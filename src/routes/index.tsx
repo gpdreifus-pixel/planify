@@ -1,0 +1,32 @@
+import { createBrowserRouter, Navigate } from 'react-router-dom'
+import HomeScreen from '../screens/HomeScreen'
+import AuthScreen from '../screens/AuthScreen'
+import VerifyEmailScreen from '../screens/VerifyEmailScreen'
+import ChatScreen from '../screens/ChatScreen'
+import ChatSummaryScreen from '../screens/ChatSummaryScreen'
+import ResultsScreen from '../screens/ResultsScreen'
+import FiltersScreen from '../screens/FiltersScreen'
+import MapScreen from '../screens/MapScreen'
+import TripDetailScreen from '../screens/TripDetailScreen'
+import BookingScreen from '../screens/BookingScreen'
+import MyTripsScreen from '../screens/MyTripsScreen'
+import CommunityScreen from '../screens/CommunityScreen'
+import ProfileScreen from '../screens/ProfileScreen'
+
+export const router = createBrowserRouter([
+  { path: '/', element: <HomeScreen /> },
+  { path: '/auth', element: <AuthScreen /> },
+  { path: '/auth/verify', element: <VerifyEmailScreen /> },
+  { path: '/chat/summary', element: <ChatSummaryScreen /> },
+  { path: '/chat/:step', element: <ChatScreen /> },
+  { path: '/results', element: <ResultsScreen /> },
+  { path: '/results/filters', element: <FiltersScreen /> },
+  { path: '/results/map', element: <MapScreen /> },
+  { path: '/results/:id', element: <TripDetailScreen /> },
+  { path: '/booking/:id', element: <BookingScreen /> },
+  { path: '/trips', element: <MyTripsScreen /> },
+  { path: '/community', element: <CommunityScreen /> },
+  { path: '/profile', element: <ProfileScreen /> },
+  // Catch-all
+  { path: '*', element: <Navigate to="/" replace /> },
+])

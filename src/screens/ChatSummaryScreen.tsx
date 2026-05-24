@@ -1,0 +1,125 @@
+import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import AppBackground from '../components/ui/AppBackground'
+import TopAppBar from '../components/ui/TopAppBar'
+import { useChatStore } from '../store/chatStore'
+import { useSearchStore } from '../store/searchStore'
+import { staggerContainer, staggerItem } from '../animations/transitions'
+
+const FIELD_META: Record<string, { icon: string; label: string }> = {
+  destination:       { icon: 'location_on',    label: 'Destino' },
+  departureDate:     { icon: 'calendar_month', label: 'Fecha de salida' },
+  returnDate:        { icon: 'event',          label: 'Duración' },
+  travelers:         { icon: 'group',          label: 'Viajeros' },
+  budget:            { icon: 'payments',       label: 'Presupuesto' },
+  accommodationType: { icon: 'hotel',          label: 'Alojamiento' },
+  activities:        { icon: 'explore',        label: 'Actividades' },
+  flightPreference:  { icon: 'flight_takeoff', label: 'Vuelo' },
+  extras:            { icon: 'interests',      label: 'Extras' },
+  vibe:              { icon: 'mood',           label: 'Vibra' },
+}
+
+export default function ChatSummaryScreen() {
+  const navigate = useNavigate()
+  const { criteria } = useChatStore()
+  const { search, isLoading } = useSearchStore()
+
+  const entries = Object.entries(criteria).filter(([, v]) => v !== undefined && v !== '')
+
+  const handleSearch = async () => {
+    await search()
+    navigate('/results')
+  }
+
+  return (
+    <AppBackground variant="chat">
+      <TopAppBar backTo="/chat/10" title="Tu búsqueda" rightSlot={
+        <span
+          className="text-white/70"
+          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
+        >
+          10/10
+        </span>
+      } />
+
+      <main className="flex-1 flex flex-col relative z-10 px-6 pb-32 max-w-md mx-auto w-full">
+        {/* Summary pills — glass-molded rounded-full, one per criteria item */}
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="flex flex-col gap-3 mb-8"
+        >
+          {entries.length === 0 ? (
+            <p
+              className="text-white/55 text-sm py-8 text-center"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              No ingresaste ningún criterio.
+            </p>
+          ) : (
+            entries.map(([key, value]) => {
+              const meta = FIELD_META[key] ?? { icon: 'info', label: key }
+              return (
+                <motion.div
+                  key={key}
+                  variants={staggerItem}
+                  className="glass-molded rounded-full p-3.5 flex items-center gap-4 cursor-pointer hover:-translate-y-0.5 transition-transform duration-200"
+                >
+                  <div className="w-11 h-11 rounded-full glass-raised flex items-center justify-center text-white flex-shrink-0">
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                      {meta.icon}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="text-white/65 uppercase tracking-wider"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.6875rem', fontWeight: 600 }}
+                    >
+                      {meta.label}
+                    </p>
+                    <p
+                      className="text-white font-bold truncate drop-shadow-sm"
+                      style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.0625rem' }}
+                    >
+                      {Array.isArray(value) ? value.join(', ') : String(value)}
+                    </p>
+                  </div>
+                </motion.div>
+              )
+            })
+          )}
+        </motion.div>
+
+        {/* Buttons */}
+        <div className="flex flex-col gap-3">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={handleSearch}
+            disabled={isLoading}
+            className="w-full py-4 rounded-full neu-btn-primary text-white font-bold disabled:opacity-60 flex items-center justify-center gap-2"
+            style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem', fontWeight: 700 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+          >
+            {isLoading ? 'Buscando...' : 'Buscar opciones'}
+            {!isLoading && <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>}
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/chat/1')}
+            className="w-full py-3.5 rounded-full glass-raised text-white"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9rem', fontWeight: 600 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+          >
+            Editar respuestas
+          </motion.button>
+        </div>
+      </main>
+    </AppBackground>
+  )
+}
