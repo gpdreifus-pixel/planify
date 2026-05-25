@@ -60,6 +60,9 @@ export const useSearchStore = create<SearchState>()(
           // Union — deduplicated by Set
           const merged = Array.from(new Set([...localIds, ...cloudIds]))
           set({ savedPropertyIds: merged })
+        } else if (event === 'SIGNED_OUT') {
+          // Clear saved IDs so they don't bleed into the next user's session
+          set({ savedPropertyIds: [] })
         }
       })
 

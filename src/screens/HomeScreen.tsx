@@ -93,7 +93,7 @@ export default function HomeScreen() {
             </span>
           </motion.button>
 
-          {/* Secondary link — discovery entry for guests, shortcut for authenticated */}
+          {/* Secondary action — shortcut for authenticated, two auth entry points for guests */}
           {isAuthenticated ? (
             <button
               onClick={() => navigate('/trips')}
@@ -106,16 +106,24 @@ export default function HomeScreen() {
               </span>
             </button>
           ) : (
-            <button
-              onClick={() => navigate('/auth')}
-              className="text-center text-white/55 hover:text-white/75 transition-colors"
-              style={{ fontFamily: "'Syne', sans-serif", fontSize: '0.9375rem' }}
-            >
-              ¿Ya tenés cuenta?{' '}
-              <span className="text-white/85 font-semibold underline underline-offset-2">
-                Iniciá sesión
-              </span>
-            </button>
+            <div className="flex gap-3">
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => navigate('/auth', { state: { tab: 'login' } })}
+                className="flex-1 py-3.5 rounded-full neu-pressed text-white/80 hover:text-white font-semibold transition-colors"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+              >
+                Iniciar sesión
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => navigate('/auth', { state: { tab: 'register' } })}
+                className="flex-1 py-3.5 rounded-full neu-flat text-white font-semibold"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+              >
+                Crear cuenta
+              </motion.button>
+            </div>
           )}
         </motion.div>
 

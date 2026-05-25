@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import { useAuthStore } from '../store/authStore'
@@ -8,8 +8,11 @@ type Tab = 'login' | 'register'
 
 export default function AuthScreen() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { login, loginWithSocial, register, isLoading, error, clearError, setOnboardingComplete } = useAuthStore()
-  const [tab, setTab] = useState<Tab>('register')
+  // Read the initial tab from router state (set by HomeScreen buttons); default to login
+  const initialTab = (location.state as { tab?: Tab } | null)?.tab ?? 'login'
+  const [tab, setTab] = useState<Tab>(initialTab)
 
   // Login form
   const [loginEmail, setLoginEmail] = useState('')
