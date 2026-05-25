@@ -161,9 +161,12 @@ export default function ProfileScreen() {
               { icon: 'privacy_tip',  label: 'Privacidad' },
               { icon: 'info',         label: 'Acerca de Planify' },
             ].map((item, i, arr) => (
-              <button
+              <motion.button
                 key={item.label}
-                className="flex items-center gap-4 px-4 py-4 w-full hover:bg-white/5 transition-colors"
+                whileTap={{ scale: 0.98, x: 3 }}
+                whileHover={{ x: 2, backgroundColor: 'rgba(255,255,255,0.05)' }}
+                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                className="flex items-center gap-4 px-4 py-4 w-full"
                 style={{
                   borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.10)' : 'none',
                 }}
@@ -190,7 +193,7 @@ export default function ProfileScreen() {
                 >
                   chevron_right
                 </span>
-              </button>
+              </motion.button>
             ))}
           </motion.div>
 

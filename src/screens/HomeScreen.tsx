@@ -71,7 +71,9 @@ export default function HomeScreen() {
 
           {/* CTA — h-20 (80px) rounded-full neu-btn-primary with shimmer */}
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.96 }}
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: 'spring', stiffness: 340, damping: 22 }}
             className="w-full h-20 rounded-full neu-btn-primary relative overflow-hidden group mt-1 flex items-center justify-center gap-2"
             style={{
               fontFamily: "'Syne', sans-serif",

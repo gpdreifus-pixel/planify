@@ -33,9 +33,10 @@ export default function BottomNav({ activeIndex }: BottomNavProps) {
               onClick={() => navigate(item.path)}
             >
               <motion.div
-                whileTap={{ scale: 0.88 }}
-                className={`w-14 h-14 flex items-center justify-center transition-all duration-200 ${
-                  isActive ? 'neu-nav-item-active' : 'text-white/70 hover:text-white'
+                whileTap={{ scale: 0.84 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+                className={`w-14 h-14 flex items-center justify-center ${
+                  isActive ? 'neu-nav-item-active' : 'text-white/70 hover:text-white/90'
                 }`}
               >
                 <span

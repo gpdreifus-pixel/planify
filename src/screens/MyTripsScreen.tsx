@@ -34,7 +34,9 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
   return (
     <motion.div
       variants={staggerItem}
-      whileTap={{ scale: 0.985 }}
+      whileTap={{ scale: 0.97 }}
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 22 }}
       onClick={onPress}
       className="glass-molded rounded-3xl overflow-hidden cursor-pointer group"
     >
@@ -164,12 +166,21 @@ export default function MyTripsScreen() {
             <button
               key={t}
               onClick={() => setActiveTab(t)}
-              className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 ${
-                activeTab === t ? 'glass-raised text-white shadow-md' : 'text-white/55 hover:text-white/75'
+              className={`flex-1 py-2.5 rounded-full text-sm font-semibold relative ${
+                activeTab === t ? 'text-white' : 'text-white/55 hover:text-white/75'
               }`}
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
-              {t === 'active' ? 'Activos' : t === 'past' ? 'Pasados' : 'Borradores'}
+              {activeTab === t && (
+                <motion.div
+                  layoutId="trips-tab-pill"
+                  className="absolute inset-0 glass-raised rounded-full shadow-md"
+                  transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                />
+              )}
+              <span className="relative z-10">
+                {t === 'active' ? 'Activos' : t === 'past' ? 'Pasados' : 'Borradores'}
+              </span>
             </button>
           ))}
         </div>
@@ -231,7 +242,9 @@ export default function MyTripsScreen() {
       {/* FAB */}
       <div className="fixed bottom-24 right-6 z-40">
         <motion.button
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.90 }}
+          whileHover={{ scale: 1.12, boxShadow: '0 12px 30px rgba(255,107,31,0.6)' }}
+          transition={{ type: 'spring', stiffness: 380, damping: 20 }}
           onClick={() => navigate('/chat/1')}
           className="w-14 h-14 rounded-full flex items-center justify-center"
           style={{

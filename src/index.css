@@ -336,6 +336,22 @@ body {
   animation: shimmer 1.8s infinite;
 }
 
+/* ── Skeleton shimmer (loading placeholders) ─────────────────────────────── */
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton-line {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.07) 25%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.07) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+}
+
 /* ── Raised action button (Booking screen item actions) ─────────────────── */
 .raised-btn {
   background: rgba(255, 255, 255, 0.1);

@@ -18,8 +18,10 @@ export default function ChatAnswerChips({ chips, onSelect }: ChatAnswerChipsProp
         <motion.button
           key={chip}
           variants={staggerItem}
-          whileTap={{ scale: 0.95 }}
-          className="btn-primary px-5 py-2.5 rounded-full flex items-center gap-2 hover:opacity-90 transition-all duration-200"
+          whileTap={{ scale: 0.93 }}
+          whileHover={{ scale: 1.05, y: -2 }}
+          transition={{ type: 'spring', stiffness: 380, damping: 20 }}
+          className="btn-primary px-5 py-2.5 rounded-full flex items-center gap-2"
           onClick={() => onSelect(chip)}
         >
           <span

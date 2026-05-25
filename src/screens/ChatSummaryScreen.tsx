@@ -64,7 +64,9 @@ export default function ChatSummaryScreen() {
                 <motion.div
                   key={key}
                   variants={staggerItem}
-                  className="glass-molded rounded-full p-3.5 flex items-center gap-4 cursor-pointer hover:-translate-y-0.5 transition-transform duration-200"
+                  whileHover={{ y: -3 }}
+                  transition={{ type: 'spring', stiffness: 340, damping: 22 }}
+                  className="glass-molded rounded-full p-3.5 flex items-center gap-4 cursor-pointer"
                 >
                   <div className="w-11 h-11 rounded-full glass-raised flex items-center justify-center text-white flex-shrink-0">
                     <span className="material-symbols-outlined" style={{ fontSize: 20 }}>

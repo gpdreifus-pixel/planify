@@ -7,11 +7,31 @@ import { useSearchStore } from '../store/searchStore'
 import type { Property } from '../types'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
+/** Structured shimmer placeholder matching the card's layout */
+function SkeletonCard() {
+  return (
+    <div className="glass-surface rounded-3xl overflow-hidden">
+      <div className="h-48 skeleton-line" />
+      <div className="p-4 flex flex-col gap-3">
+        <div className="h-5 skeleton-line rounded-lg w-3/4" />
+        <div className="h-4 skeleton-line rounded-lg w-1/2" />
+        <div className="flex justify-between mt-1">
+          <div className="h-4 skeleton-line rounded-lg w-1/3" />
+          <div className="h-4 skeleton-line rounded-lg w-1/4" />
+        </div>
+        <div className="h-9 skeleton-line rounded-full mt-1" />
+      </div>
+    </div>
+  )
+}
+
 function PropertyCard({ property, onPress }: { property: Property; onPress: () => void }) {
   return (
     <motion.div
       variants={staggerItem}
-      whileTap={{ scale: 0.985 }}
+      whileTap={{ scale: 0.975 }}
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 22 }}
       onClick={onPress}
       className="glass-surface rounded-3xl overflow-hidden cursor-pointer group"
     >
@@ -186,13 +206,24 @@ export default function ResultsScreen() {
           </button>
         </div>
 
-        {/* Loading skeletons */}
+        {/* Loading skeletons — structured shimmer matching card layout */}
         {isLoading && (
-          <div className="flex flex-col gap-4">
+          <motion.div
+            className="flex flex-col gap-4"
+            initial="initial"
+            animate="animate"
+            variants={{ animate: { transition: { staggerChildren: 0.08 } } }}
+          >
             {[1, 2, 3].map((i) => (
-              <div key={i} className="glass-surface rounded-3xl h-64 animate-pulse opacity-50" />
+              <motion.div
+                key={i}
+                variants={{ initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.3 }}
+              >
+                <SkeletonCard />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Results */}

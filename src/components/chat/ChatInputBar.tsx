@@ -31,11 +31,13 @@ export default function ChatInputBar({ value, onChange, onSend, placeholder }: C
           />
         </div>
 
-        {/* Send button */}
+        {/* Send button — scales in when there's text to send */}
         <motion.button
           aria-label="Send"
-          whileTap={{ scale: 0.92 }}
-          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.88 }}
+          whileHover={{ scale: 1.08 }}
+          animate={{ scale: value.trim() ? 1 : 0.88, opacity: value.trim() ? 1 : 0.5 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 22 }}
           onClick={onSend}
           className="w-[52px] h-[52px] rounded-full btn-primary flex items-center justify-center text-white flex-shrink-0"
         >

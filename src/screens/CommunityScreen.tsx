@@ -37,12 +37,21 @@ export default function CommunityScreen() {
             <button
               key={t}
               onClick={() => setActiveTab(t)}
-              className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 ${
-                activeTab === t ? 'glass-raised text-white shadow-md' : 'text-white/55 hover:text-white/75'
+              className={`flex-1 py-2.5 rounded-full text-sm font-semibold relative ${
+                activeTab === t ? 'text-white' : 'text-white/55 hover:text-white/75'
               }`}
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
-              {t === 'community' ? 'Comunidad' : 'Favoritos'}
+              {activeTab === t && (
+                <motion.div
+                  layoutId="community-tab-pill"
+                  className="absolute inset-0 glass-raised rounded-full shadow-md"
+                  transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                />
+              )}
+              <span className="relative z-10">
+                {t === 'community' ? 'Comunidad' : 'Favoritos'}
+              </span>
             </button>
           ))}
         </div>

@@ -89,16 +89,14 @@ export default function AuthScreen() {
             </p>
           </div>
 
-          {/* Tab switcher — neu-pressed container + neu-flat sliding indicator */}
+          {/* Tab switcher — neu-pressed container + neu-flat spring indicator */}
           <div className="neu-pressed rounded-full p-1 flex relative z-10">
-            {/* Sliding indicator */}
-            <div
-              className="absolute top-1 bottom-1 neu-flat rounded-full transition-transform duration-300 ease-in-out pointer-events-none"
-              style={{
-                width: 'calc(50% - 4px)',
-                left: '4px',
-                transform: tab === 'login' ? 'translateX(0)' : 'translateX(calc(100% + 0px))',
-              }}
+            {/* Sliding indicator — spring physics, no CSS transition needed */}
+            <motion.div
+              className="absolute top-1 bottom-1 neu-flat rounded-full pointer-events-none"
+              style={{ width: 'calc(50% - 4px)', left: '4px' }}
+              animate={{ x: tab === 'login' ? '0%' : '100%' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 34 }}
             />
             <button
               onClick={() => setTab('login')}

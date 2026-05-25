@@ -156,7 +156,10 @@ export default function BookingScreen() {
                   </div>
 
                   {/* Right: action button */}
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
+                    whileHover={{ scale: 1.06 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                     className="raised-btn rounded-full px-4 py-2.5 flex items-center gap-2"
                   >
                     <span
@@ -172,7 +175,7 @@ export default function BookingScreen() {
                     <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#ffb68d' }}>
                       open_in_new
                     </span>
-                  </button>
+                  </motion.button>
                 </div>
               )
             })}
