@@ -14,8 +14,8 @@ export default function ProfileScreen() {
 
   const completedTrips = trips.filter((t) => t.status === 'completed').length
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     navigate('/')
   }
 

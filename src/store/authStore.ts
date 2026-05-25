@@ -41,7 +41,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>
   loginWithSocial: (provider: 'google' | 'apple') => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
   clearError: () => void
   setOnboardingComplete: () => void
   setPreferences: (partial: Partial<UserPreferences>) => void
@@ -131,11 +131,14 @@ export const useAuthStore = create<AuthState>()(
           // email confirmation is disabled). AuthScreen navigates to /auth/verify.
         },
 
-        logout: () => {
-          // Optimistically clear local state for instant UX — the user sees
-          // the guest screen immediately without waiting for the network call.
+        logout: async () => {
+          // Clear local state immediately for instant UX feedback.
           set({ user: null, isAuthenticated: false })
-          supabase.auth.signOut() // fire-and-forget; onAuthStateChange confirms
+          // Await signOut so the Supabase session is actually invalidated before
+          // the caller navigates away. Without this, a quick F5 can restore the
+          // session because the sb-* localStorage token is still valid.
+          await supabase.auth.signOut()
+          // onAuthStateChange fires SIGNED_OUT and confirms the cleared state.
         },
 
         clearError: () => set({ error: null }),
