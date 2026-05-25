@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import type { User, UserPreferences } from '../types'
 import { supabase } from '../utils/supabase'
+import { fetchUserPreferences, upsertUserPreferences } from '../services/db'
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   currency: 'USD',
@@ -48,17 +49,30 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => {
+    (set, get) => {
       // Subscribe to Supabase auth state changes.
       // Fires immediately with INITIAL_SESSION (restoring a stored session on
       // page reload) and then on every change: SIGNED_IN, SIGNED_OUT,
       // TOKEN_REFRESHED, etc. This is the single source of truth for auth state.
       supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user) {
+          const userId = session.user.id
           set({
             user: mapSupabaseUser(session.user),
             isAuthenticated: true,
             isInitializing: false,
+          })
+          // Fetch and merge cloud preferences — fire-and-forget.
+          // If the user has saved preferences in the cloud, apply them over
+          // local defaults. If not, bootstrap them from the current local prefs.
+          fetchUserPreferences(userId).then((cloudPrefs) => {
+            if (Object.keys(cloudPrefs).length > 0) {
+              set((state) => ({
+                userPreferences: { ...state.userPreferences, ...cloudPrefs },
+              }))
+            } else {
+              upsertUserPreferences(userId, get().userPreferences)
+            }
           })
         } else {
           set({ user: null, isAuthenticated: false, isInitializing: false })
@@ -82,7 +96,7 @@ export const useAuthStore = create<AuthState>()(
             set({ error: error.message })
             throw error
           }
-          // onAuthStateChange handles user + isAuthenticated
+          // onAuthStateChange handles user + isAuthenticated + prefs sync
         },
 
         loginWithSocial: async (provider) => {
@@ -128,10 +142,17 @@ export const useAuthStore = create<AuthState>()(
 
         setOnboardingComplete: () => set({ onboardingComplete: true }),
 
-        setPreferences: (partial) =>
+        setPreferences: (partial) => {
           set((state) => ({
             userPreferences: { ...state.userPreferences, ...partial },
-          })),
+          }))
+          // Cloud write — fire-and-forget; get() reflects the merged state
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user) {
+              upsertUserPreferences(session.user.id, get().userPreferences)
+            }
+          })
+        },
       }
     },
     {

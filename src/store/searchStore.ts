@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Property, FilterState, RecentSearch, TripSearchCriteria } from '../types'
 import { MOCK_PROPERTIES } from '../data/mockData'
+import { supabase } from '../utils/supabase'
+import { fetchSavedPropertyIds, saveProperty, unsaveProperty } from '../services/db'
 
 interface SearchState {
   results: Property[]
@@ -37,7 +39,31 @@ const DEFAULT_FILTERS: FilterState = {
 
 export const useSearchStore = create<SearchState>()(
   persist(
-    (set, get) => ({
+    (set, get) => {
+      // ── Cloud sync ─────────────────────────────────────────────────────────
+      // On sign-in: fetch saved property IDs from Supabase and union with any
+      // locally saved IDs (guest saves are preserved and synced up to cloud).
+      // Sign-out does NOT clear local saves — guest mode keeps them intact.
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        if (
+          (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') &&
+          session?.user
+        ) {
+          const userId = session.user.id
+          const cloudIds = await fetchSavedPropertyIds(userId)
+          const localIds = get().savedPropertyIds
+          // Write any guest-saved IDs that aren't in the cloud yet
+          const localOnly = localIds.filter((id) => !cloudIds.includes(id))
+          for (const id of localOnly) {
+            saveProperty(userId, id) // fire-and-forget
+          }
+          // Union — deduplicated by Set
+          const merged = Array.from(new Set([...localIds, ...cloudIds]))
+          set({ savedPropertyIds: merged })
+        }
+      })
+
+      return {
       results: [],
       filteredResults: [],
       selectedProperty: null,
@@ -138,11 +164,19 @@ export const useSearchStore = create<SearchState>()(
       },
 
       toggleSavedProperty: (id) => {
+        const wasSaved = get().savedPropertyIds.includes(id)
         set((state) => ({
-          savedPropertyIds: state.savedPropertyIds.includes(id)
+          savedPropertyIds: wasSaved
             ? state.savedPropertyIds.filter((sid) => sid !== id)
             : [...state.savedPropertyIds, id],
         }))
+        // Cloud write — fire-and-forget
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            if (wasSaved) unsaveProperty(session.user.id, id)
+            else saveProperty(session.user.id, id)
+          }
+        })
       },
 
       isPropertySaved: (id) => get().savedPropertyIds.includes(id),
@@ -156,7 +190,8 @@ export const useSearchStore = create<SearchState>()(
           ],
         }))
       },
-    }),
+    }
+    },
     {
       name: 'planify-search',
       partialize: (state) => ({
