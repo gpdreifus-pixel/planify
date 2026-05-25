@@ -6,7 +6,6 @@ import { useAuthStore } from '../store/authStore'
 import type { UserPreferences } from '../types'
 
 const STEPS = ['welcome', 'preferences', 'ready'] as const
-type Step = (typeof STEPS)[number]
 
 export default function OnboardingScreen() {
   const navigate = useNavigate()
