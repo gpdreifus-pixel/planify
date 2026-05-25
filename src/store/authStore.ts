@@ -57,14 +57,17 @@ export const useAuthStore = create<AuthState>()(
       supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user) {
           const userId = session.user.id
+          // Read onboarding status from Supabase user metadata so it is
+          // per-user and device-independent (fixes stale localStorage bug).
+          const isOnboarded =
+            session.user.user_metadata?.onboarding_complete === true
           set({
             user: mapSupabaseUser(session.user),
             isAuthenticated: true,
             isInitializing: false,
+            onboardingComplete: isOnboarded,
           })
           // Fetch and merge cloud preferences — fire-and-forget.
-          // If the user has saved preferences in the cloud, apply them over
-          // local defaults. If not, bootstrap them from the current local prefs.
           fetchUserPreferences(userId).then((cloudPrefs) => {
             if (Object.keys(cloudPrefs).length > 0) {
               set((state) => ({
@@ -134,16 +137,25 @@ export const useAuthStore = create<AuthState>()(
         logout: async () => {
           // Clear local state immediately for instant UX feedback.
           set({ user: null, isAuthenticated: false })
-          // Await signOut so the Supabase session is actually invalidated before
-          // the caller navigates away. Without this, a quick F5 can restore the
-          // session because the sb-* localStorage token is still valid.
-          await supabase.auth.signOut()
+          // scope: 'global' revokes the session server-side too, so the refresh
+          // token can't restore the session on F5 even if any storage survives.
+          await supabase.auth.signOut({ scope: 'global' })
+          // Belt-and-suspenders: remove any remaining sb-* keys so Supabase
+          // can't reconstruct the session from stale localStorage entries.
+          Object.keys(localStorage).forEach((k) => {
+            if (k.startsWith('sb-')) localStorage.removeItem(k)
+          })
           // onAuthStateChange fires SIGNED_OUT and confirms the cleared state.
         },
 
         clearError: () => set({ error: null }),
 
-        setOnboardingComplete: () => set({ onboardingComplete: true }),
+        setOnboardingComplete: () => {
+          set({ onboardingComplete: true })
+          // Persist in Supabase user metadata so the flag is per-user and
+          // device-independent — not just a localStorage boolean.
+          supabase.auth.updateUser({ data: { onboarding_complete: true } })
+        },
 
         setPreferences: (partial) => {
           set((state) => ({
