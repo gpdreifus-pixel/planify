@@ -61,7 +61,12 @@
     <!-- Prevent white flash before React mounts by matching the app's
          atmospheric gradient exactly on the document body. -->
     <style>
-      html, body {
+      /* Startup background on html only — prevents white flash before the CSS
+         bundle loads. body is left transparent so it never overrides html's
+         atmospheric gradient (index.css sets the full complex version on html
+         with background-attachment:fixed; body having its own background caused
+         the mid-scroll background switch regression on long screens). */
+      html {
         background: linear-gradient(180deg, #8178a8 0%, #c49ba2 35%, #ff8c42 70%, #ff6b1f 100%);
         margin: 0;
         padding: 0;

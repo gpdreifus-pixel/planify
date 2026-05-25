@@ -82,6 +82,10 @@ html {
 
 body {
   margin: 0;
+  /* Explicit transparent — ensures no inline or legacy background on body
+     ever overrides html's atmospheric gradient. The visible background must
+     always come from the single source of truth: html { background ... fixed }. */
+  background: transparent;
   font-family: var(--font-jakarta);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
