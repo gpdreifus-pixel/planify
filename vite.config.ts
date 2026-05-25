@@ -59,6 +59,7 @@ export default defineConfig({
         screenshots: [
           {
             src: '/splash.png',
+            sizes: '1290x2796',
             type: 'image/png',
             form_factor: 'narrow',
             label: 'Planify — pantalla de inicio',
