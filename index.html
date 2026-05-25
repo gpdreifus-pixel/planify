@@ -2,13 +2,71 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── Viewport & display ──────────────────────────────────────────── -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- ── Standard favicon ────────────────────────────────────────────── -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ── PWA manifest (Vite plugin injects this; explicit ref is a belt-
+         and-suspenders fallback for browsers that don't pick it up) ───── -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- ── Theme & status bar ──────────────────────────────────────────── -->
+    <!-- Base orange — matches primary CTA and manifest theme_color -->
     <meta name="theme-color" content="#ff6b1f" />
+    <!-- iOS: transparent status bar so the atmospheric gradient bleeds up -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="AI-powered travel planning" />
+    <meta name="apple-mobile-web-app-title" content="Planify" />
+
+    <!-- ── iOS home screen icon ────────────────────────────────────────── -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- ── iOS splash screens ──────────────────────────────────────────── -->
+    <!-- One image covers the base case; iOS uses background_color from
+         manifest for any uncovered device size. -->
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash.png"
+      media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash.png"
+      media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash.png"
+      media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)"
+    />
+
+    <!-- ── Windows tile ────────────────────────────────────────────────── -->
+    <meta name="msapplication-TileColor" content="#ff6b1f" />
+    <meta name="msapplication-TileImage" content="/icon-192.png" />
+
+    <!-- ── SEO / social ────────────────────────────────────────────────── -->
+    <meta name="description" content="Planificá tu próximo viaje en 10 preguntas. Tu viaje ideal, con IA." />
+    <meta property="og:title" content="Planify — Tu viaje ideal" />
+    <meta property="og:description" content="10 preguntas. Tu viaje ideal. Planeá con IA." />
+    <meta property="og:image" content="/splash.png" />
+
     <title>Planify</title>
+
+    <!-- ── Startup background ──────────────────────────────────────────── -->
+    <!-- Prevent white flash before React mounts by matching the app's
+         atmospheric gradient exactly on the document body. -->
+    <style>
+      html, body {
+        background: linear-gradient(180deg, #8178a8 0%, #c49ba2 35%, #ff8c42 70%, #ff6b1f 100%);
+        margin: 0;
+        padding: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
