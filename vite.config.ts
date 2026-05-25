@@ -8,9 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      // 'prompt' — shows the app's own update banner instead of silently
-      // reloading mid-session, which could interrupt active trip planning.
-      registerType: 'prompt',
+      // 'autoUpdate' — new service worker activates immediately on deploy.
+      // Paired with skipWaiting + clientsClaim below, all open tabs reload
+      // automatically so users never see a stale cached version.
+      registerType: 'autoUpdate',
 
       includeAssets: ['favicon.png', 'favicon.svg', 'apple-touch-icon.png', 'splash.png'],
 
