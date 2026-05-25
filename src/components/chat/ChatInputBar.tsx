@@ -34,12 +34,19 @@ export default function ChatInputBar({ value, onChange, onSend, placeholder }: C
         {/* Send button — scales in when there's text to send */}
         <motion.button
           aria-label="Send"
-          whileTap={{ scale: 0.88 }}
-          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.88, opacity: 1 }}
+          whileHover={{ scale: 1.08, opacity: 1 }}
           animate={{ scale: value.trim() ? 1 : 0.88, opacity: value.trim() ? 1 : 0.5 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+          transition={{ type: 'spring', stiffness: 420, damping: 22 }}
           onClick={onSend}
           className="w-[52px] h-[52px] rounded-full btn-primary flex items-center justify-center text-white flex-shrink-0"
+          style={{
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+            WebkitTapHighlightColor: 'transparent',
+            outline: 'none',
+            userSelect: 'none',
+          }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
             arrow_upward

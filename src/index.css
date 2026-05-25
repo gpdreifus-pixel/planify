@@ -60,6 +60,10 @@
 /* ── Global resets ──────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
+  /* Kill the browser/OS native tap-highlight dark overlay on every element.
+     Without this, iOS Safari and Android Chrome inject rgba(0,0,0,0.18) on
+     any tapped element — the "ugly dark flash" visible on the chat chips. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -198,7 +202,10 @@ body {
   font-family: var(--font-syne);
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  outline: none;
+  user-select: none;
+  /* Same reason as .btn-primary — avoid transition:all fighting Framer Motion */
+  transition: box-shadow 0.15s ease;
 }
 
 .neu-btn-primary:active {
@@ -254,16 +261,21 @@ body {
     inset 1px 1px 2px rgba(255, 255, 255, 0.3);
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  outline: none;
+  user-select: none;
+  /* IMPORTANT: Do NOT use `transition: all` here — it intercepts Framer Motion's
+     composited transform/opacity animations and forces CPU repaints, causing
+     the visible flicker during chip mount + tap. Only transition static CSS
+     properties that Framer Motion never touches. */
+  transition: box-shadow 0.15s ease;
 }
 
 .btn-primary:hover {
   opacity: 0.9;
 }
 
-.btn-primary:active {
-  transform: scale(0.95);
-}
+/* Remove the CSS :active transform — Framer Motion's whileTap handles this.
+   Having both fight over `transform` was a source of visual jitter. */
 
 /* ── Progress bar ────────────────────────────────────────────────────────── */
 .progress-track {
