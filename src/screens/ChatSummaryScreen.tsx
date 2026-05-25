@@ -27,7 +27,7 @@ export default function ChatSummaryScreen() {
   const entries = Object.entries(criteria).filter(([, v]) => v !== undefined && v !== '')
 
   const handleSearch = async () => {
-    await search()
+    await search(criteria)
     navigate('/results')
   }
 

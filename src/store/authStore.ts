@@ -1,18 +1,28 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User } from '../types'
+import type { User, UserPreferences } from '../types'
+
+const DEFAULT_PREFERENCES: UserPreferences = {
+  currency: 'USD',
+  language: 'es',
+  notifications: true,
+}
 
 interface AuthState {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
+  onboardingComplete: boolean
+  userPreferences: UserPreferences
   // Actions
   login: (email: string, password: string) => Promise<void>
   loginWithSocial: (provider: 'google' | 'apple') => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
   clearError: () => void
+  setOnboardingComplete: () => void
+  setPreferences: (partial: Partial<UserPreferences>) => void
 }
 
 // Mock user for prototype
@@ -35,6 +45,8 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      onboardingComplete: false,
+      userPreferences: DEFAULT_PREFERENCES,
 
       login: async (_email, _password) => {
         set({ isLoading: true, error: null })
@@ -64,10 +76,22 @@ export const useAuthStore = create<AuthState>()(
       },
 
       clearError: () => set({ error: null }),
+
+      setOnboardingComplete: () => set({ onboardingComplete: true }),
+
+      setPreferences: (partial) =>
+        set((state) => ({
+          userPreferences: { ...state.userPreferences, ...partial },
+        })),
     }),
     {
       name: 'planify-auth',
-      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+        onboardingComplete: state.onboardingComplete,
+        userPreferences: state.userPreferences,
+      }),
     }
   )
 )

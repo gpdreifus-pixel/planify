@@ -70,6 +70,10 @@ export const useTripsStore = create<TripsState>()(
     }),
     {
       name: 'planify-trips',
+      // activeTrip is a session-level pointer — do not persist it.
+      // Restoring a stale activeTrip reference after a reload would
+      // show the wrong trip detail, so we derive it on demand instead.
+      partialize: (state) => ({ trips: state.trips }),
     }
   )
 )

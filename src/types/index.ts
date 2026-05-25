@@ -158,3 +158,18 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info'
   duration?: number
 }
+
+// ── User Preferences ──────────────────────────────────────────────────────
+export interface UserPreferences {
+  currency: 'USD' | 'EUR' | 'ARS'
+  language: 'es' | 'en'
+  notifications: boolean
+}
+
+// ── Recent Searches ───────────────────────────────────────────────────────
+export interface RecentSearch {
+  id: string
+  criteria: TripSearchCriteria
+  timestamp: string
+  resultsCount: number
+}
