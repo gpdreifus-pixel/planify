@@ -243,7 +243,7 @@ export default function CommunityScreen() {
               </motion.div>
             )}
 
-            {displayPosts.length === 0 && tab === 'explore' && !isLoading && (
+            {displayPosts.length === 0 && tab === 'explore' && (
               <motion.div variants={staggerItem} className="text-center py-16">
                 <span className="material-symbols-outlined text-white/25" style={{ fontSize: 60 }}>
                   groups
@@ -254,6 +254,17 @@ export default function CommunityScreen() {
                 >
                   Sé el primero en compartir un viaje.
                 </p>
+                {isAuthenticated && (
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => navigate('/community/new')}
+                    className="mt-5 px-6 py-2.5 rounded-full neu-btn-primary text-white font-semibold inline-flex items-center gap-2"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
+                    Compartí tu viaje
+                  </motion.button>
+                )}
               </motion.div>
             )}
 

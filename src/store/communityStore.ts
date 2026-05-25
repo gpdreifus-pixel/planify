@@ -32,23 +32,28 @@ export const useCommunityStore = create<CommunityState>()((set, get) => ({
 
   fetchPosts: async () => {
     set({ isLoading: true, error: null })
+    try {
+      const [rawPosts, { data: sessionData }] = await Promise.all([
+        fetchCommunityPosts(),
+        supabase.auth.getSession(),
+      ])
 
-    const [rawPosts, session] = await Promise.all([
-      fetchCommunityPosts(),
-      supabase.auth.getSession().then(({ data }) => data.session),
-    ])
+      const session = sessionData?.session
+      const likedIds = new Set(
+        session?.user ? await fetchUserLikedPostIds(session.user.id) : []
+      )
 
-    // Overlay likedByUser for authenticated users
-    const likedIds = new Set(
-      session?.user ? await fetchUserLikedPostIds(session.user.id) : []
-    )
+      const posts = rawPosts.map((p) => ({
+        ...p,
+        likedByUser: likedIds.has(p.id),
+      }))
 
-    const posts = rawPosts.map((p) => ({
-      ...p,
-      likedByUser: likedIds.has(p.id),
-    }))
-
-    set({ posts, isLoading: false })
+      set({ posts, isLoading: false })
+    } catch (e) {
+      console.warn('[community] fetchPosts error:', e)
+      // Always clear loading so the UI doesn't get stuck on skeletons
+      set({ isLoading: false, posts: [] })
+    }
   },
 
   toggleLike: (postId) => {
