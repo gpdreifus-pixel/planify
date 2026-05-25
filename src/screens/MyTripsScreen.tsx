@@ -216,7 +216,7 @@ export default function MyTripsScreen() {
         </div>
       </div>
 
-      <main className="flex-1 relative z-10 px-6 pb-28 max-w-md mx-auto w-full">
+      <main className="flex-1 relative z-10 px-6 pb-32 max-w-md mx-auto w-full">
         {/* ── Saved tab ── */}
         {activeTab === 'saved' && (
           savedProperties.length === 0 ? (

@@ -294,7 +294,7 @@ export default function CommunityScreen() {
             onClick={() => navigate('/community/new')}
             className="fixed z-40 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg"
             style={{
-              bottom: '6rem', // above BottomNav
+              bottom: 'calc(5rem + env(safe-area-inset-bottom))',
               right: '1.5rem',
               background: 'linear-gradient(135deg, #ff8c42, #ff6b1f)',
               boxShadow: '0 6px 20px rgba(255,107,31,0.55)',
