@@ -18,8 +18,8 @@ export default function BottomNav({ activeIndex }: BottomNavProps) {
   const { pathname } = useLocation()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] neu-bottombar">
-      <div className="flex items-center justify-around px-4 h-20 max-w-md mx-auto pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] neu-bottombar overflow-hidden">
+      <div className="flex items-center justify-around px-4 h-20 max-w-md mx-auto">
         {NAV_ITEMS.map((item, idx) => {
           const isActive =
             activeIndex !== undefined
@@ -55,6 +55,9 @@ export default function BottomNav({ activeIndex }: BottomNavProps) {
           )
         })}
       </div>
+      {/* Safe-area spacer — fills the home-indicator gap on iPhone X+ without
+          shrinking the icon row, so the active bubble always has 80px to live in */}
+      <div style={{ height: 'env(safe-area-inset-bottom)' }} />
     </nav>
   )
 }
