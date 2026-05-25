@@ -141,7 +141,7 @@ export default function MapScreen() {
               // sits above BottomNav (z-50 = 50 in Tailwind ≈ z-index:50)
               // Leaflet tiles are z-200 but we need the sheet above Leaflet
               className="absolute left-4 right-4 glass-panel rounded-[24px] p-3 flex gap-3 items-center"
-              style={{ bottom: '5.5rem', zIndex: 1001 }}
+              style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom))', zIndex: 1001 }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Thumbnail */}

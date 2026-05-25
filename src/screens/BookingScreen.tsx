@@ -184,7 +184,7 @@ export default function BookingScreen() {
       </main>
 
       {/* Fixed bottom CTA */}
-      <div className="fixed bottom-24 left-0 right-0 px-6 z-40 max-w-md mx-auto">
+      <div className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] left-0 right-0 px-6 z-40 max-w-md mx-auto">
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={handleBook}

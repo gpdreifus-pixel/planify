@@ -379,7 +379,7 @@ export default function TripDetailScreen() {
       </main>
 
       {/* Floating CTA — adapts to existing booking state */}
-      <div className="fixed bottom-24 left-0 right-0 px-6 z-40 max-w-md mx-auto">
+      <div className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] left-0 right-0 px-6 z-40 max-w-md mx-auto">
         {existingTrip ? (
           <motion.button
             whileTap={{ scale: 0.97 }}

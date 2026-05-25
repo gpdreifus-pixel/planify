@@ -361,7 +361,7 @@ export default function MyTripsScreen() {
       </main>
 
       {/* FAB */}
-      <div className="fixed bottom-24 right-6 z-40">
+      <div className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-6 z-40">
         <motion.button
           whileTap={{ scale: 0.90 }}
           whileHover={{ scale: 1.12, boxShadow: '0 12px 30px rgba(255,107,31,0.6)' }}
