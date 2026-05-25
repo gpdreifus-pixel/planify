@@ -135,29 +135,26 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: async () => {
-          // 1. Wipe Zustand-persisted stores first so nothing can re-hydrate auth state.
-          ;['planify-auth', 'planify-search', 'planify-trips'].forEach((k) =>
-            localStorage.removeItem(k)
-          )
-          // 2. Wipe every Supabase session key (sb-*) so the client can't
-          //    reconstruct the session from stale tokens on the next page load.
-          Object.keys(localStorage)
-            .filter((k) => k.startsWith('sb-'))
-            .forEach((k) => localStorage.removeItem(k))
-          // Also nuke sessionStorage — Supabase occasionally writes there too.
-          try { sessionStorage.clear() } catch { /* sandboxed iframe — ignore */ }
-          // 3. Tell Supabase to revoke the refresh token server-side.
-          //    Wrap in try/catch so a network error never blocks the logout.
-          try {
-            await supabase.auth.signOut({ scope: 'global' })
-          } catch {
-            // If signOut fails (offline, 4xx, etc.) we've already cleared storage,
-            // so the session won't be restored on the next load regardless.
-          }
-          // 4. Force a hard page reload — this destroys the in-memory Supabase
-          //    client instance and guarantees the app boots fresh with no session.
-          //    (SPA navigate() leaves the JS runtime alive which can cause the
-          //    old session to linger in the Supabase client's memory.)
+          // planify-auth only stores onboardingComplete + userPreferences —
+          // no auth tokens. Save it so preferences survive the logout.
+          const savedAuth = localStorage.getItem('planify-auth')
+
+          // Nuclear clear: wipes every Supabase session key regardless of its
+          // exact name (avoids relying on the 'sb-*' prefix pattern which varies
+          // across Supabase JS versions).
+          localStorage.clear()
+          try { sessionStorage.clear() } catch { /* sandboxed iframe */ }
+
+          // Restore non-sensitive preferences / onboarding flag.
+          if (savedAuth) localStorage.setItem('planify-auth', savedAuth)
+
+          // Best-effort server-side token revocation.
+          // Wrapped in try/catch: if offline or the server rejects the call,
+          // storage is already gone so the session won't survive a page reload.
+          try { await supabase.auth.signOut({ scope: 'global' }) } catch { /* ignore */ }
+
+          // Hard reload — destroys the in-memory Supabase client and JS runtime.
+          // SPA navigate() leaves the client alive, which can re-serve the old session.
           window.location.href = '/'
         },
 
