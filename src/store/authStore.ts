@@ -135,17 +135,30 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: async () => {
-          // Clear local state immediately for instant UX feedback.
-          set({ user: null, isAuthenticated: false })
-          // scope: 'global' revokes the session server-side too, so the refresh
-          // token can't restore the session on F5 even if any storage survives.
-          await supabase.auth.signOut({ scope: 'global' })
-          // Belt-and-suspenders: remove any remaining sb-* keys so Supabase
-          // can't reconstruct the session from stale localStorage entries.
-          Object.keys(localStorage).forEach((k) => {
-            if (k.startsWith('sb-')) localStorage.removeItem(k)
-          })
-          // onAuthStateChange fires SIGNED_OUT and confirms the cleared state.
+          // 1. Wipe Zustand-persisted stores first so nothing can re-hydrate auth state.
+          ;['planify-auth', 'planify-search', 'planify-trips'].forEach((k) =>
+            localStorage.removeItem(k)
+          )
+          // 2. Wipe every Supabase session key (sb-*) so the client can't
+          //    reconstruct the session from stale tokens on the next page load.
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith('sb-'))
+            .forEach((k) => localStorage.removeItem(k))
+          // Also nuke sessionStorage — Supabase occasionally writes there too.
+          try { sessionStorage.clear() } catch { /* sandboxed iframe — ignore */ }
+          // 3. Tell Supabase to revoke the refresh token server-side.
+          //    Wrap in try/catch so a network error never blocks the logout.
+          try {
+            await supabase.auth.signOut({ scope: 'global' })
+          } catch {
+            // If signOut fails (offline, 4xx, etc.) we've already cleared storage,
+            // so the session won't be restored on the next load regardless.
+          }
+          // 4. Force a hard page reload — this destroys the in-memory Supabase
+          //    client instance and guarantees the app boots fresh with no session.
+          //    (SPA navigate() leaves the JS runtime alive which can cause the
+          //    old session to linger in the Supabase client's memory.)
+          window.location.href = '/'
         },
 
         clearError: () => set({ error: null }),
