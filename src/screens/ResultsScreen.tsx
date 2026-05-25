@@ -7,6 +7,37 @@ import { useSearchStore } from '../store/searchStore'
 import type { Property } from '../types'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
+// Reads store directly to avoid prop-drilling saved state into every card
+function SaveButton({ propertyId }: { propertyId: string }) {
+  const { toggleSavedProperty, isPropertySaved } = useSearchStore()
+  const saved = isPropertySaved(propertyId)
+  return (
+    <motion.button
+      whileTap={{ scale: 0.80, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+      onClick={(e) => { e.stopPropagation(); toggleSavedProperty(propertyId) }}
+      className="absolute top-3 right-3 w-9 h-9 rounded-full glass-raised flex items-center justify-center z-10"
+      aria-label={saved ? 'Quitar de guardados' : 'Guardar propiedad'}
+      style={{ WebkitTapHighlightColor: 'transparent', willChange: 'transform' }}
+    >
+      <motion.span
+        key={String(saved)}
+        initial={{ scale: 0.5 }}
+        animate={{ scale: 1 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+        className="material-symbols-outlined"
+        style={{
+          fontSize: 18,
+          color: saved ? '#ff6b1f' : 'rgba(255,255,255,0.85)',
+          fontVariationSettings: saved ? "'FILL' 1" : "'FILL' 0",
+        }}
+      >
+        favorite
+      </motion.span>
+    </motion.button>
+  )
+}
+
 /** Structured shimmer placeholder matching the card's layout */
 function SkeletonCard() {
   return (
@@ -43,6 +74,8 @@ function PropertyCard({ property, onPress }: { property: Property; onPress: () =
           className="w-full h-full object-cover opacity-90 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        {/* Save button — top right */}
+        <SaveButton propertyId={property.id} />
         {/* Tags */}
         <div className="absolute top-3 left-3 flex gap-2">
           {property.tags.slice(0, 2).map((tag) => (

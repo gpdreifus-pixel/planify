@@ -8,7 +8,7 @@ type Tab = 'login' | 'register'
 
 export default function AuthScreen() {
   const navigate = useNavigate()
-  const { login, loginWithSocial, register, isLoading } = useAuthStore()
+  const { login, loginWithSocial, register, isLoading, setOnboardingComplete } = useAuthStore()
   const [tab, setTab] = useState<Tab>('register')
 
   // Login form
@@ -23,17 +23,20 @@ export default function AuthScreen() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     await login(loginEmail, loginPassword)
+    setOnboardingComplete()
     navigate('/results')
   }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     await register(regName, regEmail, regPassword)
+    setOnboardingComplete()
     navigate('/auth/verify')
   }
 
   const handleSocial = async (provider: 'google' | 'apple') => {
     await loginWithSocial(provider)
+    setOnboardingComplete()
     navigate('/results')
   }
 

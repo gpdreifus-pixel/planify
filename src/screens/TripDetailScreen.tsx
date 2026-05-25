@@ -5,19 +5,26 @@ import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
 import { useSearchStore } from '../store/searchStore'
+import { useTripsStore } from '../store/tripsStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
 export default function TripDetailScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { selectedProperty, selectProperty } = useSearchStore()
+  const { selectedProperty, selectProperty, toggleSavedProperty, isPropertySaved } = useSearchStore()
+  const { trips } = useTripsStore()
 
   useEffect(() => {
     if (id) selectProperty(id)
   }, [id, selectProperty])
 
   const property = selectedProperty ?? MOCK_PROPERTIES[0]
+  const isSaved = isPropertySaved(property.id)
+  // Check if user already has a live booking for this property
+  const existingTrip = trips.find(
+    (t) => t.property.id === property.id && ['confirmed', 'upcoming', 'active'].includes(t.status)
+  )
 
   return (
     <AppBackground variant="chat">
@@ -28,10 +35,27 @@ export default function TripDetailScreen() {
           title=""
           rightSlot={
             <motion.button
-              whileTap={{ scale: 0.90 }}
-              className="w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white"
+              whileTap={{ scale: 0.88, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+              onClick={() => toggleSavedProperty(property.id)}
+              className="w-10 h-10 rounded-full glass-raised flex items-center justify-center"
+              aria-label={isSaved ? 'Quitar de guardados' : 'Guardar propiedad'}
+              style={{ WebkitTapHighlightColor: 'transparent', willChange: 'transform' }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 22 }}>favorite_border</span>
+              <motion.span
+                key={String(isSaved)}
+                initial={{ scale: 0.5 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: 22,
+                  color: isSaved ? '#ff6b1f' : 'rgba(255,255,255,0.90)',
+                  fontVariationSettings: isSaved ? "'FILL' 1" : "'FILL' 0",
+                }}
+              >
+                favorite
+              </motion.span>
             </motion.button>
           }
         />
@@ -354,26 +378,47 @@ export default function TripDetailScreen() {
         </motion.div>
       </main>
 
-      {/* Floating CTA */}
+      {/* Floating CTA — adapts to existing booking state */}
       <div className="fixed bottom-24 left-0 right-0 px-6 z-40 max-w-md mx-auto">
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={() => navigate(`/booking/${property.id}`)}
-          className="w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white font-bold"
-          style={{
-            background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
-            boxShadow: '0 4px 20px rgba(255,107,31,0.5)',
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '1.0625rem',
-            fontWeight: 700,
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
-        >
-          Ir a reservar
-          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
-        </motion.button>
+        {existingTrip ? (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/trips')}
+            className="w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white font-bold"
+            style={{
+              background: 'linear-gradient(to right, #22c55e, #16a34a)',
+              boxShadow: '0 4px 20px rgba(34,197,94,0.4)',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '1.0625rem',
+              fontWeight: 700,
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+            Ya tenés una reserva activa
+          </motion.button>
+        ) : (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate(`/booking/${property.id}`)}
+            className="w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white font-bold"
+            style={{
+              background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
+              boxShadow: '0 4px 20px rgba(255,107,31,0.5)',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '1.0625rem',
+              fontWeight: 700,
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+          >
+            Ir a reservar
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+          </motion.button>
+        )}
       </div>
 
       <BottomNav activeIndex={1} />
