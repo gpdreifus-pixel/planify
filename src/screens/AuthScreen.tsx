@@ -36,7 +36,7 @@ export default function AuthScreen() {
     try {
       await register(regName, regEmail, regPassword)
       setOnboardingComplete()
-      navigate('/auth/verify')
+      navigate('/auth/verify', { state: { email: regEmail } })
     } catch {
       // error message surfaced via store.error
     }

@@ -9,7 +9,7 @@ import { staggerContainer, staggerItem } from '../animations/transitions'
 
 export default function ProfileScreen() {
   const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
+  const { user, logout, userPreferences, setPreferences } = useAuthStore()
   const { trips } = useTripsStore()
 
   const completedTrips = trips.filter((t) => t.status === 'completed').length
@@ -152,14 +152,146 @@ export default function ProfileScreen() {
             </motion.div>
           )}
 
+          {/* Preferences */}
+          <motion.div variants={staggerItem} className="glass-surface rounded-3xl overflow-hidden">
+            <div className="px-5 pt-4 pb-2">
+              <h3
+                style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  color: 'white',
+                }}
+              >
+                Preferencias
+              </h3>
+            </div>
+
+            {/* Currency */}
+            <div
+              className="px-5 py-3 flex items-center gap-4"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.09)' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.50)' }}>
+                payments
+              </span>
+              <span
+                className="flex-1"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem', color: 'rgba(255,255,255,0.85)' }}
+              >
+                Moneda
+              </span>
+              <div className="flex gap-1.5">
+                {(['USD', 'EUR', 'ARS'] as const).map((c) => {
+                  const active = userPreferences.currency === c
+                  return (
+                    <motion.button
+                      key={c}
+                      whileTap={{ scale: 0.91 }}
+                      onClick={() => setPreferences({ currency: c })}
+                      className="px-2.5 py-1 rounded-full text-xs font-semibold transition-all"
+                      style={{
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        background: active ? 'rgba(255,140,66,0.22)' : 'rgba(255,255,255,0.07)',
+                        border: `1px solid ${active ? 'rgba(255,140,66,0.45)' : 'rgba(255,255,255,0.12)'}`,
+                        color: active ? '#ff8c42' : 'rgba(255,255,255,0.55)',
+                      }}
+                    >
+                      {c}
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Language */}
+            <div
+              className="px-5 py-3 flex items-center gap-4"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.09)' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.50)' }}>
+                language
+              </span>
+              <span
+                className="flex-1"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem', color: 'rgba(255,255,255,0.85)' }}
+              >
+                Idioma
+              </span>
+              <div className="flex gap-1.5">
+                {([{ val: 'es' as const, label: 'ES' }, { val: 'en' as const, label: 'EN' }]).map(({ val, label }) => {
+                  const active = userPreferences.language === val
+                  return (
+                    <motion.button
+                      key={val}
+                      whileTap={{ scale: 0.91 }}
+                      onClick={() => setPreferences({ language: val })}
+                      className="px-2.5 py-1 rounded-full text-xs font-semibold transition-all"
+                      style={{
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        background: active ? 'rgba(255,140,66,0.22)' : 'rgba(255,255,255,0.07)',
+                        border: `1px solid ${active ? 'rgba(255,140,66,0.45)' : 'rgba(255,255,255,0.12)'}`,
+                        color: active ? '#ff8c42' : 'rgba(255,255,255,0.55)',
+                      }}
+                    >
+                      {label}
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Notifications toggle */}
+            <div
+              className="px-5 py-3 flex items-center gap-4"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.09)' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.50)' }}>
+                notifications
+              </span>
+              <span
+                className="flex-1"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem', color: 'rgba(255,255,255,0.85)' }}
+              >
+                Notificaciones
+              </span>
+              <motion.button
+                whileTap={{ scale: 0.93 }}
+                onClick={() => setPreferences({ notifications: !userPreferences.notifications })}
+                style={{
+                  width: 46,
+                  height: 26,
+                  borderRadius: 9999,
+                  background: userPreferences.notifications ? 'rgba(255,140,66,0.30)' : 'rgba(255,255,255,0.09)',
+                  border: `1px solid ${userPreferences.notifications ? 'rgba(255,140,66,0.45)' : 'rgba(255,255,255,0.14)'}`,
+                  padding: 3,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: userPreferences.notifications ? 'flex-end' : 'flex-start',
+                  transition: 'background 0.2s, border-color 0.2s',
+                  cursor: 'pointer',
+                }}
+              >
+                <motion.div
+                  layout
+                  transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: '50%',
+                    background: userPreferences.notifications ? '#ff8c42' : 'rgba(255,255,255,0.35)',
+                  }}
+                />
+              </motion.button>
+            </div>
+          </motion.div>
+
           {/* Menu items */}
           <motion.div variants={staggerItem} className="glass-surface rounded-3xl overflow-hidden">
             {[
-              { icon: 'settings',     label: 'Configuración' },
-              { icon: 'notifications', label: 'Notificaciones' },
-              { icon: 'help',         label: 'Ayuda y soporte' },
-              { icon: 'privacy_tip',  label: 'Privacidad' },
-              { icon: 'info',         label: 'Acerca de Planify' },
+              { icon: 'help',        label: 'Ayuda y soporte' },
+              { icon: 'privacy_tip', label: 'Privacidad' },
+              { icon: 'info',        label: 'Acerca de Planify' },
             ].map((item, i, arr) => (
               <motion.button
                 key={item.label}
