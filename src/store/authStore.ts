@@ -57,14 +57,17 @@ export const useAuthStore = create<AuthState>()(
       supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user) {
           const userId = session.user.id
+          // Read onboarding status from Supabase user metadata so it is
+          // per-user and device-independent (fixes stale localStorage bug).
+          const isOnboarded =
+            session.user.user_metadata?.onboarding_complete === true
           set({
             user: mapSupabaseUser(session.user),
             isAuthenticated: true,
             isInitializing: false,
+            onboardingComplete: isOnboarded,
           })
           // Fetch and merge cloud preferences — fire-and-forget.
-          // If the user has saved preferences in the cloud, apply them over
-          // local defaults. If not, bootstrap them from the current local prefs.
           fetchUserPreferences(userId).then((cloudPrefs) => {
             if (Object.keys(cloudPrefs).length > 0) {
               set((state) => ({
@@ -132,18 +135,37 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: async () => {
-          // Clear local state immediately for instant UX feedback.
-          set({ user: null, isAuthenticated: false })
-          // Await signOut so the Supabase session is actually invalidated before
-          // the caller navigates away. Without this, a quick F5 can restore the
-          // session because the sb-* localStorage token is still valid.
-          await supabase.auth.signOut()
-          // onAuthStateChange fires SIGNED_OUT and confirms the cleared state.
+          // planify-auth only stores onboardingComplete + userPreferences —
+          // no auth tokens. Save it so preferences survive the logout.
+          const savedAuth = localStorage.getItem('planify-auth')
+
+          // Nuclear clear: wipes every Supabase session key regardless of its
+          // exact name (avoids relying on the 'sb-*' prefix pattern which varies
+          // across Supabase JS versions).
+          localStorage.clear()
+          try { sessionStorage.clear() } catch { /* sandboxed iframe */ }
+
+          // Restore non-sensitive preferences / onboarding flag.
+          if (savedAuth) localStorage.setItem('planify-auth', savedAuth)
+
+          // Best-effort server-side token revocation.
+          // Wrapped in try/catch: if offline or the server rejects the call,
+          // storage is already gone so the session won't survive a page reload.
+          try { await supabase.auth.signOut({ scope: 'global' }) } catch { /* ignore */ }
+
+          // Hard reload — destroys the in-memory Supabase client and JS runtime.
+          // SPA navigate() leaves the client alive, which can re-serve the old session.
+          window.location.href = '/'
         },
 
         clearError: () => set({ error: null }),
 
-        setOnboardingComplete: () => set({ onboardingComplete: true }),
+        setOnboardingComplete: () => {
+          set({ onboardingComplete: true })
+          // Persist in Supabase user metadata so the flag is per-user and
+          // device-independent — not just a localStorage boolean.
+          supabase.auth.updateUser({ data: { onboarding_complete: true } })
+        },
 
         setPreferences: (partial) => {
           set((state) => ({

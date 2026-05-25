@@ -6,7 +6,7 @@
  * state is always the source of truth for the UI.
  */
 import { supabase } from '../utils/supabase'
-import type { Trip, TripStatus, UserPreferences } from '../types'
+import type { Trip, TripStatus, UserPreferences, CommunityPost } from '../types'
 
 // ─── Trips ────────────────────────────────────────────────────────────────────
 
@@ -152,4 +152,116 @@ export async function upsertUserPreferences(
     updated_at: new Date().toISOString(),
   })
   if (error) console.warn('[db] upsertUserPreferences:', error.message)
+}
+
+// ─── Community Posts ──────────────────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToPost(row: any): CommunityPost {
+  return {
+    id: row.id,
+    author: {
+      id: row.user_id,
+      name: row.author_name,
+      email: '',
+      avatar: row.author_avatar_url ?? undefined,
+      joinDate: row.created_at?.split('T')[0] ?? '',
+      tripsCount: 0,
+      reviewsCount: 0,
+      badges: [],
+    },
+    destination: row.destination,
+    images: [row.image_url],
+    caption: row.caption,
+    likes: row.likes_count ?? 0,
+    comments: 0,
+    likedByUser: false, // store overrides this after fetching liked IDs
+    createdAt: row.created_at,
+    tags: [],
+  }
+}
+
+export async function fetchCommunityPosts(): Promise<CommunityPost[]> {
+  const { data, error } = await supabase
+    .from('community_posts')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (error) {
+    console.warn('[db] fetchCommunityPosts:', error.message)
+    return []
+  }
+
+  return (data ?? []).map(rowToPost)
+}
+
+export async function fetchUserLikedPostIds(userId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('post_likes')
+    .select('post_id')
+    .eq('user_id', userId)
+
+  if (error) {
+    console.warn('[db] fetchUserLikedPostIds:', error.message)
+    return []
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (data ?? []).map((row: any) => row.post_id as string)
+}
+
+export async function createCommunityPost(
+  userId: string,
+  authorName: string,
+  authorAvatarUrl: string | undefined,
+  destination: string,
+  caption: string,
+  imageUrl: string
+): Promise<CommunityPost | null> {
+  const { data, error } = await supabase
+    .from('community_posts')
+    .insert({
+      user_id: userId,
+      author_name: authorName,
+      author_avatar_url: authorAvatarUrl ?? null,
+      destination,
+      caption,
+      image_url: imageUrl,
+      likes_count: 0,
+    })
+    .select()
+    .single()
+
+  if (error) {
+    console.warn('[db] createCommunityPost:', error.message)
+    return null
+  }
+
+  return rowToPost(data)
+}
+
+export async function likePost(userId: string, postId: string): Promise<void> {
+  const { error } = await supabase
+    .from('post_likes')
+    .insert({ user_id: userId, post_id: postId })
+
+  // 23505 = unique_violation (already liked) — silently ignore
+  if (error && error.code !== '23505') {
+    console.warn('[db] likePost:', error.message)
+    return
+  }
+
+  // Atomic increment via RPC (defined in 002_community.sql)
+  await supabase.rpc('increment_post_likes', { p_post_id: postId })
+}
+
+export async function unlikePost(userId: string, postId: string): Promise<void> {
+  await supabase
+    .from('post_likes')
+    .delete()
+    .eq('user_id', userId)
+    .eq('post_id', postId)
+
+  await supabase.rpc('decrement_post_likes', { p_post_id: postId })
 }

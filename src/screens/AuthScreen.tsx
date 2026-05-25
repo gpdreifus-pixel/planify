@@ -9,7 +9,7 @@ type Tab = 'login' | 'register'
 export default function AuthScreen() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, loginWithSocial, register, isLoading, error, clearError, setOnboardingComplete } = useAuthStore()
+  const { login, loginWithSocial, register, isLoading, error, clearError, onboardingComplete } = useAuthStore()
   // Read the initial tab from router state (set by HomeScreen buttons); default to login
   const initialTab = (location.state as { tab?: Tab } | null)?.tab ?? 'login'
   const [tab, setTab] = useState<Tab>(initialTab)
@@ -27,8 +27,9 @@ export default function AuthScreen() {
     e.preventDefault()
     try {
       await login(loginEmail, loginPassword)
-      setOnboardingComplete()
-      navigate('/results')
+      // New users (onboardingComplete === false) go through onboarding first;
+      // returning users land straight on results.
+      navigate(onboardingComplete ? '/results' : '/onboarding')
     } catch {
       // error message surfaced via store.error
     }
@@ -38,7 +39,8 @@ export default function AuthScreen() {
     e.preventDefault()
     try {
       await register(regName, regEmail, regPassword)
-      setOnboardingComplete()
+      // Email verification required — onboarding runs after the link is clicked
+      // and SIGNED_IN fires, which triggers the HomeScreen guard.
       navigate('/auth/verify', { state: { email: regEmail } })
     } catch {
       // error message surfaced via store.error
@@ -48,10 +50,9 @@ export default function AuthScreen() {
   const handleSocial = async (provider: 'google' | 'apple') => {
     try {
       await loginWithSocial(provider)
-      // OAuth flow redirects the browser; these lines only execute if the
-      // provider call fails before redirect (e.g. provider not configured).
-      setOnboardingComplete()
-      navigate('/results')
+      // Browser redirects to OAuth provider — these lines only execute if the
+      // call fails before redirect. HomeScreen guard handles onboarding on return.
+      navigate('/')
     } catch {
       // error message surfaced via store.error
     }

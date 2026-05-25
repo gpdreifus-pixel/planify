@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
@@ -8,15 +8,18 @@ import { useTripsStore } from '../store/tripsStore'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
 export default function ProfileScreen() {
-  const navigate = useNavigate()
   const { user, logout, userPreferences, setPreferences } = useAuthStore()
   const { trips } = useTripsStore()
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const completedTrips = trips.filter((t) => t.status === 'completed').length
 
   const handleLogout = async () => {
+    if (loggingOut) return
+    setLoggingOut(true)
+    // logout() clears all storage and then does window.location.href = '/'
+    // so this component will be unmounted — no need to reset loggingOut.
     await logout()
-    navigate('/')
   }
 
   return (
@@ -332,17 +335,32 @@ export default function ProfileScreen() {
           {/* Logout */}
           <motion.div variants={staggerItem}>
             <motion.button
-              whileTap={{ scale: 0.97 }}
+              whileTap={loggingOut ? {} : { scale: 0.97 }}
               onClick={handleLogout}
-              className="w-full py-4 rounded-2xl font-semibold glass-surface"
+              disabled={loggingOut}
+              className="w-full py-4 rounded-2xl font-semibold glass-surface flex items-center justify-center gap-2"
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: '0.9375rem',
-                color: '#ffb4ab',
+                color: loggingOut ? 'rgba(255,180,171,0.45)' : '#ffb4ab',
                 border: '1px solid rgba(255,180,171,0.22)',
+                cursor: loggingOut ? 'not-allowed' : 'pointer',
+                transition: 'color 0.2s',
               }}
             >
-              Cerrar sesión
+              {loggingOut ? (
+                <>
+                  <span
+                    className="material-symbols-outlined animate-spin"
+                    style={{ fontSize: 18 }}
+                  >
+                    progress_activity
+                  </span>
+                  Cerrando sesión...
+                </>
+              ) : (
+                'Cerrar sesión'
+              )}
             </motion.button>
           </motion.div>
         </motion.div>

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
@@ -5,7 +6,14 @@ import { useAuthStore } from '../store/authStore'
 
 export default function HomeScreen() {
   const navigate = useNavigate()
-  const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated, isInitializing, onboardingComplete, user } = useAuthStore()
+
+  // Redirect new users to onboarding once auth has resolved
+  useEffect(() => {
+    if (!isInitializing && isAuthenticated && !onboardingComplete) {
+      navigate('/onboarding', { replace: true })
+    }
+  }, [isAuthenticated, isInitializing, onboardingComplete, navigate])
 
   return (
     <AppBackground variant="chat">

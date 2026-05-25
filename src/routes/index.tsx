@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import HomeScreen from '../screens/HomeScreen'
 import AuthScreen from '../screens/AuthScreen'
 import VerifyEmailScreen from '../screens/VerifyEmailScreen'
+import OnboardingScreen from '../screens/OnboardingScreen'
 import ChatScreen from '../screens/ChatScreen'
 import ChatSummaryScreen from '../screens/ChatSummaryScreen'
 import ResultsScreen from '../screens/ResultsScreen'
@@ -11,10 +12,12 @@ import TripDetailScreen from '../screens/TripDetailScreen'
 import BookingScreen from '../screens/BookingScreen'
 import MyTripsScreen from '../screens/MyTripsScreen'
 import CommunityScreen from '../screens/CommunityScreen'
+import CreatePostScreen from '../screens/CreatePostScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 
 export const router = createBrowserRouter([
   { path: '/', element: <HomeScreen /> },
+  { path: '/onboarding', element: <OnboardingScreen /> },
   { path: '/auth', element: <AuthScreen /> },
   { path: '/auth/verify', element: <VerifyEmailScreen /> },
   { path: '/chat/summary', element: <ChatSummaryScreen /> },
@@ -26,6 +29,7 @@ export const router = createBrowserRouter([
   { path: '/booking/:id', element: <BookingScreen /> },
   { path: '/trips', element: <MyTripsScreen /> },
   { path: '/community', element: <CommunityScreen /> },
+  { path: '/community/new', element: <CreatePostScreen /> },
   { path: '/profile', element: <ProfileScreen /> },
   // Catch-all
   { path: '*', element: <Navigate to="/" replace /> },
