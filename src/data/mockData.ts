@@ -96,8 +96,8 @@ export const MOCK_PROPERTIES: Property[] = [
     location: 'Marte, Zona Norte',
     country: 'Planeta Rojo',
     images: [
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJlN1u4UZSqwKZeGJECOBWFQMbI4T3YdROHrdq2Ps_ItXcHgMG3e6VTlhklflXJFxP-lIv4O2z0j_SbMcI_4mJnKOamEXJFVq5J6LpbXO-4KlIJhPbovYpfbMN4xRIEyb0RzlOlQ1mVMvPBe2CmhZHPQ_4zVWk3hxDd2XS-t2TGrWNYwmDk7qAlF82C7FW2TZ7pN4EiDuHMf5gERYoEBQ8pYjZEFJN_LZYE8s7cN6bPbBc8V0JGJUUk9CfGOLKtXNkJoI_B8GBw',
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJlN1u4UZSqwKZeGJECOBWFQMbI4T3YdROHrdq2Ps_ItXcHgMG3e6VTlhklflXJFxP-lIv4O2z0j_SbMcI_4mJnKOamEXJFVq5J6LpbXO-4KlIJhPbovYpfbMN4xRIEyb0RzlOlQ1mVMvPBe2CmhZHPQ_4zVWk3hxDd2XS-t2TGrWNYwmDk7qAlF82C7FW2TZ7pN4EiDuHMf5gERYoEBQ8pYjZEFJN_LZYE8s7cN6bPbBc8V0JGJUUk9CfGOLKtXNkJoI_B8GBw',
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80',
     ],
     rating: 4.8,
     reviewCount: 247,
@@ -130,7 +130,7 @@ export const MOCK_PROPERTIES: Property[] = [
     location: 'Playa Central',
     country: 'Costa Azul',
     images: [
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJlN1u4UZSqwKZeGJECOBWFQMbI4T3YdROHrdq2Ps_ItXcHgMG3e6VTlhklflXJFxP-lIv4O2z0j_SbMcI_4mJnKOamEXJFVq5J6LpbXO-4KlIJhPbovYpfbMN4xRIEyb0RzlOlQ1mVMvPBe2CmhZHPQ_4zVWk3hxDd2XS-t2TGrWNYwmDk7qAlF82C7FW2TZ7pN4EiDuHMf5gERYoEBQ8pYjZEFJN_LZYE8s7cN6bPbBc8V0JGJUUk9CfGOLKtXNkJoI_B8GBw',
+      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80',
     ],
     rating: 4.6,
     reviewCount: 189,
@@ -154,7 +154,7 @@ export const MOCK_PROPERTIES: Property[] = [
     location: 'Centro histórico',
     country: 'Villa Colonial',
     images: [
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJlN1u4UZSqwKZeGJECOBWFQMbI4T3YdROHrdq2Ps_ItXcHgMG3e6VTlhklflXJFxP-lIv4O2z0j_SbMcI_4mJnKOamEXJFVq5J6LpbXO-4KlIJhPbovYpfbMN4xRIEyb0RzlOlQ1mVMvPBe2CmhZHPQ_4zVWk3hxDd2XS-t2TGrWNYwmDk7qAlF82C7FW2TZ7pN4EiDuHMf5gERYoEBQ8pYjZEFJN_LZYE8s7cN6bPbBc8V0JGJUUk9CfGOLKtXNkJoI_B8GBw',
+      'https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=800&q=80',
     ],
     rating: 4.4,
     reviewCount: 312,
@@ -220,7 +220,7 @@ export const MOCK_COMMUNITY_POSTS: CommunityPost[] = [
     },
     destination: 'Santorini, Grecia',
     images: [
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJlN1u4UZSqwKZeGJECOBWFQMbI4T3YdROHrdq2Ps_ItXcHgMG3e6VTlhklflXJFxP-lIv4O2z0j_SbMcI_4mJnKOamEXJFVq5J6LpbXO-4KlIJhPbovYpfbMN4xRIEyb0RzlOlQ1mVMvPBe2CmhZHPQ_4zVWk3hxDd2XS-t2TGrWNYwmDk7qAlF82C7FW2TZ7pN4EiDuHMf5gERYoEBQ8pYjZEFJN_LZYE8s7cN6bPbBc8V0JGJUUk9CfGOLKtXNkJoI_B8GBw',
+      'https://images.unsplash.com/photo-1613395877344-13d4a8eeee8f?auto=format&fit=crop&w=800&q=80',
     ],
     caption:
       'Las vistas desde Oia al atardecer son simplemente mágicas 🌅. Planifiqué todo con Planify en 5 minutos y quedó perfecto.',
@@ -243,7 +243,7 @@ export const MOCK_COMMUNITY_POSTS: CommunityPost[] = [
     },
     destination: 'Machu Picchu, Perú',
     images: [
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJlN1u4UZSqwKZeGJECOBWFQMbI4T3YdROHrdq2Ps_ItXcHgMG3e6VTlhklflXJFxP-lIv4O2z0j_SbMcI_4mJnKOamEXJFVq5J6LpbXO-4KlIJhPbovYpfbMN4xRIEyb0RzlOlQ1mVMvPBe2CmhZHPQ_4zVWk3hxDd2XS-t2TGrWNYwmDk7qAlF82C7FW2TZ7pN4EiDuHMf5gERYoEBQ8pYjZEFJN_LZYE8s7cN6bPbBc8V0JGJUUk9CfGOLKtXNkJoI_B8GBw',
+      'https://images.unsplash.com/photo-1526772662643-4c8d1b51c85b?auto=format&fit=crop&w=800&q=80',
     ],
     caption:
       'Después de 4 días de trekking, llegar a Machu Picchu al amanecer fue el momento más épico de mi vida 🏔️.',
@@ -266,7 +266,7 @@ export const MOCK_COMMUNITY_POSTS: CommunityPost[] = [
     },
     destination: 'Tokio, Japón',
     images: [
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDJlN1u4UZSqwKZeGJECOBWFQMbI4T3YdROHrdq2Ps_ItXcHgMG3e6VTlhklflXJFxP-lIv4O2z0j_SbMcI_4mJnKOamEXJFVq5J6LpbXO-4KlIJhPbovYpfbMN4xRIEyb0RzlOlQ1mVMvPBe2CmhZHPQ_4zVWk3hxDd2XS-t2TGrWNYwmDk7qAlF82C7FW2TZ7pN4EiDuHMf5gERYoEBQ8pYjZEFJN_LZYE8s7cN6bPbBc8V0JGJUUk9CfGOLKtXNkJoI_B8GBw',
+      'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
     ],
     caption: 'Tokio en temporada de sakura es otro nivel 🌸. El ramen a las 3am en Shinjuku fue lo más.',
     likes: 215,

@@ -66,6 +66,14 @@ html {
   height: 100%;
   /* Prevent iOS Safari font size change on orientation */
   -webkit-text-size-adjust: 100%;
+  /* Persistent atmospheric background — survives React route changes and component remounts.
+     Fixes the white/dark flash when navigating between screens (e.g. Map ↔ Results). */
+  background:
+    radial-gradient(circle at 20% 110%, #1a1a24 10%, #871919 35%, transparent 60%),
+    radial-gradient(circle at 50% 120%, #1a1a24 10%, #a53d00 30%, #ff6b1f 60%, transparent 80%),
+    radial-gradient(circle at 80% 110%, #1a1a24 10%, #871919 35%, transparent 60%),
+    linear-gradient(180deg, #8178a8 0%, #c49ba2 35%, #ff8c42 70%, #ff6b1f 100%);
+  background-attachment: fixed;
 }
 
 body {
@@ -421,14 +429,10 @@ body {
 
 /* ── Atmospheric background (chat/main screens) ──────────────────────────── */
 .app-bg-chat {
-  background:
-    radial-gradient(circle at 20% 110%, #1a1a24 10%, #871919 35%, transparent 60%),
-    radial-gradient(circle at 50% 120%, #1a1a24 10%, #a53d00 30%, #ff6b1f 60%, transparent 80%),
-    radial-gradient(circle at 80% 110%, #1a1a24 10%, #871919 35%, transparent 60%),
-    linear-gradient(180deg, #8178a8 0%, #c49ba2 35%, #ff8c42 70%, #ff6b1f 100%);
-  background-attachment: fixed;
-  /* Prevent off-screen bg-circle elements from creating a horizontal scrollbar.
-     overflow-x:clip does NOT create a scroll container, so position:sticky still works. */
+  /* Background gradient lives on html (above) for cross-route persistence.
+     This layer only enforces horizontal clip to keep off-screen bg-circles from
+     creating a scrollbar. overflow-x:clip does NOT create a scroll container,
+     so position:sticky still works. */
   overflow-x: clip;
 }
 

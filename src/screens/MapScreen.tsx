@@ -12,7 +12,7 @@ export default function MapScreen() {
   const properties = filteredResults.length > 0 ? filteredResults : MOCK_PROPERTIES
 
   return (
-    <AppBackground variant="app">
+    <AppBackground variant="chat">
       <TopAppBar backTo="/results" title="Mapa" />
 
       <main className="flex-1 relative z-10 max-w-md mx-auto w-full pb-28">
