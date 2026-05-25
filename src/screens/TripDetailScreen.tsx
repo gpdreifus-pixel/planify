@@ -383,7 +383,7 @@ export default function TripDetailScreen() {
         {existingTrip ? (
           <motion.button
             whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/trips')}
+            onClick={() => navigate(`/booking/${property.id}`)}
             className="w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white font-bold"
             style={{
               background: 'linear-gradient(to right, #22c55e, #16a34a)',
@@ -396,8 +396,8 @@ export default function TripDetailScreen() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45 }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-            Ya tenés una reserva activa
+            <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}>receipt_long</span>
+            Ver links de reserva
           </motion.button>
         ) : (
           <motion.button
