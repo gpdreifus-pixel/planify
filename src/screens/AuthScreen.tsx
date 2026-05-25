@@ -8,7 +8,7 @@ type Tab = 'login' | 'register'
 
 export default function AuthScreen() {
   const navigate = useNavigate()
-  const { login, loginWithSocial, register, isLoading, setOnboardingComplete } = useAuthStore()
+  const { login, loginWithSocial, register, isLoading, error, clearError, setOnboardingComplete } = useAuthStore()
   const [tab, setTab] = useState<Tab>('register')
 
   // Login form
@@ -22,22 +22,41 @@ export default function AuthScreen() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    await login(loginEmail, loginPassword)
-    setOnboardingComplete()
-    navigate('/results')
+    try {
+      await login(loginEmail, loginPassword)
+      setOnboardingComplete()
+      navigate('/results')
+    } catch {
+      // error message surfaced via store.error
+    }
   }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    await register(regName, regEmail, regPassword)
-    setOnboardingComplete()
-    navigate('/auth/verify')
+    try {
+      await register(regName, regEmail, regPassword)
+      setOnboardingComplete()
+      navigate('/auth/verify')
+    } catch {
+      // error message surfaced via store.error
+    }
   }
 
   const handleSocial = async (provider: 'google' | 'apple') => {
-    await loginWithSocial(provider)
-    setOnboardingComplete()
-    navigate('/results')
+    try {
+      await loginWithSocial(provider)
+      // OAuth flow redirects the browser; these lines only execute if the
+      // provider call fails before redirect (e.g. provider not configured).
+      setOnboardingComplete()
+      navigate('/results')
+    } catch {
+      // error message surfaced via store.error
+    }
+  }
+
+  const handleTabChange = (t: Tab) => {
+    clearError()
+    setTab(t)
   }
 
   return (
@@ -102,7 +121,7 @@ export default function AuthScreen() {
               transition={{ type: 'spring', stiffness: 400, damping: 34 }}
             />
             <button
-              onClick={() => setTab('login')}
+              onClick={() => handleTabChange('login')}
               className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
                 tab === 'login' ? 'text-white' : 'text-white/60'
               }`}
@@ -111,7 +130,7 @@ export default function AuthScreen() {
               Iniciar Sesión
             </button>
             <button
-              onClick={() => setTab('register')}
+              onClick={() => handleTabChange('register')}
               className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
                 tab === 'register' ? 'text-white' : 'text-white/60'
               }`}
@@ -202,6 +221,23 @@ export default function AuthScreen() {
                   <span className="drop-shadow-sm">{isLoading ? 'Iniciando...' : 'Entrar'}</span>
                   {!isLoading && <span className="material-symbols-outlined drop-shadow-sm" style={{ fontSize: 22 }}>arrow_forward</span>}
                 </motion.button>
+
+                {/* Inline error — only shown when Supabase returns an error */}
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center"
+                    style={{
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontSize: '0.8125rem',
+                      color: '#ffb4ab',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {error}
+                  </motion.p>
+                )}
               </motion.form>
             ) : (
               <motion.form
@@ -294,6 +330,23 @@ export default function AuthScreen() {
                   <span className="drop-shadow-sm">{isLoading ? 'Registrando...' : 'Crear Cuenta'}</span>
                   {!isLoading && <span className="material-symbols-outlined drop-shadow-sm" style={{ fontSize: 22 }}>arrow_forward</span>}
                 </motion.button>
+
+                {/* Inline error */}
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center"
+                    style={{
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontSize: '0.8125rem',
+                      color: '#ffb4ab',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {error}
+                  </motion.p>
+                )}
               </motion.form>
             )}
           </AnimatePresence>
