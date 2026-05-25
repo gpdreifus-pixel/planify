@@ -202,23 +202,25 @@ export default function CommunityScreen() {
       </div>
 
       <main className="flex-1 relative z-10 px-6 pb-32 max-w-md mx-auto w-full overflow-y-auto">
-        {/* Loading skeletons */}
-        {isLoading && (
+        {/* Skeletons only on first load (no posts yet).
+            On revisits the cached posts stay visible while the refresh runs in the background. */}
+        {isLoading && posts.length === 0 && (
           <div className="flex flex-col gap-4">
             {[1, 2, 3].map((i) => <SkeletonPost key={i} />)}
           </div>
         )}
 
-        {/* Posts */}
-        {!isLoading && (
+        {/* Posts: render whenever we have posts OR the fetch finished (to show empty states).
+            This keeps cached posts visible during a background refresh. */}
+        {(!isLoading || posts.length > 0) && (
           <motion.div
             variants={staggerContainer}
             initial="initial"
             animate="animate"
             className="flex flex-col gap-4"
           >
-            {/* Empty states */}
-            {displayPosts.length === 0 && tab === 'mine' && (
+            {/* Empty states — only after loading finished with truly no posts */}
+            {!isLoading && displayPosts.length === 0 && tab === 'mine' && (
               <motion.div variants={staggerItem} className="text-center py-16">
                 <span className="material-symbols-outlined text-white/25" style={{ fontSize: 60 }}>
                   photo_camera
@@ -243,7 +245,7 @@ export default function CommunityScreen() {
               </motion.div>
             )}
 
-            {displayPosts.length === 0 && tab === 'explore' && (
+            {!isLoading && displayPosts.length === 0 && tab === 'explore' && (
               <motion.div variants={staggerItem} className="text-center py-16">
                 <span className="material-symbols-outlined text-white/25" style={{ fontSize: 60 }}>
                   groups
