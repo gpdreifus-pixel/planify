@@ -166,13 +166,13 @@ export default function BookingScreen() {
                       style={{
                         fontFamily: "'Plus Jakarta Sans', sans-serif",
                         fontSize: '0.8125rem',
-                        color: '#ffb68d',
+                        color: 'rgba(255,255,255,0.95)',
                         fontWeight: 600,
                       }}
                     >
                       {item.platform} ${price}
                     </span>
-                    <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#ffb68d' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'rgba(255,255,255,0.65)' }}>
                       open_in_new
                     </span>
                   </motion.button>
