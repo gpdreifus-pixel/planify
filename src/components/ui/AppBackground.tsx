@@ -55,23 +55,42 @@ export default function AppBackground({ variant = 'chat', children }: AppBackgro
   }
 
   return (
-    <div className="app-bg-chat relative min-h-dvh flex flex-col items-center text-white antialiased overflow-hidden">
+    <div className="app-bg-chat relative min-h-dvh flex flex-col text-white antialiased overflow-hidden">
+      {/* Background animated blobs for chat variant */}
       <motion.div
-        animate={{ x: [0, 15, -10, 0], y: [0, -10, 15, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="bg-circle-1"
+        className="pointer-events-none fixed -bottom-[10%] -left-[10%] w-[600px] h-[600px] rounded-full opacity-40 mix-blend-screen"
+        animate={{ x: [0, 50, -30, 0], y: [0, -50, 30, 0], scale: [1, 1.1, 0.9, 1] }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          background: 'radial-gradient(circle, #ff8c42 0%, transparent 60%)',
+          filter: 'blur(90px)',
+          zIndex: 0,
+        }}
       />
       <motion.div
-        animate={{ x: [0, -15, 10, 0], y: [0, 15, -10, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="bg-circle-2"
+        className="pointer-events-none fixed -bottom-[20%] left-[30%] w-[800px] h-[800px] rounded-full opacity-30 mix-blend-screen"
+        animate={{ x: [0, -60, 40, 0], y: [0, 40, -60, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          background: 'radial-gradient(circle, #ff6b1f 0%, transparent 70%)',
+          filter: 'blur(110px)',
+          zIndex: 0,
+        }}
       />
       <motion.div
-        animate={{ x: [0, 10, -15, 0], y: [0, -15, 10, 0], scale: [1, 1.05, 0.95, 1] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-        className="bg-circle-3"
+        className="pointer-events-none fixed bottom-[5%] -right-[10%] w-[500px] h-[500px] rounded-full opacity-40 mix-blend-screen"
+        animate={{ x: [0, 40, -50, 0], y: [0, -30, 50, 0], scale: [1, 1.2, 0.8, 1] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          background: 'radial-gradient(circle, #c49ba2 0%, transparent 60%)',
+          filter: 'blur(80px)',
+          zIndex: 0,
+        }}
       />
-      {children}
+
+      <div className="relative z-10 w-full flex-1 flex flex-col items-center">
+        {children}
+      </div>
     </div>
   )
 }
