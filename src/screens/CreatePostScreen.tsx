@@ -58,9 +58,15 @@ export default function CreatePostScreen() {
   ])
 
   const updateExperience = (index: number, field: keyof CommunityExperience, value: string | number) => {
-    const newExps = [...experiences]
-    newExps[index] = { ...newExps[index], [field]: value }
-    setExperiences(newExps)
+    setExperiences(prev => {
+      const newExps = [...prev]
+      if (field === 'rating') {
+        newExps[index] = { ...newExps[index], rating: value as number }
+      } else if (field === 'comment') {
+        newExps[index] = { ...newExps[index], comment: value as string }
+      }
+      return newExps
+    })
   }
 
   const handlePreset = (full: string) => {

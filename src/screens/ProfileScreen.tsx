@@ -379,59 +379,60 @@ export default function ProfileScreen() {
           </motion.div>
         </motion.div>
 
-        {/* Logout Confirm Sheet */}
-        <AnimatePresence>
-          {showLogoutConfirm && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => !loggingOut && setShowLogoutConfirm(false)}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-                style={{ zIndex: 9998 }}
-              />
-              <motion.div
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="fixed bottom-0 left-0 right-0 bg-[#2a2438] rounded-t-[32px] flex flex-col pt-6 pb-10 px-6 max-w-md mx-auto shadow-2xl"
-                style={{ borderTop: '1px solid rgba(255,255,255,0.1)', zIndex: 9999 }}
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="w-12 h-1 bg-white/20 rounded-full" />
-                </div>
-                <h3 className="text-white font-bold text-xl mb-2 text-center" style={{ fontFamily: "'Syne', sans-serif" }}>¿Cerrar sesión?</h3>
-                <p className="text-white/70 text-center mb-6" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                  Tendrás que volver a ingresar con tus credenciales la próxima vez.
-                </p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowLogoutConfirm(false)}
-                    disabled={loggingOut}
-                    className="flex-1 py-3.5 rounded-full neu-pressed text-white/80 hover:text-white font-semibold transition-colors"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    disabled={loggingOut}
-                    className="flex-1 py-3.5 rounded-full font-semibold text-white flex items-center justify-center gap-2"
-                    style={{
-                      background: 'linear-gradient(to right, #e74c3c, #c0392b)',
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    }}
-                  >
-                    {loggingOut ? 'Saliendo...' : 'Cerrar sesión'}
-                  </button>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
       </main>
+
+      {/* Logout Confirm Sheet */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !loggingOut && setShowLogoutConfirm(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+              style={{ zIndex: 9998 }}
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 bg-[#2a2438] rounded-t-[32px] flex flex-col pt-6 pb-10 px-6 max-w-md mx-auto shadow-2xl"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.1)', zIndex: 9999 }}
+            >
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-1 bg-white/20 rounded-full" />
+              </div>
+              <h3 className="text-white font-bold text-xl mb-2 text-center" style={{ fontFamily: "'Syne', sans-serif" }}>¿Cerrar sesión?</h3>
+              <p className="text-white/70 text-center mb-6" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Tendrás que volver a ingresar con tus credenciales la próxima vez.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  disabled={loggingOut}
+                  className="flex-1 py-3.5 rounded-full neu-pressed text-white/80 hover:text-white font-semibold transition-colors"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="flex-1 py-3.5 rounded-full font-semibold text-white flex items-center justify-center gap-2"
+                  style={{
+                    background: 'linear-gradient(to right, #e74c3c, #c0392b)',
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  }}
+                >
+                  {loggingOut ? 'Saliendo...' : 'Cerrar sesión'}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <BottomNav />
     </AppBackground>

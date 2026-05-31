@@ -60,92 +60,110 @@ export const useSearchStore = create<SearchState>()(
         // Simulate API call
         await new Promise((r) => setTimeout(r, 1200))
 
-        let matched = [...MOCK_PROPERTIES]
-
-        if (criteria && Object.keys(criteria).length > 0) {
-          // ── Filter by destination / vibe ──────────────────────────────────
-          if (criteria.destination) {
-            const dest = criteria.destination.toLowerCase()
-            // Map chip vibes to keywords
-            const vibeMap: Record<string, string[]> = {
-              'beach': ['playa', 'beach', 'cancún', 'punta cana', 'florianópolis', 'surf', 'mar', 'costa'],
-              'city': ['city', 'ciudad', 'buenos aires', 'montevideo', 'lima', 'méxico', 'urban', 'centro'],
-              'mountains': ['montaña', 'mountain', 'andes', 'bariloche', 'chaltén', 'patagonia', 'trekking', 'lodge'],
-            }
-
-            // Check if the destination matches a vibe keyword
-            let vibeKeywords: string[] = []
-            for (const [, keywords] of Object.entries(vibeMap)) {
-              if (keywords.some((k) => dest.includes(k))) {
-                vibeKeywords = keywords
-                break
-              }
-            }
-
-            if (vibeKeywords.length > 0) {
-              const vibeMatched = matched.filter((p) => {
-                const searchable = `${p.name} ${p.location} ${p.country} ${p.tags.join(' ')} ${p.description}`.toLowerCase()
-                return vibeKeywords.some((k) => searchable.includes(k))
-              })
-              if (vibeMatched.length > 0) matched = vibeMatched
-            } else {
-              // Direct text match on name, location, country
-              const textMatched = matched.filter((p) => {
-                const searchable = `${p.name} ${p.location} ${p.country}`.toLowerCase()
-                return searchable.includes(dest)
-              })
-              if (textMatched.length > 0) matched = textMatched
-            }
-          }
-
-          // ── Filter by budget ─────────────────────────────────────────────
-          if (criteria.budget) {
-            const budgetStr = (typeof criteria.budget === 'string' ? criteria.budget : '').toLowerCase()
-            let maxPrice = Infinity
-            let minPrice = 0
-            if (budgetStr.includes('econom') || budgetStr.includes('económico') || budgetStr.includes('barato')) {
-              maxPrice = 50
-            } else if (budgetStr.includes('estándar') || budgetStr.includes('standard')) {
-              minPrice = 40; maxPrice = 120
-            } else if (budgetStr.includes('confort') || budgetStr.includes('comfort')) {
-              minPrice = 80; maxPrice = 200
-            } else if (budgetStr.includes('lujo') || budgetStr.includes('luxury') || budgetStr.includes('👑')) {
-              minPrice = 150
-            }
-            if (maxPrice < Infinity || minPrice > 0) {
-              const budgetMatched = matched.filter(
-                (p) => p.pricePerNight >= minPrice && p.pricePerNight <= maxPrice
-              )
-              if (budgetMatched.length > 0) matched = budgetMatched
-            }
-          }
-
-          // ── Filter by accommodation type ─────────────────────────────────
-          if (criteria.accommodationType) {
-            const typeStr = (typeof criteria.accommodationType === 'string' ? criteria.accommodationType : '').toLowerCase()
-            const typeMap: Record<string, string[]> = {
-              'hotel': ['hotel'],
-              'hostel': ['hostel'],
-              'apartment': ['apartamento', 'apartment', 'loft', 'cabaña'],
-              'resort': ['resort'],
-              'boutique': ['boutique'],
-            }
-            const matchTypes: string[] = []
-            for (const [type, keywords] of Object.entries(typeMap)) {
-              if (keywords.some((k) => typeStr.includes(k))) {
-                matchTypes.push(type)
-                break
-              }
-            }
-            if (matchTypes.length > 0) {
-              const typeMatched = matched.filter((p) => matchTypes.includes(p.type))
-              if (typeMatched.length > 0) matched = typeMatched
-            }
-          }
+        if (!criteria || Object.keys(criteria).length === 0) {
+          set({
+            results: [...MOCK_PROPERTIES],
+            filteredResults: [...MOCK_PROPERTIES],
+            isLoading: false,
+            hasSearched: true,
+          })
+          return
         }
 
-        // If filters were too restrictive and nothing matched, fall back to all
-        if (matched.length === 0) matched = [...MOCK_PROPERTIES]
+        // ── Smart Scoring System ─────────────────────────────────────────────
+        // Instead of strict filtering which can result in 0 matches and a fallback,
+        // we score each property based on how well it matches the criteria.
+        
+        const scoredProperties = MOCK_PROPERTIES.map(p => {
+          let score = 0;
+          const searchable = `${p.name} ${p.location} ${p.country} ${p.tags.join(' ')} ${p.description}`.toLowerCase()
+
+          // 1. Destination / Vibe (Highest weight: +50)
+          if (criteria.destination) {
+            const dest = criteria.destination.toLowerCase()
+            const vibeMap: Record<string, string[]> = {
+              'beach': ['playa', 'beach', 'cancún', 'punta cana', 'florianópolis', 'surf', 'mar', 'costa'],
+              'city': ['city', 'ciudad', 'buenos aires', 'montevideo', 'lima', 'méxico', 'urban', 'centro', 'urbano'],
+              'mountains': ['montaña', 'mountain', 'andes', 'bariloche', 'chaltén', 'patagonia', 'trekking', 'lodge', 'nieve'],
+            }
+            
+            let vibeMatched = false;
+            for (const [, keywords] of Object.entries(vibeMap)) {
+              if (keywords.some((k) => dest.includes(k))) {
+                if (keywords.some((k) => searchable.includes(k))) {
+                  score += 50
+                  vibeMatched = true;
+                }
+                break;
+              }
+            }
+            
+            if (!vibeMatched && searchable.includes(dest)) {
+              score += 50
+            }
+          }
+
+          // 2. Budget (Medium weight: +30)
+          if (criteria.budget) {
+            const budgetStr = String(criteria.budget).toLowerCase()
+            let maxPrice = Infinity
+            let minPrice = 0
+            if (budgetStr.includes('econom') || budgetStr.includes('económico') || budgetStr.includes('barato') || budgetStr.includes('💸')) {
+              maxPrice = 60
+            } else if (budgetStr.includes('estándar') || budgetStr.includes('standard') || budgetStr.includes('💳')) {
+              minPrice = 40; maxPrice = 130
+            } else if (budgetStr.includes('confort') || budgetStr.includes('comfort') || budgetStr.includes('✨')) {
+              minPrice = 90; maxPrice = 220
+            } else if (budgetStr.includes('lujo') || budgetStr.includes('luxury') || budgetStr.includes('👑')) {
+              minPrice = 180
+            }
+            
+            if (p.pricePerNight >= minPrice && p.pricePerNight <= maxPrice) {
+              score += 30
+            } else if (p.pricePerNight < minPrice) {
+              // If it's cheaper than expected, that's still pretty good
+              score += 15
+            }
+          }
+
+          // 3. Accommodation Type (Medium weight: +20)
+          if (criteria.accommodationType) {
+            const typeStr = String(criteria.accommodationType).toLowerCase()
+            const typeMap: Record<string, string[]> = {
+              'hotel': ['hotel', '🏨'],
+              'hostel': ['hostel', '🛏️'],
+              'apartment': ['apartamento', 'apartment', 'loft', 'cabaña', '🏠'],
+              'resort': ['resort', '🌴'],
+              'boutique': ['boutique'],
+            }
+            
+            let typeMatched = false;
+            for (const [type, keywords] of Object.entries(typeMap)) {
+              if (keywords.some((k) => typeStr.includes(k))) {
+                if (p.type === type) {
+                  score += 20
+                  typeMatched = true;
+                }
+                break;
+              }
+            }
+            // If the user's strict type didn't match the property type, but they asked for a generic term that matches the description
+            if (!typeMatched && searchable.includes(typeStr)) {
+               score += 10
+            }
+          }
+
+          return { property: p, score }
+        })
+
+        // Sort by score descending
+        scoredProperties.sort((a, b) => b.score - a.score)
+        
+        // Take top matches (score > 0, or at least the top 3 if everything failed)
+        let matched = scoredProperties.filter(sp => sp.score > 0).map(sp => sp.property)
+        if (matched.length === 0) {
+           matched = scoredProperties.slice(0, 3).map(sp => sp.property) // fallback to best generic options
+        }
 
         set({
           results: matched,
