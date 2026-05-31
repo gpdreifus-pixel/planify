@@ -388,14 +388,14 @@ export default function ProfileScreen() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => !loggingOut && setShowLogoutConfirm(false)}
-                className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
+                className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm"
               />
               <motion.div
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="fixed bottom-0 left-0 right-0 bg-[#2a2438] rounded-t-[32px] z-50 flex flex-col p-6 max-w-md mx-auto shadow-2xl"
+                className="fixed bottom-0 left-0 right-0 bg-[#2a2438] rounded-t-[32px] z-[60] flex flex-col pt-6 pb-10 px-6 max-w-md mx-auto shadow-2xl"
                 style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}
               >
                 <div className="flex justify-center mb-4">

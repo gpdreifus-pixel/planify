@@ -61,7 +61,7 @@ export default function TripDetailScreen() {
         />
       </div>
 
-      <main className="flex-1 relative z-10 pb-32 max-w-md mx-auto w-full">
+      <main className="flex-1 relative z-10 pb-44 max-w-md mx-auto w-full">
         {/* Hero image */}
         <div className="relative h-[340px] overflow-hidden">
           <img
@@ -83,15 +83,18 @@ export default function TripDetailScreen() {
             >
               {property.name}
             </h2>
-            <div className="flex items-center gap-1.5 mt-1.5">
-              <span className="material-symbols-outlined text-white/80" style={{ fontSize: 16 }}>location_on</span>
+            <button 
+              onClick={() => navigate('/results/map')}
+              className="flex items-center gap-1.5 mt-2 hover:opacity-80 transition-opacity text-left"
+            >
+              <span className="material-symbols-outlined text-white/90" style={{ fontSize: 16 }}>location_on</span>
               <span
-                className="text-white/80"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
+                className="text-white/90 underline decoration-white/40 underline-offset-4"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 500 }}
               >
-                {property.location}
+                {property.location} (Ver en mapa)
               </span>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -360,21 +363,6 @@ export default function TripDetailScreen() {
             </div>
           </motion.div>
 
-          {/* Map link */}
-          <motion.div variants={staggerItem}>
-            <button
-              onClick={() => navigate('/results/map')}
-              className="flex items-center gap-2 hover:opacity-75 transition-opacity"
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.875rem',
-                color: 'rgba(255,255,255,0.75)',
-              }}
-            >
-              <span className="material-symbols-outlined text-white/60" style={{ fontSize: 20 }}>map</span>
-              Ver en el mapa
-            </button>
-          </motion.div>
         </motion.div>
       </main>
 

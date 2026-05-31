@@ -21,11 +21,16 @@ export default function BookingScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { selectedProperty } = useSearchStore()
-  const { bookTrip } = useTripsStore()
+  const { bookTrip, trips } = useTripsStore()
   const { criteria } = useChatStore()
   const [isBooking, setIsBooking] = useState(false)
 
   const property = selectedProperty ?? MOCK_PROPERTIES[0]
+
+  // Check if already booked
+  const existingTrip = trips.find(
+    (t) => t.property.id === property.id && ['confirmed', 'upcoming', 'active'].includes(t.status)
+  )
 
   // ── Derive dates from criteria ────────────────────────────────────────
   const getCheckInDate = (): string => {
@@ -75,6 +80,11 @@ export default function BookingScreen() {
   const checkOut = checkOutDate.toISOString().split('T')[0]
 
   const handleBook = async () => {
+    if (existingTrip) {
+      navigate('/trips')
+      return
+    }
+
     setIsBooking(true)
     await new Promise((r) => setTimeout(r, 1200))
     const newTrip = bookTrip(property, criteria, checkIn, checkOut, travelers)
@@ -237,26 +247,52 @@ export default function BookingScreen() {
 
       {/* Fixed bottom CTA */}
       <div className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] left-0 right-0 px-6 z-40 max-w-md mx-auto">
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={handleBook}
-          disabled={isBooking}
-          className="w-full h-16 rounded-full flex items-center justify-center gap-3 text-white font-bold disabled:opacity-60 border border-white/20"
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '1.125rem',
-            fontWeight: 700,
-            background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
-            boxShadow: '0 12px 40px rgba(255,107,31,0.5)',
-          }}
-        >
-          <span>{isBooking ? 'Procesando...' : 'Ya reservé todo'}</span>
-          {!isBooking && (
-            <span className="material-symbols-outlined" style={{ fontSize: 22, fontVariationSettings: "'FILL' 1" }}>
-              check_circle
-            </span>
-          )}
-        </motion.button>
+        {existingTrip ? (
+          <div className="w-full rounded-[2rem] glass-molded p-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between px-2">
+              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
+                Código de reserva
+              </span>
+              <span className="font-mono font-bold text-white tracking-widest bg-white/10 px-3 py-1 rounded-lg">
+                {existingTrip.confirmationCode}
+              </span>
+            </div>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate('/trips')}
+              className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-white font-bold border border-white/20"
+              style={{
+                fontFamily: "'Syne', sans-serif",
+                fontSize: '1rem',
+                background: 'linear-gradient(to right, #22c55e, #16a34a)',
+                boxShadow: '0 8px 25px rgba(34,197,94,0.3)',
+              }}
+            >
+              Volver a Mis Viajes
+            </motion.button>
+          </div>
+        ) : (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={handleBook}
+            disabled={isBooking}
+            className="w-full h-16 rounded-full flex items-center justify-center gap-3 text-white font-bold disabled:opacity-60 border border-white/20"
+            style={{
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '1.125rem',
+              fontWeight: 700,
+              background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
+              boxShadow: '0 12px 40px rgba(255,107,31,0.5)',
+            }}
+          >
+            <span>{isBooking ? 'Procesando...' : 'Ya reservé todo'}</span>
+            {!isBooking && (
+              <span className="material-symbols-outlined" style={{ fontSize: 22, fontVariationSettings: "'FILL' 1" }}>
+                check_circle
+              </span>
+            )}
+          </motion.button>
+        )}
       </div>
 
       <BottomNav />
