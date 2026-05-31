@@ -58,32 +58,32 @@ export default function AppBackground({ variant = 'chat', children }: AppBackgro
     <div className="app-bg-chat relative min-h-dvh flex flex-col text-white antialiased overflow-hidden">
       {/* Background animated blobs for chat variant */}
       <motion.div
-        className="pointer-events-none fixed -bottom-[10%] -left-[10%] w-[600px] h-[600px] rounded-full opacity-40 mix-blend-screen"
-        animate={{ x: [0, 50, -30, 0], y: [0, -50, 30, 0], scale: [1, 1.1, 0.9, 1] }}
+        className="pointer-events-none fixed -bottom-[10%] -left-[10%] w-[500px] h-[500px] rounded-full opacity-70"
+        animate={{ x: [0, 80, -40, 0], y: [0, -80, 40, 0], scale: [1, 1.2, 0.9, 1] }}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
         style={{
-          background: 'radial-gradient(circle, #ff8c42 0%, transparent 60%)',
-          filter: 'blur(90px)',
+          background: '#ff5e00',
+          filter: 'blur(120px)',
           zIndex: 0,
         }}
       />
       <motion.div
-        className="pointer-events-none fixed -bottom-[20%] left-[30%] w-[800px] h-[800px] rounded-full opacity-30 mix-blend-screen"
-        animate={{ x: [0, -60, 40, 0], y: [0, 40, -60, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-        style={{
-          background: 'radial-gradient(circle, #ff6b1f 0%, transparent 70%)',
-          filter: 'blur(110px)',
-          zIndex: 0,
-        }}
-      />
-      <motion.div
-        className="pointer-events-none fixed bottom-[5%] -right-[10%] w-[500px] h-[500px] rounded-full opacity-40 mix-blend-screen"
-        animate={{ x: [0, 40, -50, 0], y: [0, -30, 50, 0], scale: [1, 1.2, 0.8, 1] }}
+        className="pointer-events-none fixed top-[20%] right-[10%] w-[400px] h-[400px] rounded-full opacity-60"
+        animate={{ x: [0, -60, 50, 0], y: [0, 60, -30, 0], scale: [1, 1.1, 0.8, 1] }}
         transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
         style={{
-          background: 'radial-gradient(circle, #c49ba2 0%, transparent 60%)',
-          filter: 'blur(80px)',
+          background: '#8178a8',
+          filter: 'blur(100px)',
+          zIndex: 0,
+        }}
+      />
+      <motion.div
+        className="pointer-events-none fixed bottom-[20%] right-[20%] w-[600px] h-[600px] rounded-full opacity-50"
+        animate={{ x: [0, 50, -60, 0], y: [0, -40, 50, 0], scale: [1, 1.3, 0.85, 1] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          background: '#ff2a00',
+          filter: 'blur(140px)',
           zIndex: 0,
         }}
       />

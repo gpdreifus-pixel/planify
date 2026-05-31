@@ -97,7 +97,7 @@ export default function BookingScreen() {
     <AppBackground variant="chat">
       <TopAppBar backTo={`/results/${id}`} title="Reservar tu viaje" />
 
-      <main className="flex-1 relative z-10 px-6 pb-52 max-w-md mx-auto w-full">
+      <main className="flex-1 relative z-10 px-6 pb-72 max-w-md mx-auto w-full">
         <motion.div
           variants={staggerContainer}
           initial="initial"
