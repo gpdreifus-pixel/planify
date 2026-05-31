@@ -137,7 +137,18 @@ export default function BookingScreen() {
                 color: '#ffb68d',
               }}
             >
-              USD / por persona
+              USD{travelers > 1 ? ' / por persona' : ''}
+            </p>
+            <p
+              style={{
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontSize: '0.75rem',
+                color: 'rgba(255,255,255,0.5)',
+                marginTop: '0.5rem',
+                lineHeight: 1.4,
+              }}
+            >
+              * Precio estimado sujeto a cambios de disponibilidad y plataformas.
             </p>
           </motion.div>
 

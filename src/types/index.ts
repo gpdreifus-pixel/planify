@@ -121,6 +121,12 @@ export type TripStatus =
   | 'cancelled'
 
 // ── Community ─────────────────────────────────────────────────────────────
+export interface CommunityExperience {
+  type: 'Hospedaje' | 'Vuelo' | 'Transporte' | 'Actividades'
+  rating: number // 1-5
+  comment: string
+}
+
 export interface CommunityPost {
   id: string
   author: User
@@ -132,6 +138,8 @@ export interface CommunityPost {
   likedByUser: boolean
   createdAt: string
   tags: string[]
+  experiences?: CommunityExperience[]
+  tripCriteria?: TripSearchCriteria
 }
 
 // ── Filters ───────────────────────────────────────────────────────────────

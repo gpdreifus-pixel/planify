@@ -180,6 +180,21 @@ interface PostRow {
 }
 
 function rowToPost(row: PostRow): CommunityPost {
+  let parsedCaption = row.caption
+  let experiences = undefined
+  let tripCriteria = undefined
+
+  try {
+    const data = JSON.parse(row.caption)
+    if (data && typeof data === 'object' && data.text !== undefined) {
+      parsedCaption = data.text
+      experiences = data.experiences
+      tripCriteria = data.tripCriteria
+    }
+  } catch {
+    // It's a legacy plain-text caption, keep it as is
+  }
+
   return {
     id: row.id,
     author: {
@@ -194,12 +209,14 @@ function rowToPost(row: PostRow): CommunityPost {
     },
     destination: row.destination,
     images: [row.image_url],
-    caption: row.caption,
+    caption: parsedCaption,
     likes: row.likes_count ?? 0,
     comments: 0,
     likedByUser: false, // store overrides this after fetching liked IDs
     createdAt: row.created_at,
     tags: [],
+    experiences,
+    tripCriteria,
   }
 }
 

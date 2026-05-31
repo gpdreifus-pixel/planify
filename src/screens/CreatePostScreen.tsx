@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import { useCommunityStore } from '../store/communityStore'
+import type { CommunityExperience } from '../types'
 
 // Curated Unsplash presets — users can also paste their own URL
 const PRESETS = [
@@ -49,6 +50,19 @@ export default function CreatePostScreen() {
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null)
   const [error, setError] = useState('')
 
+  const [experiences, setExperiences] = useState<CommunityExperience[]>([
+    { type: 'Hospedaje', rating: 0, comment: '' },
+    { type: 'Vuelo', rating: 0, comment: '' },
+    { type: 'Transporte', rating: 0, comment: '' },
+    { type: 'Actividades', rating: 0, comment: '' },
+  ])
+
+  const updateExperience = (index: number, field: keyof CommunityExperience, value: string | number) => {
+    const newExps = [...experiences]
+    newExps[index] = { ...newExps[index], [field]: value }
+    setExperiences(newExps)
+  }
+
   const handlePreset = (full: string) => {
     setImageUrl(full)
     setSelectedPreset(full)
@@ -63,7 +77,14 @@ export default function CreatePostScreen() {
     if (!caption.trim())     { setError('Escribí una descripción.'); return }
     if (!imageUrl.trim())    { setError('Elegí o pegá una imagen.'); return }
 
-    const ok = await createPost(destination.trim(), caption.trim(), imageUrl.trim())
+    const activeExperiences = experiences.filter(e => e.rating > 0 || e.comment.trim() !== '')
+    const payload = {
+      text: caption.trim(),
+      experiences: activeExperiences,
+      tripCriteria: { destination: destination.trim() }
+    }
+
+    const ok = await createPost(destination.trim(), JSON.stringify(payload), imageUrl.trim())
     if (ok) {
       navigate('/community', { replace: true })
     } else {
@@ -212,6 +233,48 @@ export default function CreatePostScreen() {
                 {caption.length}/280
               </p>
             </div>
+          </div>
+
+          {/* Experiences (Optional) */}
+          <div className="flex flex-col gap-3 mt-2">
+            <h3 className="text-white font-bold" style={{ fontFamily: "'Syne', sans-serif" }}>Valora tu viaje (Opcional)</h3>
+            
+            {experiences.map((exp, idx) => (
+              <div key={exp.type} className="glass-molded rounded-2xl p-4 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-white/90 font-medium" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                    {exp.type}
+                  </span>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => updateExperience(idx, 'rating', star)}
+                        className="material-symbols-outlined"
+                        style={{
+                          fontSize: 24,
+                          color: star <= exp.rating ? '#ff8c42' : 'rgba(255,255,255,0.2)',
+                          fontVariationSettings: star <= exp.rating ? "'FILL' 1" : "'FILL' 0",
+                          transition: 'color 0.2s ease'
+                        }}
+                      >
+                        star
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  placeholder={`Comentario sobre ${exp.type.toLowerCase()}...`}
+                  value={exp.comment}
+                  onChange={e => updateExperience(idx, 'comment', e.target.value)}
+                  maxLength={100}
+                  className="bg-transparent border-b border-white/20 outline-none text-white text-sm pb-1 placeholder:text-white/30 focus:border-white/60 transition-colors w-full"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                />
+              </div>
+            ))}
           </div>
 
           {/* Error */}
