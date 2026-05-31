@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 
 interface TopAppBarProps {
   /** Back destination path. Omit to hide back button. */
@@ -28,9 +28,15 @@ export default function TopAppBar({
     else navigate(-1)
   }
 
+  const { scrollY } = useScroll()
+  const backgroundColor = useTransform(scrollY, [0, 30], ['rgba(30, 26, 40, 0)', 'rgba(30, 26, 40, 0.8)'])
+  const backdropFilter = useTransform(scrollY, [0, 30], ['blur(0px)', 'blur(12px)'])
+  const borderBottom = useTransform(scrollY, [0, 30], ['1px solid rgba(255,255,255,0)', '1px solid rgba(255,255,255,0.1)'])
+
   return (
-    <header
-      className={`w-full sticky top-0 z-30 flex justify-between items-center px-6 py-4 max-w-md mx-auto ${className}`}
+    <motion.header
+      style={{ backgroundColor, backdropFilter, borderBottom }}
+      className={`w-full sticky top-0 z-40 flex justify-between items-center px-6 py-4 max-w-md mx-auto transition-colors ${className}`}
     >
       {/* Back button */}
       {(backTo !== undefined || onBack) ? (
@@ -62,6 +68,6 @@ export default function TopAppBar({
       <div className="w-10 flex justify-end">
         {rightSlot ?? null}
       </div>
-    </header>
+    </motion.header>
   )
 }

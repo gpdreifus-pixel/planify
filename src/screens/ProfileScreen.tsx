@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
@@ -11,6 +11,7 @@ export default function ProfileScreen() {
   const { user, logout, userPreferences, setPreferences, updateProfile, isLoading } = useAuthStore()
   const { trips } = useTripsStore()
   const [loggingOut, setLoggingOut] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(user?.name ?? '')
@@ -361,35 +362,74 @@ export default function ProfileScreen() {
           {/* Logout */}
           <motion.div variants={staggerItem}>
             <motion.button
-              whileTap={loggingOut ? {} : { scale: 0.97 }}
-              onClick={handleLogout}
-              disabled={loggingOut}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setShowLogoutConfirm(true)}
               className="w-full py-4 rounded-2xl font-semibold glass-surface flex items-center justify-center gap-2"
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: '0.9375rem',
-                color: loggingOut ? 'rgba(255,180,171,0.45)' : '#ffb4ab',
+                color: '#ffb4ab',
                 border: '1px solid rgba(255,180,171,0.22)',
-                cursor: loggingOut ? 'not-allowed' : 'pointer',
+                cursor: 'pointer',
                 transition: 'color 0.2s',
               }}
             >
-              {loggingOut ? (
-                <>
-                  <span
-                    className="material-symbols-outlined animate-spin"
-                    style={{ fontSize: 18 }}
-                  >
-                    progress_activity
-                  </span>
-                  Cerrando sesión...
-                </>
-              ) : (
-                'Cerrar sesión'
-              )}
+              Cerrar sesión
             </motion.button>
           </motion.div>
         </motion.div>
+
+        {/* Logout Confirm Sheet */}
+        <AnimatePresence>
+          {showLogoutConfirm && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => !loggingOut && setShowLogoutConfirm(false)}
+                className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="fixed bottom-0 left-0 right-0 bg-[#2a2438] rounded-t-[32px] z-50 flex flex-col p-6 max-w-md mx-auto shadow-2xl"
+                style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="w-12 h-1 bg-white/20 rounded-full" />
+                </div>
+                <h3 className="text-white font-bold text-xl mb-2 text-center" style={{ fontFamily: "'Syne', sans-serif" }}>¿Cerrar sesión?</h3>
+                <p className="text-white/70 text-center mb-6" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  Tendrás que volver a ingresar con tus credenciales la próxima vez.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowLogoutConfirm(false)}
+                    disabled={loggingOut}
+                    className="flex-1 py-3.5 rounded-full neu-pressed text-white/80 hover:text-white font-semibold transition-colors"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    disabled={loggingOut}
+                    className="flex-1 py-3.5 rounded-full font-semibold text-white flex items-center justify-center gap-2"
+                    style={{
+                      background: 'linear-gradient(to right, #e74c3c, #c0392b)',
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    }}
+                  >
+                    {loggingOut ? 'Saliendo...' : 'Cerrar sesión'}
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </main>
 
       <BottomNav />

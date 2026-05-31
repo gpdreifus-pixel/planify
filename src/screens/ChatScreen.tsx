@@ -55,6 +55,11 @@ export default function ChatScreen() {
     else navigate('/')
   }
 
+  const handleRestart = () => {
+    useChatStore.getState().reset()
+    navigate('/chat/1', { replace: true })
+  }
+
   if (!stepData) return null
 
   return (
@@ -62,12 +67,21 @@ export default function ChatScreen() {
       <TopAppBar
         onBack={goBack}
         rightSlot={
-          <span
-            className="text-white/80"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
-          >
-            {stepNum}/{totalSteps}
-          </span>
+          <div className="flex items-center gap-3">
+            <span
+              className="text-white/80"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
+            >
+              {stepNum}/{totalSteps}
+            </span>
+            <button 
+              onClick={handleRestart}
+              className="neu-icon-btn w-9 h-9 flex items-center justify-center text-white opacity-80 hover:opacity-100"
+              aria-label="Reiniciar búsqueda"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>refresh</span>
+            </button>
+          </div>
         }
       />
 
