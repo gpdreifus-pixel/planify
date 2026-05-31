@@ -14,6 +14,7 @@ import MyTripsScreen from '../screens/MyTripsScreen'
 import CommunityScreen from '../screens/CommunityScreen'
 import CreatePostScreen from '../screens/CreatePostScreen'
 import ProfileScreen from '../screens/ProfileScreen'
+import ProtectedRoute from '../components/ui/ProtectedRoute'
 
 export const router = createBrowserRouter([
   { path: '/', element: <HomeScreen /> },
@@ -27,10 +28,11 @@ export const router = createBrowserRouter([
   { path: '/results/map', element: <MapScreen /> },
   { path: '/results/:id', element: <TripDetailScreen /> },
   { path: '/booking/:id', element: <BookingScreen /> },
-  { path: '/trips', element: <MyTripsScreen /> },
+  { path: '/trips', element: <ProtectedRoute><MyTripsScreen /></ProtectedRoute> },
   { path: '/community', element: <CommunityScreen /> },
-  { path: '/community/new', element: <CreatePostScreen /> },
-  { path: '/profile', element: <ProfileScreen /> },
+  { path: '/community/new', element: <ProtectedRoute><CreatePostScreen /></ProtectedRoute> },
+  { path: '/profile', element: <ProtectedRoute><ProfileScreen /></ProtectedRoute> },
   // Catch-all
   { path: '*', element: <Navigate to="/" replace /> },
 ])
+

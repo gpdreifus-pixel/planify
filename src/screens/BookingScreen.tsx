@@ -27,20 +27,61 @@ export default function BookingScreen() {
 
   const property = selectedProperty ?? MOCK_PROPERTIES[0]
 
+  // ── Derive dates from criteria ────────────────────────────────────────
+  const getCheckInDate = (): string => {
+    const raw = criteria.departureDate ?? ''
+    // Try to parse an ISO date first
+    const parsed = new Date(raw)
+    if (!isNaN(parsed.getTime()) && raw.match(/\d{4}-\d{2}-\d{2}/)) {
+      return raw
+    }
+    // Default: next Saturday from today
+    const today = new Date()
+    const daysUntilSat = (6 - today.getDay() + 7) % 7 || 7
+    const nextSat = new Date(today)
+    nextSat.setDate(today.getDate() + daysUntilSat)
+    return nextSat.toISOString().split('T')[0]
+  }
+
+  const getNights = (): number => {
+    const raw = (criteria.returnDate ?? '').toLowerCase()
+    // Parse chip responses like "Un finde 2d", "Una semana 7d", "Dos semanas 14d"
+    const match = raw.match(/(\d+)\s*d/)
+    if (match) return parseInt(match[1], 10)
+    if (raw.includes('finde') || raw.includes('weekend')) return 2
+    if (raw.includes('semana') && raw.includes('dos')) return 14
+    if (raw.includes('semana')) return 7
+    return 7 // default
+  }
+
+  const getTravelers = (): number => {
+    if (typeof criteria.travelers === 'number') return criteria.travelers
+    const raw = String(criteria.travelers ?? '').toLowerCase()
+    if (raw.includes('solo') || raw.includes('🧳')) return 1
+    if (raw.includes('pareja') || raw.includes('💑')) return 2
+    if (raw.includes('amigos') || raw.includes('👯')) return 4
+    if (raw.includes('familia') || raw.includes('👨')) return 4
+    // Try to parse a number
+    const num = parseInt(raw, 10)
+    if (!isNaN(num) && num > 0) return num
+    return 1
+  }
+
+  const checkIn = getCheckInDate()
+  const nights = getNights()
+  const travelers = getTravelers()
+  const checkOutDate = new Date(checkIn)
+  checkOutDate.setDate(checkOutDate.getDate() + nights)
+  const checkOut = checkOutDate.toISOString().split('T')[0]
+
   const handleBook = async () => {
     setIsBooking(true)
     await new Promise((r) => setTimeout(r, 1200))
-    bookTrip(
-      property,
-      criteria,
-      '2025-06-15',
-      '2025-06-22',
-      typeof criteria.travelers === 'number' ? criteria.travelers : 1
-    )
+    bookTrip(property, criteria, checkIn, checkOut, travelers)
     navigate('/trips')
   }
 
-  const totalEstimate = property.pricePerNight * 7 + 850 + 220 + 45
+  const totalEstimate = property.pricePerNight * nights + 850 + 220 + 45
 
   return (
     <AppBackground variant="chat">
@@ -115,7 +156,7 @@ export default function BookingScreen() {
 
             {BOOKING_ITEMS.map((item) => {
               const price = item.priceKey === 'base'
-                ? property.pricePerNight * 7
+                ? property.pricePerNight * nights
                 : item.extra ?? 0
 
               return (

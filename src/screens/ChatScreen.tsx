@@ -43,8 +43,9 @@ export default function ChatScreen() {
     if (stepNum < totalSteps) {
       navigate(`/chat/${stepNum + 1}`)
     } else {
-      // Last step → search + go to summary
-      await search()
+      // Last step → search with accumulated criteria + go to summary
+      const { criteria } = useChatStore.getState()
+      await search(criteria)
       navigate('/chat/summary')
     }
   }

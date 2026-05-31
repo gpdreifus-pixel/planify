@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import { useAuthStore } from '../store/authStore'
+import { useUIStore } from '../store/uiStore'
 
 type Tab = 'login' | 'register'
 
@@ -10,6 +11,7 @@ export default function AuthScreen() {
   const navigate = useNavigate()
   const location = useLocation()
   const { login, loginWithSocial, register, isLoading, error, clearError, onboardingComplete } = useAuthStore()
+  const { showToast } = useUIStore()
   // Read the initial tab from router state (set by HomeScreen buttons); default to login
   const initialTab = (location.state as { tab?: Tab } | null)?.tab ?? 'login'
   const [tab, setTab] = useState<Tab>(initialTab)
@@ -31,7 +33,9 @@ export default function AuthScreen() {
       // returning users land straight on results.
       navigate(onboardingComplete ? '/results' : '/onboarding')
     } catch {
-      // error message surfaced via store.error
+      // error message surfaced via store.error + toast for visibility
+      const errMsg = useAuthStore.getState().error
+      if (errMsg) showToast(errMsg, 'error')
     }
   }
 
@@ -43,7 +47,8 @@ export default function AuthScreen() {
       // and SIGNED_IN fires, which triggers the HomeScreen guard.
       navigate('/auth/verify', { state: { email: regEmail } })
     } catch {
-      // error message surfaced via store.error
+      const errMsg = useAuthStore.getState().error
+      if (errMsg) showToast(errMsg, 'error')
     }
   }
 
@@ -54,7 +59,8 @@ export default function AuthScreen() {
       // call fails before redirect. HomeScreen guard handles onboarding on return.
       navigate('/')
     } catch {
-      // error message surfaced via store.error
+      const errMsg = useAuthStore.getState().error
+      if (errMsg) showToast(errMsg, 'error')
     }
   }
 
