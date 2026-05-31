@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
@@ -8,9 +8,30 @@ import { useTripsStore } from '../store/tripsStore'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
 export default function ProfileScreen() {
-  const { user, logout, userPreferences, setPreferences } = useAuthStore()
+  const { user, logout, userPreferences, setPreferences, updateProfile, isLoading } = useAuthStore()
   const { trips } = useTripsStore()
   const [loggingOut, setLoggingOut] = useState(false)
+  
+  const [isEditing, setIsEditing] = useState(false)
+  const [editName, setEditName] = useState(user?.name ?? '')
+  const [editBio, setEditBio] = useState(user?.bio ?? '')
+
+  useEffect(() => {
+    if (user && !isEditing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEditName(user.name)
+      setEditBio(user.bio ?? '')
+    }
+  }, [user, isEditing])
+
+  const handleSave = async () => {
+    try {
+      await updateProfile(editName, editBio)
+      setIsEditing(false)
+    } catch {
+      // error handled by store
+    }
+  }
 
   const completedTrips = trips.filter((t) => t.status === 'completed').length
 
@@ -24,7 +45,19 @@ export default function ProfileScreen() {
 
   return (
     <AppBackground variant="chat">
-      <TopAppBar title="Mi Perfil" />
+      <TopAppBar 
+        title="Mi Perfil" 
+        rightSlot={
+          <motion.button
+            whileTap={{ scale: 0.90 }}
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+            disabled={isLoading && isEditing}
+            className="px-4 h-9 rounded-full glass-raised flex items-center justify-center text-white font-semibold text-sm disabled:opacity-50"
+          >
+            {isEditing ? (isLoading ? 'Guardando...' : 'Guardar') : 'Editar'}
+          </motion.button>
+        }
+      />
 
       <main className="flex-1 relative z-10 px-6 pb-32 max-w-md mx-auto w-full">
         <motion.div
@@ -36,8 +69,16 @@ export default function ProfileScreen() {
           {/* Profile header card */}
           <motion.div
             variants={staggerItem}
-            className="glass-surface rounded-3xl p-6 flex flex-col items-center text-center gap-3"
+            className="glass-surface rounded-3xl p-6 flex flex-col items-center text-center gap-3 relative"
           >
+            {isEditing && (
+              <button 
+                onClick={() => { setIsEditing(false); setEditName(user?.name ?? ''); setEditBio(user?.bio ?? '') }}
+                className="absolute top-4 left-4 text-white/50 hover:text-white"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
+              </button>
+            )}
             {user?.avatar ? (
               <img
                 src={user.avatar}
@@ -45,46 +86,68 @@ export default function ProfileScreen() {
                 className="w-20 h-20 rounded-full object-cover neu-icon-btn"
               />
             ) : (
-              <div className="neu-icon-btn w-20 h-20 flex items-center justify-center">
+              <div className="neu-icon-btn w-20 h-20 flex items-center justify-center flex-shrink-0">
                 <span className="material-symbols-outlined text-white" style={{ fontSize: 36 }}>
                   person
                 </span>
               </div>
             )}
-            <div>
-              <h2
-                style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
-                  color: 'white',
-                }}
-              >
-                {user?.name ?? 'Viajero'}
-              </h2>
-              <p
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.875rem',
-                  color: 'rgba(255,255,255,0.60)',
-                }}
-              >
-                {user?.email ?? ''}
-              </p>
+            <div className="w-full px-4">
+              {isEditing ? (
+                <div className="flex flex-col gap-3 mt-2">
+                  <input
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    placeholder="Tu nombre"
+                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-center text-white font-bold"
+                    style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem' }}
+                  />
+                  <textarea
+                    value={editBio}
+                    onChange={(e) => setEditBio(e.target.value)}
+                    placeholder="Escribe algo sobre ti..."
+                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-center text-white/80 resize-none h-24"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
+                  />
+                </div>
+              ) : (
+                <>
+                  <h2
+                    style={{
+                      fontFamily: "'Syne', sans-serif",
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      color: 'white',
+                    }}
+                  >
+                    {user?.name ?? 'Viajero'}
+                  </h2>
+                  <p
+                    style={{
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontSize: '0.875rem',
+                      color: 'rgba(255,255,255,0.60)',
+                    }}
+                  >
+                    {user?.email ?? ''}
+                  </p>
+                  {user?.bio && (
+                    <p
+                      className="mt-2"
+                      style={{
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        fontSize: '0.875rem',
+                        lineHeight: 1.6,
+                        color: 'rgba(255,255,255,0.75)',
+                        fontWeight: 300,
+                      }}
+                    >
+                      {user.bio}
+                    </p>
+                  )}
+                </>
+              )}
             </div>
-            {user?.bio && (
-              <p
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.875rem',
-                  lineHeight: 1.6,
-                  color: 'rgba(255,255,255,0.75)',
-                  fontWeight: 300,
-                }}
-              >
-                {user.bio}
-              </p>
-            )}
           </motion.div>
 
           {/* Stats row */}
@@ -201,43 +264,6 @@ export default function ProfileScreen() {
                       }}
                     >
                       {c}
-                    </motion.button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Language */}
-            <div
-              className="px-5 py-3 flex items-center gap-4"
-              style={{ borderTop: '1px solid rgba(255,255,255,0.09)' }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.50)' }}>
-                language
-              </span>
-              <span
-                className="flex-1"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem', color: 'rgba(255,255,255,0.85)' }}
-              >
-                Idioma
-              </span>
-              <div className="flex gap-1.5">
-                {([{ val: 'es' as const, label: 'ES' }, { val: 'en' as const, label: 'EN' }]).map(({ val, label }) => {
-                  const active = userPreferences.language === val
-                  return (
-                    <motion.button
-                      key={val}
-                      whileTap={{ scale: 0.91 }}
-                      onClick={() => setPreferences({ language: val })}
-                      className="px-2.5 py-1 rounded-full text-xs font-semibold transition-all"
-                      style={{
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        background: active ? 'rgba(255,140,66,0.22)' : 'rgba(255,255,255,0.07)',
-                        border: `1px solid ${active ? 'rgba(255,140,66,0.45)' : 'rgba(255,255,255,0.12)'}`,
-                        color: active ? '#ff8c42' : 'rgba(255,255,255,0.55)',
-                      }}
-                    >
-                      {label}
                     </motion.button>
                   )
                 })}
@@ -366,7 +392,7 @@ export default function ProfileScreen() {
         </motion.div>
       </main>
 
-      <BottomNav activeIndex={3} />
+      <BottomNav />
     </AppBackground>
   )
 }

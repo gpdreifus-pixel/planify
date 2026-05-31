@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
@@ -167,8 +167,17 @@ export default function CommunityScreen() {
     fetchPosts()
   }, [fetchPosts])
 
-  const displayPosts =
-    tab === 'mine' ? posts.filter((p) => p.author.id === user?.id) : posts
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const displayPosts = (tab === 'mine' ? posts.filter((p) => p.author.id === user?.id) : posts).filter((p) => {
+    if (!searchQuery.trim()) return true
+    const q = searchQuery.toLowerCase()
+    return (
+      p.destination.toLowerCase().includes(q) ||
+      p.caption.toLowerCase().includes(q) ||
+      p.author.name.toLowerCase().includes(q)
+    )
+  })
 
   return (
     <AppBackground variant="chat">
@@ -198,6 +207,21 @@ export default function CommunityScreen() {
               </span>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Search bar */}
+      <div className="px-6 max-w-md mx-auto w-full relative z-10 pb-3">
+        <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
+          <span className="material-symbols-outlined text-white/50 mr-2" style={{ fontSize: 20 }}>search</span>
+          <input
+            type="search"
+            placeholder="Buscar destino, autor..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+          />
         </div>
       </div>
 
@@ -308,7 +332,7 @@ export default function CommunityScreen() {
         )}
       </AnimatePresence>
 
-      <BottomNav activeIndex={2} />
+      <BottomNav />
     </AppBackground>
   )
 }

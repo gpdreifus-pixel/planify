@@ -8,23 +8,15 @@ const NAV_ITEMS = [
   { path: '/profile', icon: 'person' },
 ]
 
-interface BottomNavProps {
-  /** Override active index (useful when path matching is ambiguous). */
-  activeIndex?: number
-}
-
-export default function BottomNav({ activeIndex }: BottomNavProps) {
+export default function BottomNav() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] neu-bottombar overflow-hidden">
       <div className="flex items-center justify-around px-4 h-20 max-w-md mx-auto">
-        {NAV_ITEMS.map((item, idx) => {
-          const isActive =
-            activeIndex !== undefined
-              ? activeIndex === idx
-              : pathname.startsWith(item.path)
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname.startsWith(item.path)
 
           return (
             <button

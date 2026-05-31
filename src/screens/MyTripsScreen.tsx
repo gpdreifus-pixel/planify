@@ -378,7 +378,7 @@ export default function MyTripsScreen() {
         </motion.button>
       </div>
 
-      <BottomNav activeIndex={1} />
+      <BottomNav />
     </AppBackground>
   )
 }

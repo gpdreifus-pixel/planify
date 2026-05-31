@@ -10,8 +10,22 @@ import type { Trip, TripStatus, UserPreferences, CommunityPost } from '../types'
 
 // ─── Trips ────────────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function rowToTrip(row: any): Trip {
+interface TripRow {
+  id: string
+  property: Trip['property']
+  criteria: Trip['criteria']
+  status: string
+  booked_at?: string
+  check_in: string
+  check_out: string
+  total_price: string | number
+  currency: string
+  travelers: number
+  confirmation_code?: string
+  notes?: string
+}
+
+function rowToTrip(row: TripRow): Trip {
   return {
     id: row.id,
     property: row.property,
@@ -86,8 +100,7 @@ export async function fetchSavedPropertyIds(userId: string): Promise<string[]> {
     return []
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (data ?? []).map((row: any) => row.property_id as string)
+  return (data ?? []).map((row: { property_id: string }) => row.property_id)
 }
 
 export async function saveProperty(
@@ -135,7 +148,6 @@ export async function fetchUserPreferences(
 
   return {
     currency: data.currency as UserPreferences['currency'],
-    language: data.language as UserPreferences['language'],
     notifications: data.notifications as boolean,
   }
 }
@@ -147,7 +159,6 @@ export async function upsertUserPreferences(
   const { error } = await supabase.from('user_preferences').upsert({
     user_id: userId,
     currency: prefs.currency,
-    language: prefs.language,
     notifications: prefs.notifications,
     updated_at: new Date().toISOString(),
   })
@@ -156,8 +167,19 @@ export async function upsertUserPreferences(
 
 // ─── Community Posts ──────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function rowToPost(row: any): CommunityPost {
+interface PostRow {
+  id: string
+  user_id: string
+  author_name: string
+  author_avatar_url?: string
+  created_at: string
+  destination: string
+  image_url: string
+  caption: string
+  likes_count?: number
+}
+
+function rowToPost(row: PostRow): CommunityPost {
   return {
     id: row.id,
     author: {
@@ -207,8 +229,7 @@ export async function fetchUserLikedPostIds(userId: string): Promise<string[]> {
     return []
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (data ?? []).map((row: any) => row.post_id as string)
+  return (data ?? []).map((row: { post_id: string }) => row.post_id)
 }
 
 export async function createCommunityPost(

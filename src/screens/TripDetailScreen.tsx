@@ -421,7 +421,7 @@ export default function TripDetailScreen() {
         )}
       </div>
 
-      <BottomNav activeIndex={1} />
+      <BottomNav />
     </AppBackground>
   )
 }

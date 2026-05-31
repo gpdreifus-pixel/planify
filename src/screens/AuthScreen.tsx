@@ -5,12 +5,12 @@ import AppBackground from '../components/ui/AppBackground'
 import { useAuthStore } from '../store/authStore'
 import { useUIStore } from '../store/uiStore'
 
-type Tab = 'login' | 'register'
+type Tab = 'login' | 'register' | 'forgot-password'
 
 export default function AuthScreen() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, loginWithSocial, register, isLoading, error, clearError, onboardingComplete } = useAuthStore()
+  const { login, loginWithSocial, register, resetPassword, isLoading, error, clearError, onboardingComplete } = useAuthStore()
   const { showToast } = useUIStore()
   // Read the initial tab from router state (set by HomeScreen buttons); default to login
   const initialTab = (location.state as { tab?: Tab } | null)?.tab ?? 'login'
@@ -25,10 +25,19 @@ export default function AuthScreen() {
   const [regEmail, setRegEmail] = useState('')
   const [regPassword, setRegPassword] = useState('')
 
+  // Forgot password form
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetSent, setResetSent] = useState(false)
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
       await login(loginEmail, loginPassword)
+      const from = (location.state as { from?: Location })?.from
+      if (from) {
+        navigate(from.pathname + from.search, { state: from.state, replace: true })
+        return
+      }
       // New users (onboardingComplete === false) go through onboarding first;
       // returning users land straight on results.
       navigate(onboardingComplete ? '/results' : '/onboarding')
@@ -46,6 +55,18 @@ export default function AuthScreen() {
       // Email verification required — onboarding runs after the link is clicked
       // and SIGNED_IN fires, which triggers the HomeScreen guard.
       navigate('/auth/verify', { state: { email: regEmail } })
+    } catch {
+      const errMsg = useAuthStore.getState().error
+      if (errMsg) showToast(errMsg, 'error')
+    }
+  }
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      await resetPassword(resetEmail)
+      setResetSent(true)
+      showToast('Enlace enviado a tu correo', 'success')
     } catch {
       const errMsg = useAuthStore.getState().error
       if (errMsg) showToast(errMsg, 'error')
@@ -122,33 +143,35 @@ export default function AuthScreen() {
           </div>
 
           {/* Tab switcher — neu-pressed container + neu-flat spring indicator */}
-          <div className="neu-pressed rounded-full p-1 flex relative z-10">
-            {/* Sliding indicator — spring physics, no CSS transition needed */}
-            <motion.div
-              className="absolute top-1 bottom-1 neu-flat rounded-full pointer-events-none"
-              style={{ width: 'calc(50% - 4px)', left: '4px' }}
-              animate={{ x: tab === 'login' ? '0%' : '100%' }}
-              transition={{ type: 'spring', stiffness: 400, damping: 34 }}
-            />
-            <button
-              onClick={() => handleTabChange('login')}
-              className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
-                tab === 'login' ? 'text-white' : 'text-white/60'
-              }`}
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              Iniciar Sesión
-            </button>
-            <button
-              onClick={() => handleTabChange('register')}
-              className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
-                tab === 'register' ? 'text-white' : 'text-white/60'
-              }`}
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              Registrarse
-            </button>
-          </div>
+          {tab !== 'forgot-password' && (
+            <div className="neu-pressed rounded-full p-1 flex relative z-10">
+              {/* Sliding indicator — spring physics, no CSS transition needed */}
+              <motion.div
+                className="absolute top-1 bottom-1 neu-flat rounded-full pointer-events-none"
+                style={{ width: 'calc(50% - 4px)', left: '4px' }}
+                animate={{ x: tab === 'login' ? '0%' : '100%' }}
+                transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+              />
+              <button
+                onClick={() => handleTabChange('login')}
+                className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
+                  tab === 'login' ? 'text-white' : 'text-white/60'
+                }`}
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                Iniciar Sesión
+              </button>
+              <button
+                onClick={() => handleTabChange('register')}
+                className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
+                  tab === 'register' ? 'text-white' : 'text-white/60'
+                }`}
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                Registrarse
+              </button>
+            </div>
+          )}
 
           {/* Forms */}
           <AnimatePresence mode="wait">
@@ -212,6 +235,7 @@ export default function AuthScreen() {
                 <div className="flex justify-end">
                   <button
                     type="button"
+                    onClick={() => handleTabChange('forgot-password')}
                     className="text-white/90 hover:text-white transition-colors underline decoration-white/30 underline-offset-2"
                     style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8125rem', fontWeight: 600 }}
                   >
@@ -249,7 +273,7 @@ export default function AuthScreen() {
                   </motion.p>
                 )}
               </motion.form>
-            ) : (
+            ) : tab === 'register' ? (
               <motion.form
                 key="register"
                 initial={{ opacity: 0, x: 14 }}
@@ -358,23 +382,89 @@ export default function AuthScreen() {
                   </motion.p>
                 )}
               </motion.form>
+            ) : (
+              <motion.form
+                key="forgot-password"
+                initial={{ opacity: 0, x: 14 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -14 }}
+                transition={{ duration: 0.18 }}
+                className="flex flex-col gap-3 relative z-10"
+                onSubmit={handleResetPassword}
+              >
+                <div className="text-center mb-2">
+                  <h2 className="text-white font-bold" style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem' }}>
+                    Recuperar Contraseña
+                  </h2>
+                  <p className="text-white/70 text-sm mt-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                    Te enviaremos un enlace para restablecer tu contraseña.
+                  </p>
+                </div>
+
+                {resetSent ? (
+                  <div className="glass-pressed rounded-2xl p-4 text-center mt-2">
+                    <span className="material-symbols-outlined text-[#4ade80] mb-2" style={{ fontSize: 32 }}>check_circle</span>
+                    <p className="text-white/90 text-sm" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                      Revisa tu correo electrónico (incluyendo la carpeta de spam) para encontrar el enlace de recuperación.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex flex-col gap-1">
+                      <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
+                        <span className="material-symbols-outlined text-white/70 mr-3" style={{ fontSize: 20 }}>mail</span>
+                        <input
+                          type="email"
+                          placeholder="tu@email.com"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          required
+                          className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
+                          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                        />
+                      </div>
+                    </div>
+
+                    <motion.button
+                      type="submit"
+                      whileTap={{ scale: 0.97 }}
+                      disabled={isLoading}
+                      className="w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
+                      style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.125rem', fontWeight: 700 }}
+                    >
+                      <span className="drop-shadow-sm">{isLoading ? 'Enviando...' : 'Enviar Enlace'}</span>
+                    </motion.button>
+                  </>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('login')}
+                  className="mt-2 text-white/60 hover:text-white transition-colors text-sm font-semibold text-center"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  Volver a iniciar sesión
+                </button>
+              </motion.form>
             )}
           </AnimatePresence>
 
           {/* Divider */}
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="flex-1 h-px bg-white/20" />
-            <span
-              className="text-white/70 drop-shadow-sm"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8125rem' }}
-            >
-              O continuar con
-            </span>
-            <div className="flex-1 h-px bg-white/20" />
-          </div>
+          {tab !== 'forgot-password' && (
+            <>
+              <div className="flex items-center gap-4 relative z-10 mt-2">
+                <div className="flex-1 h-px bg-white/20" />
+                <span
+                  className="text-white/70 drop-shadow-sm"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8125rem' }}
+                >
+                  O continuar con
+                </span>
+                <div className="flex-1 h-px bg-white/20" />
+              </div>
 
-          {/* Social buttons — neu-icon-btn circles, icon only */}
-          <div className="flex gap-6 justify-center relative z-10">
+              {/* Social buttons */}
+              <div className="flex gap-6 justify-center relative z-10">
             <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={() => handleSocial('google')}
@@ -395,9 +485,11 @@ export default function AuthScreen() {
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden>
                 <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.15 2.95.93 3.78 2.04-3.18 1.98-2.64 6.27.56 7.6-.66 1.48-1.54 2.82-2.99 3.37zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-              </svg>
-            </motion.button>
-          </div>
+                </svg>
+              </motion.button>
+            </div>
+            </>
+          )}
         </motion.div>
 
         {/* Bottom spacer */}

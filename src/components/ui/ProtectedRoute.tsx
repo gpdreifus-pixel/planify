@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 
 /**
@@ -9,6 +9,7 @@ import { useAuthStore } from '../../store/authStore'
  */
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitializing } = useAuthStore()
+  const location = useLocation()
 
   // Wait for the first onAuthStateChange callback (session restore)
   if (isInitializing) {
@@ -30,7 +31,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />
+    return <Navigate to="/auth" state={{ from: location }} replace />
   }
 
   return <>{children}</>

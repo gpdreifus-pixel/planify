@@ -339,7 +339,7 @@ export default function ResultsScreen() {
         )}
       </main>
 
-      <BottomNav activeIndex={0} />
+      <BottomNav />
     </AppBackground>
   )
 }

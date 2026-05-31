@@ -4,10 +4,11 @@ import type { User as SupabaseUser } from '@supabase/supabase-js'
 import type { User, UserPreferences } from '../types'
 import { supabase } from '../utils/supabase'
 import { fetchUserPreferences, upsertUserPreferences } from '../services/db'
+import { useSearchStore } from './searchStore'
+import { useTripsStore } from './tripsStore'
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   currency: 'USD',
-  language: 'es',
   notifications: true,
 }
 
@@ -45,29 +46,32 @@ interface AuthState {
   clearError: () => void
   setOnboardingComplete: () => void
   setPreferences: (partial: Partial<UserPreferences>) => void
+  updateProfile: (name: string, bio: string) => Promise<void>
+  resetPassword: (email: string) => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => {
       // Subscribe to Supabase auth state changes.
-      // Fires immediately with INITIAL_SESSION (restoring a stored session on
-      // page reload) and then on every change: SIGNED_IN, SIGNED_OUT,
-      // TOKEN_REFRESHED, etc. This is the single source of truth for auth state.
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange((event, session) => {
         if (session?.user) {
           const userId = session.user.id
-          // Read onboarding status from Supabase user metadata so it is
-          // per-user and device-independent (fixes stale localStorage bug).
-          const isOnboarded =
-            session.user.user_metadata?.onboarding_complete === true
+          const isOnboarded = session.user.user_metadata?.onboarding_complete === true
           set({
             user: mapSupabaseUser(session.user),
             isAuthenticated: true,
             isInitializing: false,
             onboardingComplete: isOnboarded,
           })
-          // Fetch and merge cloud preferences — fire-and-forget.
+          
+          // Trigger sync on other stores
+          if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+            useSearchStore.getState().syncSavedProperties(userId)
+            useTripsStore.getState().syncTrips(userId)
+          }
+
+          // Fetch and merge cloud preferences
           fetchUserPreferences(userId).then((cloudPrefs) => {
             if (Object.keys(cloudPrefs).length > 0) {
               set((state) => ({
@@ -79,6 +83,10 @@ export const useAuthStore = create<AuthState>()(
           })
         } else {
           set({ user: null, isAuthenticated: false, isInitializing: false })
+          if (event === 'SIGNED_OUT') {
+            useSearchStore.getState().clearSavedProperties()
+            useTripsStore.getState().clearTrips()
+          }
         }
       })
 
@@ -177,6 +185,34 @@ export const useAuthStore = create<AuthState>()(
               upsertUserPreferences(session.user.id, get().userPreferences)
             }
           })
+        },
+
+        updateProfile: async (name, bio) => {
+          set({ isLoading: true, error: null })
+          const { data, error } = await supabase.auth.updateUser({
+            data: { full_name: name, bio },
+          })
+          set({ isLoading: false })
+          if (error) {
+            set({ error: error.message })
+            throw error
+          }
+          // Update local state immediately for a snappy feel
+          if (data.user) {
+            set({ user: mapSupabaseUser(data.user) })
+          }
+        },
+
+        resetPassword: async (email) => {
+          set({ isLoading: true, error: null })
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/auth',
+          })
+          set({ isLoading: false })
+          if (error) {
+            set({ error: error.message })
+            throw error
+          }
         },
       }
     },

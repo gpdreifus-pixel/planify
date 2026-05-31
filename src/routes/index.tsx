@@ -11,6 +11,7 @@ import MapScreen from '../screens/MapScreen'
 import TripDetailScreen from '../screens/TripDetailScreen'
 import BookingScreen from '../screens/BookingScreen'
 import MyTripsScreen from '../screens/MyTripsScreen'
+import BookingConfirmationScreen from '../screens/BookingConfirmationScreen'
 import CommunityScreen from '../screens/CommunityScreen'
 import CreatePostScreen from '../screens/CreatePostScreen'
 import ProfileScreen from '../screens/ProfileScreen'
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
   { path: '/results/map', element: <MapScreen /> },
   { path: '/results/:id', element: <TripDetailScreen /> },
   { path: '/booking/:id', element: <BookingScreen /> },
+  { path: '/booking-confirmation', element: <ProtectedRoute><BookingConfirmationScreen /></ProtectedRoute> },
   { path: '/trips', element: <ProtectedRoute><MyTripsScreen /></ProtectedRoute> },
   { path: '/community', element: <CommunityScreen /> },
   { path: '/community/new', element: <ProtectedRoute><CreatePostScreen /></ProtectedRoute> },

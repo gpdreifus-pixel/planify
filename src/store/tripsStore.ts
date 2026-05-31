@@ -18,37 +18,14 @@ interface TripsState {
   setActiveTrip: (tripId: string) => void
   cancelTrip: (tripId: string) => void
   addNote: (tripId: string, note: string) => void
+  syncTrips: (userId: string) => Promise<void>
+  clearTrips: () => void
 }
 
 export const useTripsStore = create<TripsState>()(
   persist(
     (set, get) => {
-      // ── Cloud sync ─────────────────────────────────────────────────────────
-      // INITIAL_SESSION: restore session from localStorage on page reload.
-      // SIGNED_IN: user just authenticated.
-      // Both events fetch the user's trips from Supabase and merge with any
-      // trips created locally while the user was a guest.
-      // SIGNED_OUT: clear trips so the next session starts clean.
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        if (
-          (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') &&
-          session?.user
-        ) {
-          const userId = session.user.id
-          const cloudTrips = await fetchUserTrips(userId)
-          const localTrips = get().trips
-          const cloudIds = new Set(cloudTrips.map((t) => t.id))
-          // Guest-created trips not yet in the cloud — sync them up
-          const guestOnly = localTrips.filter((t) => !cloudIds.has(t.id))
-          for (const trip of guestOnly) {
-            upsertTrip(userId, trip) // fire-and-forget
-          }
-          // Merged: cloud trips (canonical) + any local-only guest trips
-          set({ trips: [...cloudTrips, ...guestOnly] })
-        } else if (event === 'SIGNED_OUT') {
-          set({ trips: [], activeTrip: null })
-        }
-      })
+      // ── Cloud sync (called by authStore) ───────────────────────────────────
 
       return {
         // Fresh users start with no trips — continuity is built through real actions.
@@ -110,6 +87,19 @@ export const useTripsStore = create<TripsState>()(
             }
           })
         },
+
+        syncTrips: async (userId) => {
+          const cloudTrips = await fetchUserTrips(userId)
+          const localTrips = get().trips
+          const cloudIds = new Set(cloudTrips.map((t) => t.id))
+          const guestOnly = localTrips.filter((t) => !cloudIds.has(t.id))
+          for (const trip of guestOnly) {
+            upsertTrip(userId, trip) // fire-and-forget
+          }
+          set({ trips: [...cloudTrips, ...guestOnly] })
+        },
+
+        clearTrips: () => set({ trips: [], activeTrip: null }),
       }
     },
     {

@@ -170,10 +170,6 @@ function PrefsStep({
   setPrefs: (p: Partial<UserPreferences>) => void
 }) {
   const currencies = ['USD', 'EUR', 'ARS'] as const
-  const languages = [
-    { value: 'es' as const, label: 'Español' },
-    { value: 'en' as const, label: 'English' },
-  ]
 
   return (
     <>
@@ -222,37 +218,6 @@ function PrefsStep({
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               {c}
-            </motion.button>
-          ))}
-        </div>
-      </div>
-
-      {/* Language */}
-      <div className="glass-surface rounded-2xl p-4 flex flex-col gap-3 w-full">
-        <p
-          className="text-white/90"
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '0.875rem',
-            fontWeight: 600,
-          }}
-        >
-          Idioma
-        </p>
-        <div className="flex gap-2">
-          {languages.map(({ value, label }) => (
-            <motion.button
-              key={value}
-              whileTap={{ scale: 0.94 }}
-              onClick={() => setPrefs({ language: value })}
-              className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                prefs.language === value
-                  ? 'neu-btn-primary text-white'
-                  : 'neu-pressed text-white/55 hover:text-white/75'
-              }`}
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              {label}
             </motion.button>
           ))}
         </div>

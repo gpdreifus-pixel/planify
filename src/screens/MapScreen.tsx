@@ -93,11 +93,12 @@ export default function MapScreen() {
     })
 
     mapRef.current = map
+    const currentMarkers = markersRef.current
 
     return () => {
       map.remove()
       mapRef.current = null
-      markersRef.current.clear()
+      currentMarkers.clear()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -214,7 +215,7 @@ export default function MapScreen() {
         </AnimatePresence>
       </div>
 
-      <BottomNav activeIndex={0} />
+      <BottomNav />
     </AppBackground>
   )
 }

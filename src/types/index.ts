@@ -162,7 +162,6 @@ export interface ToastMessage {
 // ── User Preferences ──────────────────────────────────────────────────────
 export interface UserPreferences {
   currency: 'USD' | 'EUR' | 'ARS'
-  language: 'es' | 'en'
   notifications: boolean
 }
 

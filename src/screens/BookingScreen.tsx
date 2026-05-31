@@ -77,8 +77,8 @@ export default function BookingScreen() {
   const handleBook = async () => {
     setIsBooking(true)
     await new Promise((r) => setTimeout(r, 1200))
-    bookTrip(property, criteria, checkIn, checkOut, travelers)
-    navigate('/trips')
+    const newTrip = bookTrip(property, criteria, checkIn, checkOut, travelers)
+    navigate('/booking-confirmation', { state: { trip: newTrip } })
   }
 
   const totalEstimate = property.pricePerNight * nights + 850 + 220 + 45
@@ -248,7 +248,7 @@ export default function BookingScreen() {
         </motion.button>
       </div>
 
-      <BottomNav activeIndex={0} />
+      <BottomNav />
     </AppBackground>
   )
 }

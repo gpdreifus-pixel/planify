@@ -26,6 +26,8 @@ interface SearchState {
   toggleSavedProperty: (id: string) => void
   isPropertySaved: (id: string) => boolean
   markPropertyViewed: (id: string) => void
+  syncSavedProperties: (userId: string) => Promise<void>
+  clearSavedProperties: () => void
 }
 
 const DEFAULT_FILTERS: FilterState = {
@@ -40,31 +42,7 @@ const DEFAULT_FILTERS: FilterState = {
 export const useSearchStore = create<SearchState>()(
   persist(
     (set, get) => {
-      // ── Cloud sync ─────────────────────────────────────────────────────────
-      // On sign-in: fetch saved property IDs from Supabase and union with any
-      // locally saved IDs (guest saves are preserved and synced up to cloud).
-      // Sign-out does NOT clear local saves — guest mode keeps them intact.
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        if (
-          (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') &&
-          session?.user
-        ) {
-          const userId = session.user.id
-          const cloudIds = await fetchSavedPropertyIds(userId)
-          const localIds = get().savedPropertyIds
-          // Write any guest-saved IDs that aren't in the cloud yet
-          const localOnly = localIds.filter((id) => !cloudIds.includes(id))
-          for (const id of localOnly) {
-            saveProperty(userId, id) // fire-and-forget
-          }
-          // Union — deduplicated by Set
-          const merged = Array.from(new Set([...localIds, ...cloudIds]))
-          set({ savedPropertyIds: merged })
-        } else if (event === 'SIGNED_OUT') {
-          // Clear saved IDs so they don't bleed into the next user's session
-          set({ savedPropertyIds: [] })
-        }
-      })
+      // ── Cloud sync (called by authStore) ───────────────────────────────────
 
       return {
       results: [],
@@ -152,7 +130,7 @@ export const useSearchStore = create<SearchState>()(
               'resort': ['resort'],
               'boutique': ['boutique'],
             }
-            let matchTypes: string[] = []
+            const matchTypes: string[] = []
             for (const [type, keywords] of Object.entries(typeMap)) {
               if (keywords.some((k) => typeStr.includes(k))) {
                 matchTypes.push(type)
@@ -281,6 +259,19 @@ export const useSearchStore = create<SearchState>()(
           ],
         }))
       },
+
+      syncSavedProperties: async (userId) => {
+        const cloudIds = await fetchSavedPropertyIds(userId)
+        const localIds = get().savedPropertyIds
+        const localOnly = localIds.filter((id) => !cloudIds.includes(id))
+        for (const id of localOnly) {
+          saveProperty(userId, id)
+        }
+        const merged = Array.from(new Set([...localIds, ...cloudIds]))
+        set({ savedPropertyIds: merged })
+      },
+
+      clearSavedProperties: () => set({ savedPropertyIds: [] }),
     }
     },
     {
