@@ -41,25 +41,25 @@ export default function FiltersScreen() {
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       {/* Backdrop */}
       <motion.div
-        className="absolute inset-0"
-        style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)' }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        style={{ zIndex: -1 }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
         onClick={handleClose}
       />
 
-      {/* Sheet — glass-bottom-sheet */}
+      {/* Sheet — dark theme */}
       <motion.div
-        className="relative glass-bottom-sheet w-full max-w-md mx-auto rounded-t-[32px] overflow-hidden"
-        style={{ maxHeight: '90dvh', overflowY: 'auto' }}
+        className="relative bg-[#2a2438] w-full max-w-md mx-auto rounded-t-[32px] overflow-hidden shadow-2xl"
+        style={{ maxHeight: '90dvh', overflowY: 'auto', borderTop: '1px solid rgba(255,255,255,0.1)' }}
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
       >
         {/* Handle */}
-        <div className="flex justify-center pt-3 pb-0">
-          <div className="w-10 h-1 rounded-full bg-gray-300" />
+        <div className="flex justify-center pt-4 pb-0">
+          <div className="w-12 h-1 bg-white/20 rounded-full" />
         </div>
 
         {/* Header */}
@@ -69,7 +69,7 @@ export default function FiltersScreen() {
               fontFamily: "'Syne', sans-serif",
               fontSize: '1.375rem',
               fontWeight: 700,
-              color: '#93441A',
+              color: 'white',
               lineHeight: 1.2,
             }}
           >
@@ -77,14 +77,10 @@ export default function FiltersScreen() {
           </h2>
           <button
             onClick={handleClose}
-            className="w-9 h-9 flex items-center justify-center rounded-full"
-            style={{
-              background: 'rgba(255,255,255,0.6)',
-              boxShadow: '2px 2px 6px rgba(0,0,0,0.08), -2px -2px 6px rgba(255,255,255,0.9)',
-            }}
+            className="neu-icon-btn w-9 h-9 flex items-center justify-center text-white"
             aria-label="Cerrar filtros"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#5a4137' }}>close</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
           </button>
         </div>
 
@@ -98,7 +94,7 @@ export default function FiltersScreen() {
                 fontFamily: "'Syne', sans-serif",
                 fontSize: '0.9375rem',
                 fontWeight: 700,
-                color: '#1b1c1c',
+                color: 'white',
                 marginBottom: '0.75rem',
               }}
             >
@@ -114,14 +110,11 @@ export default function FiltersScreen() {
                     className="py-2.5 px-3 rounded-xl text-sm font-semibold transition-all"
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      color: active ? '#FF6B1F' : '#5a4137',
+                      color: active ? '#FF6B1F' : 'rgba(255,255,255,0.7)',
                       background: active
-                        ? 'white'
-                        : 'rgba(255,255,255,0.5)',
-                      border: active ? '1px solid rgba(255,107,31,0.20)' : '1px solid white',
-                      boxShadow: active
-                        ? 'inset 2px 2px 6px rgba(0,0,0,0.05)'
-                        : '4px 4px 8px rgba(0,0,0,0.05), -4px -4px 8px rgba(255,255,255,0.8)',
+                        ? 'rgba(255,107,31,0.15)'
+                        : 'rgba(255,255,255,0.05)',
+                      border: active ? '1px solid rgba(255,107,31,0.30)' : '1px solid rgba(255,255,255,0.1)',
                     }}
                   >
                     {opt.label}
@@ -138,7 +131,7 @@ export default function FiltersScreen() {
                 fontFamily: "'Syne', sans-serif",
                 fontSize: '0.9375rem',
                 fontWeight: 700,
-                color: '#1b1c1c',
+                color: 'white',
                 marginBottom: '0.75rem',
               }}
             >
@@ -154,12 +147,9 @@ export default function FiltersScreen() {
                     className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all"
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      color: active ? '#FF6B1F' : '#5a4137',
-                      background: active ? 'white' : 'rgba(255,255,255,0.5)',
-                      border: active ? '1px solid rgba(255,107,31,0.20)' : '1px solid white',
-                      boxShadow: active
-                        ? 'inset 2px 2px 6px rgba(0,0,0,0.05)'
-                        : '4px 4px 8px rgba(0,0,0,0.05), -4px -4px 8px rgba(255,255,255,0.8)',
+                      color: active ? '#FF6B1F' : 'rgba(255,255,255,0.7)',
+                      background: active ? 'rgba(255,107,31,0.15)' : 'rgba(255,255,255,0.05)',
+                      border: active ? '1px solid rgba(255,107,31,0.30)' : '1px solid rgba(255,255,255,0.1)',
                     }}
                   >
                     <span>{t.icon}</span>
@@ -178,7 +168,7 @@ export default function FiltersScreen() {
                   fontFamily: "'Syne', sans-serif",
                   fontSize: '0.9375rem',
                   fontWeight: 700,
-                  color: '#1b1c1c',
+                  color: 'white',
                 }}
               >
                 Precio por noche
@@ -205,8 +195,8 @@ export default function FiltersScreen() {
               style={{ accentColor: '#FF6B1F' }}
             />
             <div className="flex justify-between mt-1">
-              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', color: '#8e7166' }}>$0</span>
-              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', color: '#8e7166' }}>$1000</span>
+              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>$0</span>
+              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>$1000</span>
             </div>
           </div>
 
@@ -217,7 +207,7 @@ export default function FiltersScreen() {
                 fontFamily: "'Syne', sans-serif",
                 fontSize: '0.9375rem',
                 fontWeight: 700,
-                color: '#1b1c1c',
+                color: 'white',
                 marginBottom: '0.75rem',
               }}
             >
@@ -234,12 +224,9 @@ export default function FiltersScreen() {
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
                       fontSize: '0.8125rem',
-                      color: active ? '#FF6B1F' : '#5a4137',
-                      background: active ? 'white' : 'rgba(255,255,255,0.5)',
-                      border: active ? '1px solid rgba(255,107,31,0.20)' : '1px solid white',
-                      boxShadow: active
-                        ? 'inset 2px 2px 6px rgba(0,0,0,0.05)'
-                        : '4px 4px 8px rgba(0,0,0,0.05), -4px -4px 8px rgba(255,255,255,0.8)',
+                      color: active ? '#FF6B1F' : 'rgba(255,255,255,0.7)',
+                      background: active ? 'rgba(255,107,31,0.15)' : 'rgba(255,255,255,0.05)',
+                      border: active ? '1px solid rgba(255,107,31,0.30)' : '1px solid rgba(255,255,255,0.1)',
                     }}
                   >
                     {r === 0 ? 'Todos' : `${r}★`}
@@ -258,10 +245,9 @@ export default function FiltersScreen() {
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: '0.9375rem',
-                color: '#5a4137',
-                background: 'rgba(255,255,255,0.5)',
-                border: '1px solid white',
-                boxShadow: '4px 4px 8px rgba(0,0,0,0.05), -4px -4px 8px rgba(255,255,255,0.8)',
+                color: 'rgba(255,255,255,0.8)',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.15)',
               }}
             >
               Limpiar
