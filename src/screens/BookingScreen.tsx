@@ -95,14 +95,14 @@ export default function BookingScreen() {
   const totalEstimate = property.pricePerNight * nights + 850 + 220 + 45
 
   const handleSharePDF = () => {
-    const element = document.getElementById('booking-summary-pdf')
+    const element = document.getElementById('booking-pdf-template')
     if (!element) return
 
     const opt = {
       margin:       15,
       filename:     `Planify_Viaje_${property.name.replace(/\s+/g, '_')}.pdf`,
       image:        { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0d0d0d' },
+      html2canvas:  { scale: 2, useCORS: true },
       jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
     }
 
@@ -126,7 +126,7 @@ export default function BookingScreen() {
         }
       />
 
-      <main id="booking-summary-pdf" className="flex-1 relative z-10 px-6 pb-72 max-w-md mx-auto w-full">
+      <main className="flex-1 relative z-10 px-6 pb-72 max-w-md mx-auto w-full">
         <motion.div
           variants={staggerContainer}
           initial="initial"
@@ -325,6 +325,55 @@ export default function BookingScreen() {
       </div>
 
       <BottomNav />
+
+      {/* Hidden PDF Template for Booking */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+        <div id="booking-pdf-template" style={{ padding: '40px', fontFamily: 'sans-serif', color: '#000', backgroundColor: '#fff', width: '800px' }}>
+          <h1 style={{ fontSize: '28px', marginBottom: '10px', color: '#ff6b1f', fontWeight: 'bold' }}>Planify - Tu Viaje a {property.name}</h1>
+          <p style={{ fontSize: '16px', color: '#555', marginBottom: '30px' }}>
+            Del {checkIn} al {checkOut} ({nights} noches) para {travelers} viajero{travelers > 1 ? 's' : ''}
+          </p>
+
+          <h2 style={{ fontSize: '20px', borderBottom: '2px solid #eee', paddingBottom: '10px', marginBottom: '20px', color: '#333' }}>
+            Resumen Estimado
+          </h2>
+          <div style={{ marginBottom: '40px', fontSize: '28px', fontWeight: 'bold', color: '#111' }}>
+            Total: ${totalEstimate.toLocaleString()} USD
+            <span style={{ fontSize: '16px', color: '#777', fontWeight: 'normal', marginLeft: '10px' }}>
+              {travelers > 1 ? '/ por persona' : ''}
+            </span>
+          </div>
+
+          <h2 style={{ fontSize: '20px', borderBottom: '2px solid #eee', paddingBottom: '10px', marginBottom: '20px', color: '#333' }}>
+            Desglose para Reservar
+          </h2>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {BOOKING_ITEMS.map((item) => {
+              const price = item.priceKey === 'base' ? property.pricePerNight * nights : item.extra ?? 0
+              const fakeUrl = `https://www.${item.platform.toLowerCase()}.com/planify-booking`
+              return (
+                <li key={item.label} style={{ marginBottom: '20px', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '12px', border: '1px solid #eaeaea' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '18px', marginBottom: '8px', color: '#111' }}>
+                    {item.label} — {item.label === 'Alojamiento' ? property.name : item.platform}
+                  </div>
+                  <div style={{ fontSize: '16px', marginBottom: '12px', color: '#444' }}>
+                    Costo estimado: <strong style={{ color: '#22c55e' }}>${price}</strong>
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#666', backgroundColor: '#fff', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}>
+                    Link de reserva:{' '}
+                    <a href={fakeUrl} style={{ color: '#0066cc', textDecoration: 'none', wordBreak: 'break-all' }}>{fakeUrl}</a>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+          
+          <div style={{ marginTop: '50px', fontSize: '14px', color: '#999', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+            Este documento es un resumen estimado generado por Planify.<br/>
+            Los precios finales están sujetos a disponibilidad en cada plataforma.
+          </div>
+        </div>
+      </div>
     </AppBackground>
   )
 }

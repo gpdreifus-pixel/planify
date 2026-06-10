@@ -8,7 +8,7 @@ interface ChatAnswerChipsProps {
   selectedValues?: string[]
 }
 
-export default function ChatAnswerChips({ chips, onSelect, isMulti, selectedValues = [] }: ChatAnswerChipsProps) {
+export default function ChatAnswerChips({ chips, onSelect, selectedValues = [] }: ChatAnswerChipsProps) {
   return (
     <motion.div
       className="flex flex-wrap ml-[52px] gap-3 mt-6"

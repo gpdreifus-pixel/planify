@@ -36,14 +36,14 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation()
-    const element = document.getElementById(`trip-card-${trip.id}`)
+    const element = document.getElementById(`trip-pdf-template-${trip.id}`)
     if (!element) return
 
     const opt = {
       margin:       5,
       filename:     `Planify_Reserva_${trip.property.name.replace(/\s+/g, '_')}.pdf`,
       image:        { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0d0d0d' },
+      html2canvas:  { scale: 2, useCORS: true },
       jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
     }
 
@@ -156,6 +156,34 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
           >
             ${trip.totalPrice.toLocaleString()}
           </span>
+        </div>
+      </div>
+
+      {/* Hidden PDF Template for MyTrips */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+        <div id={`trip-pdf-template-${trip.id}`} style={{ padding: '40px', fontFamily: 'sans-serif', color: '#000', backgroundColor: '#fff', width: '800px' }}>
+          <h1 style={{ fontSize: '28px', marginBottom: '10px', color: '#ff6b1f', fontWeight: 'bold' }}>Planify - Resumen de Viaje</h1>
+          <h2 style={{ fontSize: '22px', marginBottom: '20px', color: '#111' }}>{trip.property.name}</h2>
+          <p style={{ fontSize: '16px', color: '#555', marginBottom: '30px' }}>
+            Del {formatDate(trip.checkIn)} al {formatDate(trip.checkOut)} ({nights} noches) para {trip.travelers} viajero{trip.travelers > 1 ? 's' : ''}
+          </p>
+
+          <div style={{ marginBottom: '40px', fontSize: '24px', fontWeight: 'bold', color: '#111', borderBottom: '2px solid #eee', paddingBottom: '20px' }}>
+            Total Pagado: ${trip.totalPrice.toLocaleString()} USD
+          </div>
+
+          <div style={{ fontSize: '16px', marginBottom: '12px', color: '#333' }}>
+            <strong>Estado de la reserva:</strong> <span style={{ color: '#ff6b1f', backgroundColor: '#fff0e6', padding: '4px 8px', borderRadius: '4px' }}>{status.label}</span>
+          </div>
+          
+          <div style={{ fontSize: '16px', marginBottom: '30px', color: '#333' }}>
+            <strong>Código de Confirmación:</strong> <span style={{ fontFamily: 'monospace', backgroundColor: '#f5f5f5', padding: '4px 8px', borderRadius: '4px' }}>{trip.confirmationCode}</span>
+          </div>
+
+          <div style={{ marginTop: '50px', fontSize: '14px', color: '#999', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+            Este documento es un comprobante generado por Planify.<br/>
+            Si necesitas asistencia, contacta al soporte técnico.
+          </div>
         </div>
       </div>
     </motion.div>
