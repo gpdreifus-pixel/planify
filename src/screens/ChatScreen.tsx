@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
@@ -17,6 +17,7 @@ export default function ChatScreen() {
   const navigate = useNavigate()
   const { setStep, userInput, setUserInput, setCriteria } = useChatStore()
   const { search } = useSearchStore()
+  const [selectedChips, setSelectedChips] = useState<string[]>([])
 
   const stepNum = parseInt(stepParam ?? '1', 10)
   const totalSteps = CHAT_STEPS.length
@@ -24,15 +25,20 @@ export default function ChatScreen() {
   useEffect(() => {
     if (stepNum >= 1 && stepNum <= totalSteps) {
       setStep(stepNum)
+      setSelectedChips([])
     }
   }, [stepNum, setStep, totalSteps])
 
   const stepData = CHAT_STEPS[stepNum - 1]
   const progress = (stepNum / totalSteps) * 100
 
-  const advance = async (value?: string) => {
+  const advance = async (value?: string | string[]) => {
     const answer = value ?? userInput
-    if (!answer.trim() && !value) return
+    if (Array.isArray(answer)) {
+      if (answer.length === 0) return
+    } else {
+      if (!answer.trim() && !value) return
+    }
 
     // Save to criteria
     if (stepData?.field) {
@@ -44,9 +50,33 @@ export default function ChatScreen() {
       navigate(`/chat/${stepNum + 1}`)
     } else {
       // Last step → search with accumulated criteria + go to summary
-      const { criteria } = useChatStore.getState()
-      await search(criteria)
+      const currentCriteria = useChatStore.getState().criteria
+      await search(currentCriteria)
       navigate('/chat/summary')
+    }
+  }
+
+  const handleChipSelect = (chip: string) => {
+    if (stepData?.isMulti) {
+      if (chip.includes('Nada más') || chip.includes('Ninguno')) {
+        setSelectedChips([chip])
+      } else {
+        setSelectedChips((prev) => {
+          const withoutNone = prev.filter(c => !c.includes('Nada más') && !c.includes('Ninguno'))
+          if (withoutNone.includes(chip)) {
+            return withoutNone.filter((c) => c !== chip)
+          }
+          return [...withoutNone, chip]
+        })
+      }
+    } else {
+      advance(chip)
+    }
+  }
+
+  const advanceMulti = () => {
+    if (selectedChips.length > 0) {
+      advance(selectedChips)
     }
   }
 
@@ -100,20 +130,39 @@ export default function ChatScreen() {
           <ChatBubble question={stepData.question} hint={stepData.hint} />
 
           {stepData.chips && stepData.chips.length > 0 && (
-            <ChatAnswerChips
-              chips={stepData.chips}
-              onSelect={(chip) => advance(chip)}
-            />
+            <div className="flex flex-col">
+              <ChatAnswerChips
+                chips={stepData.chips}
+                onSelect={handleChipSelect}
+                isMulti={stepData.isMulti}
+                selectedValues={selectedChips}
+              />
+              {stepData.isMulti && selectedChips.length > 0 && (
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={advanceMulti}
+                  className="mt-6 ml-[52px] w-fit px-8 py-3 rounded-full neu-btn-primary text-white font-bold flex items-center gap-2"
+                  style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem' }}
+                >
+                  Continuar
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+                </motion.button>
+              )}
+            </div>
           )}
         </motion.main>
       </AnimatePresence>
 
-      <ChatInputBar
-        value={userInput}
-        onChange={setUserInput}
-        onSend={() => advance()}
-        placeholder={stepData.placeholder}
-      />
+      {!stepData.isMulti && (
+        <ChatInputBar
+          value={userInput}
+          onChange={setUserInput}
+          onSend={() => advance()}
+          placeholder={stepData.placeholder}
+        />
+      )}
     </AppBackground>
   )
 }

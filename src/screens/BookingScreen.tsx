@@ -9,6 +9,7 @@ import { useTripsStore } from '../store/tripsStore'
 import { useChatStore } from '../store/chatStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
+import html2pdf from 'html2pdf.js'
 
 const BOOKING_ITEMS = [
   { icon: 'bed',            label: 'Alojamiento', platform: 'Airbnb',    priceKey: 'base' as const },
@@ -93,11 +94,39 @@ export default function BookingScreen() {
 
   const totalEstimate = property.pricePerNight * nights + 850 + 220 + 45
 
+  const handleSharePDF = () => {
+    const element = document.getElementById('booking-summary-pdf')
+    if (!element) return
+
+    const opt = {
+      margin:       15,
+      filename:     `Planify_Viaje_${property.name.replace(/\s+/g, '_')}.pdf`,
+      image:        { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0d0d0d' },
+      jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
+    }
+
+    html2pdf().set(opt).from(element).save()
+  }
+
   return (
     <AppBackground variant="chat">
-      <TopAppBar backTo={`/results/${id}`} title="Reservar tu viaje" />
+      <TopAppBar 
+        backTo={`/results/${id}`} 
+        title="Reservar tu viaje" 
+        rightSlot={
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={handleSharePDF}
+            className="w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white hover:bg-white/10"
+            title="Compartir en PDF"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>share</span>
+          </motion.button>
+        }
+      />
 
-      <main className="flex-1 relative z-10 px-6 pb-72 max-w-md mx-auto w-full">
+      <main id="booking-summary-pdf" className="flex-1 relative z-10 px-6 pb-72 max-w-md mx-auto w-full">
         <motion.div
           variants={staggerContainer}
           initial="initial"

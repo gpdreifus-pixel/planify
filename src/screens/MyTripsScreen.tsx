@@ -9,6 +9,7 @@ import { useSearchStore } from '../store/searchStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 import type { Trip } from '../types'
+import html2pdf from 'html2pdf.js'
 
 type TripTab = 'active' | 'past' | 'saved'
 
@@ -33,8 +34,25 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
   const progress = trip.status === 'confirmed' || trip.status === 'completed' ? 100 :
                    trip.status === 'active' ? 65 : 35
 
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const element = document.getElementById(`trip-card-${trip.id}`)
+    if (!element) return
+
+    const opt = {
+      margin:       5,
+      filename:     `Planify_Reserva_${trip.property.name.replace(/\s+/g, '_')}.pdf`,
+      image:        { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0d0d0d' },
+      jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
+    }
+
+    html2pdf().set(opt).from(element).save()
+  }
+
   return (
     <motion.div
+      id={`trip-card-${trip.id}`}
       variants={staggerItem}
       whileTap={{ scale: 0.97 }}
       whileHover={{ y: -4 }}
@@ -63,6 +81,13 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
         >
           {status.label}
         </div>
+        {/* Share button */}
+        <button
+          onClick={handleShare}
+          className="absolute top-3 left-3 w-8 h-8 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-white"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>share</span>
+        </button>
       </div>
 
       {/* Content */}

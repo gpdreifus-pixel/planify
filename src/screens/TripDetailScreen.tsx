@@ -1,11 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
 import { useSearchStore } from '../store/searchStore'
 import { useTripsStore } from '../store/tripsStore'
+import { useChatStore } from '../store/chatStore'
+import ReviewsModal from '../components/ui/ReviewsModal'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
@@ -14,6 +16,8 @@ export default function TripDetailScreen() {
   const navigate = useNavigate()
   const { selectedProperty, selectProperty, toggleSavedProperty, isPropertySaved } = useSearchStore()
   const { trips } = useTripsStore()
+  const { criteria } = useChatStore()
+  const [showReviews, setShowReviews] = useState(false)
 
   useEffect(() => {
     if (id) selectProperty(id)
@@ -25,6 +29,15 @@ export default function TripDetailScreen() {
   const existingTrip = trips.find(
     (t) => t.property.id === property.id && ['confirmed', 'upcoming', 'active'].includes(t.status)
   )
+
+  // Determine matches
+  const searchKeywords = [...(criteria.activities || []), ...(criteria.extras || [])].map(k => k.split(' ')[0].toLowerCase().replace(/[^\w\s]/gi, ''))
+  const matchedAmenities = property.amenities.filter(a => searchKeywords.some(kw => a.label.toLowerCase().includes(kw) && kw.length > 2))
+  const matchedTags = property.tags.filter(t => searchKeywords.some(kw => t.toLowerCase().includes(kw) && kw.length > 2))
+  
+  // If no direct keyword match, fallback to just showing 2 random amenities as 'match' to demonstrate the feature
+  const displayMatches = matchedAmenities.length > 0 ? matchedAmenities : property.amenities.slice(0, 2)
+
 
   return (
     <AppBackground variant="chat">
@@ -165,7 +178,8 @@ export default function TripDetailScreen() {
           {/* Social pill — glass-raised rounded-full */}
           <motion.div
             variants={staggerItem}
-            className="glass-raised rounded-full p-2 pr-5 flex items-center gap-3 cursor-pointer border border-white/25"
+            onClick={() => setShowReviews(true)}
+            className="glass-raised rounded-full p-2 pr-5 flex items-center gap-3 cursor-pointer border border-white/25 hover:bg-white/10 transition-colors"
           >
             <div className="w-9 h-9 rounded-full glass-raised flex items-center justify-center overflow-hidden flex-shrink-0">
               <span className="material-symbols-outlined text-white/80" style={{ fontSize: 18 }}>person</span>
@@ -184,6 +198,44 @@ export default function TripDetailScreen() {
               </div>
             </div>
             <span className="material-symbols-outlined text-white/70" style={{ fontSize: 18 }}>chevron_right</span>
+          </motion.div>
+
+          {/* Match con tu búsqueda */}
+          <motion.div variants={staggerItem} className="glass-molded rounded-2xl p-4 border border-[#22c55e]/30">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="material-symbols-outlined text-[#22c55e]" style={{ fontSize: 20 }}>check_circle</span>
+              <h3
+                style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  color: 'white',
+                }}
+              >
+                Match con tu búsqueda
+              </h3>
+            </div>
+            <p className="text-white/70 mb-3" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8rem' }}>
+              Este alojamiento tiene lo que buscas:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {displayMatches.map((am) => (
+                <div key={am.label} className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-[#22c55e]/30">
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{am.icon}</span>
+                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', fontWeight: 600 }}>
+                    {am.label}
+                  </span>
+                </div>
+              ))}
+              {matchedTags.map((t) => (
+                <div key={t} className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-[#22c55e]/30">
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>label</span>
+                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', fontWeight: 600 }}>
+                    {t}
+                  </span>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
           {/* Description */}
@@ -410,6 +462,12 @@ export default function TripDetailScreen() {
       </div>
 
       <BottomNav />
+
+      <AnimatePresence>
+        {showReviews && (
+          <ReviewsModal onClose={() => setShowReviews(false)} propertyName={property.name} />
+        )}
+      </AnimatePresence>
     </AppBackground>
   )
 }

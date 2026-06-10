@@ -61,6 +61,7 @@ export interface ChatStep {
   chips?: string[]
   placeholder: string
   field: keyof TripSearchCriteria
+  isMulti?: boolean
 }
 
 // ── Properties / Results ──────────────────────────────────────────────────
