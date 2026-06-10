@@ -116,20 +116,11 @@ export default function AuthScreen() {
           <div className="absolute -top-8 -left-3 w-20 h-20 rounded-full neu-pressed opacity-40 pointer-events-none" />
           <div className="absolute top-16 -right-6 w-14 h-14 rounded-full neu-flat opacity-50 pointer-events-none" />
 
-          {/* Brand header — 42px font-medium tracking-wider */}
-          <div className="text-center relative z-10">
-            <h1
-              className="text-white drop-shadow-md pb-1"
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '2.625rem',
-                fontWeight: 500,
-                lineHeight: 1.1,
-                letterSpacing: '0.04em',
-              }}
-            >
-              Planify
-            </h1>
+          {/* Brand header */}
+          <div className="text-center relative z-10 flex flex-col items-center">
+            <div className="bg-white/95 px-6 py-3 rounded-2xl shadow-lg mb-2 inline-flex items-center justify-center">
+              <img src="/src/assets/logo-full.png" alt="Planify Logo" className="h-10 object-contain drop-shadow-sm" />
+            </div>
             <p
               className="text-white/90 drop-shadow-sm"
               style={{
