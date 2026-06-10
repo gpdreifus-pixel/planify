@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Trip, Property, TripSearchCriteria } from '../types'
 import { supabase } from '../utils/supabase'
-import { fetchUserTrips, upsertTrip, updateTripStatus } from '../services/db'
+import { fetchUserTrips, upsertTrip, updateTripStatus, deleteUserTrip } from '../services/db'
 
 interface TripsState {
   trips: Trip[]
@@ -78,6 +78,9 @@ export const useTripsStore = create<TripsState>()(
           set((state) => ({
             trips: state.trips.filter((t) => t.id !== tripId),
           }))
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user) deleteUserTrip(tripId)
+          })
         },
 
         addNote: (tripId, note) => {

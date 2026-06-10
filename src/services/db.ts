@@ -87,6 +87,11 @@ export async function updateTripStatus(
   if (error) console.warn('[db] updateTripStatus:', error.message)
 }
 
+export async function deleteUserTrip(tripId: string): Promise<void> {
+  const { error } = await supabase.from('trips').delete().eq('id', tripId)
+  if (error) console.warn('[db] deleteUserTrip:', error.message)
+}
+
 // ─── Saved Properties ─────────────────────────────────────────────────────────
 
 export async function fetchSavedPropertyIds(userId: string): Promise<string[]> {
