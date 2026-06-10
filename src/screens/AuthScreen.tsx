@@ -113,13 +113,9 @@ export default function AuthScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
         >
-          {/* Decorative blur orbs */}
-          <div className="absolute -top-8 -left-3 w-20 h-20 rounded-full neu-pressed opacity-40 pointer-events-none" />
-          <div className="absolute top-16 -right-6 w-14 h-14 rounded-full neu-flat opacity-50 pointer-events-none" />
-
           {/* Brand header */}
           <div className="text-center relative z-10 flex flex-col items-center">
-            <img src={logoFullSrc} alt="Planify Logo" className="h-14 object-contain drop-shadow-md mb-2" />
+            <img src={logoFullSrc} alt="Planify Logo" className="h-20 w-auto object-contain drop-shadow-md mb-2" />
             <p
               className="text-white/90 drop-shadow-sm"
               style={{
