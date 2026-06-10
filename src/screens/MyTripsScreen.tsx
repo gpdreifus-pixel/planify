@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
@@ -206,6 +206,14 @@ export default function MyTripsScreen() {
   const { trips, deleteTrip } = useTripsStore()
   const { savedPropertyIds, results } = useSearchStore()
   const [activeTab, setActiveTab] = useState<TripTab>('active')
+  const [tripToDelete, setTripToDelete] = useState<string | null>(null)
+
+  const confirmDelete = () => {
+    if (tripToDelete) {
+      deleteTrip(tripToDelete)
+      setTripToDelete(null)
+    }
+  }
 
   const upcoming = trips.filter((t) => ['upcoming', 'confirmed', 'active', 'planning'].includes(t.status))
   const past = trips.filter((t) => ['completed', 'cancelled'].includes(t.status))
@@ -417,7 +425,7 @@ export default function MyTripsScreen() {
                   key={trip.id}
                   trip={trip}
                   onPress={() => navigate(`/results/${trip.property.id}`)}
-                  onDelete={() => deleteTrip(trip.id)}
+                  onDelete={() => setTripToDelete(trip.id)}
                 />
               ))}
             </motion.div>
@@ -444,6 +452,52 @@ export default function MyTripsScreen() {
       </div>
 
       <BottomNav />
+
+      <AnimatePresence>
+        {tripToDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center px-6 bg-black/60 backdrop-blur-sm"
+            onClick={() => setTripToDelete(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass-molded rounded-3xl p-6 max-w-sm w-full text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-[#ffb4ab]/20 text-[#ffb4ab] flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined" style={{ fontSize: 32 }}>delete_forever</span>
+              </div>
+              <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                ¿Eliminar este viaje?
+              </h3>
+              <p className="text-white/70 mb-6" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9rem' }}>
+                Esta acción no se puede deshacer y el viaje se borrará de tu historial.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setTripToDelete(null)}
+                  className="flex-1 py-3 rounded-full border border-white/20 text-white font-semibold hover:bg-white/10 transition-colors"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.95rem' }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-3 rounded-full bg-[#ffb4ab] text-black font-bold hover:bg-[#ff8f82] transition-colors"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.95rem' }}
+                >
+                  Sí, eliminar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AppBackground>
   )
 }
