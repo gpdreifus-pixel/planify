@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import { useAuthStore } from '../store/authStore'
+import logoFullSrc from '../assets/logo-full.png'
 
 export default function HomeScreen() {
   const navigate = useNavigate()
@@ -28,8 +29,13 @@ export default function HomeScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.38, ease: 'easeOut' }}
         >
+          {/* Logo */}
+          <div className="flex justify-center mb-[-10px] relative z-10">
+            <img src={logoFullSrc} alt="Planify Logo" className="h-10 object-contain drop-shadow-md" />
+          </div>
+
           {/* Badge — neu-pressed pill with icon */}
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-2">
             <div className="neu-pressed rounded-full px-4 py-2 flex items-center gap-2">
               <span
                 className="material-symbols-outlined"

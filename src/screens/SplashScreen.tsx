@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
+import logoSrc from '../assets/logo.png'
 
 interface SplashScreenProps {
   onComplete: () => void
@@ -20,28 +21,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.6, ease: 'easeInOut' } }}
     >
-      {/* Elementos inmersivos de fondo (ondas/chispas mágicas de IA) */}
-      <motion.div
-        className="absolute w-[600px] h-[600px] rounded-full"
-        style={{
-          background: 'radial-gradient(circle, rgba(255,107,31,0.15) 0%, rgba(0,0,0,0) 70%)',
-          filter: 'blur(40px)',
-        }}
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: [0.5, 1.2, 1], opacity: [0, 1, 0.8] }}
-        transition={{ duration: 2, ease: "easeOut" }}
-      />
-      <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full"
-        style={{
-          background: 'radial-gradient(circle, rgba(255,140,66,0.2) 0%, rgba(0,0,0,0) 70%)',
-          filter: 'blur(30px)',
-        }}
-        initial={{ scale: 0.2, opacity: 0 }}
-        animate={{ scale: [0.2, 1.5, 1], opacity: [0, 0.8, 0] }}
-        transition={{ duration: 2.2, delay: 0.2, ease: "easeInOut" }}
-      />
-
       {/* Contenedor principal del Logo */}
       <motion.div
         className="relative z-10 flex flex-col items-center"
@@ -50,7 +29,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
       >
         <motion.img
-          src="/src/assets/logo.png"
+          src={logoSrc}
           alt="Planify Logo"
           className="w-32 h-32 object-contain"
           initial={{ filter: 'drop-shadow(0 0 0px rgba(255,107,31,0))' }}
