@@ -26,7 +26,7 @@ export default function ChatAnswerChips({ chips, onSelect, isMulti, selectedValu
             whileHover={{ scale: 1.05, y: -2, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 420, damping: 22 }}
             className={`px-5 py-2.5 rounded-full flex items-center gap-2 transition-colors border ${
-              isSelected || !isMulti
+              isSelected
                 ? 'btn-primary border-transparent'
                 : 'bg-white/10 border-white/20 hover:bg-white/20'
             }`}
