@@ -153,6 +153,22 @@ export const useSearchStore = create<SearchState>()(
             }
           }
 
+          // 4. Activities & Extras (Weight: +15 each)
+          const searchKeywords = [...(criteria.activities || []), ...(criteria.extras || [])]
+            .map(k => k.toLowerCase().replace(/[^\w\s\-áéíóúüñ]/gi, '').trim())
+            .filter(Boolean)
+
+          for (const kw of searchKeywords) {
+            // Check amenities
+            if (p.amenities.some(a => a.label.toLowerCase().includes(kw) || kw.includes(a.label.toLowerCase().replace(/[^\w\s\-áéíóúüñ]/gi, '').trim()))) {
+              score += 15
+            }
+            // Check tags
+            if (p.tags.some(t => t.toLowerCase().includes(kw) || kw.includes(t.toLowerCase().replace(/[^\w\s\-áéíóúüñ]/gi, '').trim()))) {
+              score += 15
+            }
+          }
+
           return { property: p, score }
         })
 

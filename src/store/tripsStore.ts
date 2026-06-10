@@ -17,6 +17,7 @@ interface TripsState {
   ) => Trip
   setActiveTrip: (tripId: string) => void
   cancelTrip: (tripId: string) => void
+  deleteTrip: (tripId: string) => void
   addNote: (tripId: string, note: string) => void
   syncTrips: (userId: string) => Promise<void>
   clearTrips: () => void
@@ -71,6 +72,12 @@ export const useTripsStore = create<TripsState>()(
           supabase.auth.getSession().then(({ data: { session } }) => {
             if (session?.user) updateTripStatus(tripId, 'cancelled')
           })
+        },
+
+        deleteTrip: (tripId) => {
+          set((state) => ({
+            trips: state.trips.filter((t) => t.id !== tripId),
+          }))
         },
 
         addNote: (tripId, note) => {

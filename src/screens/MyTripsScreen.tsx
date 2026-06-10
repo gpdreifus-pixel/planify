@@ -22,7 +22,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
   planning:  { label: 'Planificando', color: '#ffb597', bg: 'rgba(255,181,151,0.20)' },
 }
 
-function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
+function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void; onDelete: () => void }) {
   const status = STATUS_LABELS[trip.status] ?? STATUS_LABELS.planning
   const nights =
     (new Date(trip.checkOut).getTime() - new Date(trip.checkIn).getTime()) /
@@ -87,6 +87,17 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
           className="absolute top-3 left-3 w-8 h-8 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-white"
         >
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>share</span>
+        </button>
+        {/* Delete button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete()
+          }}
+          className="absolute top-3 left-14 w-8 h-8 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-[#ffb4ab] transition-colors"
+          title="Eliminar viaje"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
         </button>
       </div>
 
@@ -192,7 +203,7 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
 
 export default function MyTripsScreen() {
   const navigate = useNavigate()
-  const { trips } = useTripsStore()
+  const { trips, deleteTrip } = useTripsStore()
   const { savedPropertyIds, results } = useSearchStore()
   const [activeTab, setActiveTab] = useState<TripTab>('active')
 
@@ -406,6 +417,7 @@ export default function MyTripsScreen() {
                   key={trip.id}
                   trip={trip}
                   onPress={() => navigate(`/results/${trip.property.id}`)}
+                  onDelete={() => deleteTrip(trip.id)}
                 />
               ))}
             </motion.div>

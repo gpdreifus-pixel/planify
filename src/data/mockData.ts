@@ -107,7 +107,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 120,
     currency: 'USD',
     type: 'boutique',
-    tags: ['Destacado', 'Vista al mar', 'Desayuno'],
+    tags: ['Destacado', 'Playa', 'Buceo', 'Snorkel', 'Gastronomía Local', 'Desayuno'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'pool', label: 'Piscina' },
@@ -135,7 +135,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 210,
     currency: 'USD',
     type: 'resort',
-    tags: ['Todo incluido', 'Family friendly'],
+    tags: ['Playa', 'Familia', 'Gastronomía Local'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'pool', label: 'Piscina' },
@@ -161,7 +161,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 35,
     currency: 'USD',
     type: 'hostel',
-    tags: ['Económico', 'Social', 'Surf'],
+    tags: ['Playa', 'Buceo', 'Naturaleza y Senderismo', 'Económico'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'kitchen', label: 'Cocina compartida' },
@@ -185,7 +185,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 295,
     currency: 'USD',
     type: 'resort',
-    tags: ['Lujo', 'All-inclusive', 'Spa'],
+    tags: ['Playa', 'Spa', 'Gastronomía Local', 'Shopping'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'pool', label: 'Piscina infinity' },
@@ -214,7 +214,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 55,
     currency: 'USD',
     type: 'apartment',
-    tags: ['Súper anfitrión', 'Cocina completa'],
+    tags: ['Cultura y Museos', 'Shopping', 'Gastronomía Local'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'kitchen', label: 'Cocina' },
@@ -238,7 +238,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 88,
     currency: 'USD',
     type: 'hotel',
-    tags: ['Céntrico', 'Desayuno incluido'],
+    tags: ['Cultura y Museos', 'Gastronomía Local', 'Shopping', 'Desayuno'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'restaurant', label: 'Restaurante' },
@@ -264,7 +264,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 22,
     currency: 'USD',
     type: 'hostel',
-    tags: ['Económico', 'Rooftop', 'Social'],
+    tags: ['Cultura y Museos', 'Gastronomía Local'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'kitchen', label: 'Cocina compartida' },
@@ -288,7 +288,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 185,
     currency: 'USD',
     type: 'hotel',
-    tags: ['Lujo', 'Spa', 'Restaurante gourmet'],
+    tags: ['Shopping', 'Cultura y Museos', 'Gastronomía Local'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'pool', label: 'Piscina climatizada' },
@@ -317,7 +317,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 140,
     currency: 'USD',
     type: 'boutique',
-    tags: ['Montaña', 'Chimenea', 'Vista al lago'],
+    tags: ['Naturaleza y Senderismo', 'Montaña'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'fireplace', label: 'Chimenea' },
@@ -343,7 +343,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 95,
     currency: 'USD',
     type: 'apartment',
-    tags: ['Naturaleza', 'Pareja', 'Aislada'],
+    tags: ['Naturaleza y Senderismo', 'Montaña', 'Pet-friendly'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'kitchen', label: 'Cocina completa' },
@@ -368,7 +368,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 28,
     currency: 'USD',
     type: 'hostel',
-    tags: ['Trekking', 'Mochileros', 'Económico'],
+    tags: ['Naturaleza y Senderismo', 'Deportes extremos', 'Montaña'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'kitchen', label: 'Cocina compartida' },
@@ -394,7 +394,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 160,
     currency: 'USD',
     type: 'boutique',
-    tags: ['Naturaleza', 'Cataratas', 'Eco-lodge'],
+    tags: ['Naturaleza y Senderismo', 'Cultura y Museos'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'pool', label: 'Piscina natural' },
@@ -420,7 +420,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 65,
     currency: 'USD',
     type: 'apartment',
-    tags: ['Moderno', 'Cocina completa', 'Céntrico'],
+    tags: ['Cultura y Museos', 'Shopping'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'kitchen', label: 'Cocina completa' },
@@ -445,7 +445,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 75,
     currency: 'USD',
     type: 'hotel',
-    tags: ['Cultura', 'Gastronomía', 'Céntrico'],
+    tags: ['Cultura y Museos', 'Gastronomía Local'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'restaurant', label: 'Restaurante peruano' },
@@ -470,7 +470,7 @@ export const MOCK_PROPERTIES: Property[] = [
     pricePerNight: 250,
     currency: 'USD',
     type: 'boutique',
-    tags: ['Lujo', 'Campo', 'Cabalgata'],
+    tags: ['Naturaleza y Senderismo', 'Gastronomía Local', 'Pet-friendly'],
     amenities: [
       { icon: 'wifi', label: 'WiFi gratis' },
       { icon: 'pool', label: 'Piscina' },

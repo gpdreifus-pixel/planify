@@ -31,12 +31,22 @@ export default function TripDetailScreen() {
   )
 
   // Determine matches
-  const searchKeywords = [...(criteria.activities || []), ...(criteria.extras || [])].map(k => k.split(' ')[0].toLowerCase().replace(/[^\w\s]/gi, ''))
-  const matchedAmenities = property.amenities.filter(a => searchKeywords.some(kw => a.label.toLowerCase().includes(kw) && kw.length > 2))
-  const matchedTags = property.tags.filter(t => searchKeywords.some(kw => t.toLowerCase().includes(kw) && kw.length > 2))
+  const searchKeywords = [...(criteria.activities || []), ...(criteria.extras || [])]
+    .map(k => k.toLowerCase().replace(/[^\w\s\-áéíóúüñ]/gi, '').trim())
+    .filter(Boolean)
+
+  const matchedAmenities = property.amenities.filter(a => {
+    const label = a.label.toLowerCase().replace(/[^\w\s\-áéíóúüñ]/gi, '').trim()
+    return searchKeywords.some(kw => kw.includes(label) || label.includes(kw))
+  })
   
-  // If no direct keyword match, fallback to just showing 2 random amenities as 'match' to demonstrate the feature
-  const displayMatches = matchedAmenities.length > 0 ? matchedAmenities : property.amenities.slice(0, 2)
+  const matchedTags = property.tags.filter(t => {
+    const tag = t.toLowerCase().replace(/[^\w\s\-áéíóúüñ]/gi, '').trim()
+    return searchKeywords.some(kw => kw.includes(tag) || tag.includes(kw))
+  })
+  
+  const displayAmenities = matchedAmenities.length > 0 || matchedTags.length > 0 ? matchedAmenities : property.amenities.slice(0, 2)
+  const displayTags = matchedAmenities.length > 0 || matchedTags.length > 0 ? matchedTags : []
 
 
   return (
@@ -219,7 +229,7 @@ export default function TripDetailScreen() {
               Este alojamiento tiene lo que buscas:
             </p>
             <div className="flex flex-wrap gap-2">
-              {displayMatches.map((am) => (
+              {displayAmenities.map((am) => (
                 <div key={am.label} className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-[#22c55e]/30">
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{am.icon}</span>
                   <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', fontWeight: 600 }}>
@@ -227,7 +237,7 @@ export default function TripDetailScreen() {
                   </span>
                 </div>
               ))}
-              {matchedTags.map((t) => (
+              {displayTags.map((t) => (
                 <div key={t} className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-[#22c55e]/30">
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>label</span>
                   <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', fontWeight: 600 }}>
