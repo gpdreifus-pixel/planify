@@ -30,8 +30,8 @@ export default function HomeScreen() {
           transition={{ duration: 0.38, ease: 'easeOut' }}
         >
           {/* Logo */}
-          <div className="flex justify-center mb-[-10px] relative z-10">
-            <img src={logoFullSrc} alt="Planify Logo" className="h-40 w-auto max-w-[90%] object-contain drop-shadow-md" />
+          <div className="flex justify-center relative z-10 pointer-events-none">
+            <img src={logoFullSrc} alt="Planify Logo" className="w-[320px] h-auto -my-16 scale-125 drop-shadow-md" />
           </div>
 
           {/* Badge — neu-pressed pill with icon */}
