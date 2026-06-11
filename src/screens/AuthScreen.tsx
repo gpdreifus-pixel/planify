@@ -115,7 +115,7 @@ export default function AuthScreen() {
         >
           {/* Brand header */}
           <div className="text-center relative z-10 flex flex-col items-center pointer-events-none">
-            <img src={logoFullSrc} alt="Planify Logo" className="w-[320px] h-auto -my-10 object-contain drop-shadow-md mb-2" />
+            <img src={logoFullSrc} alt="Planify Logo" className="w-[200px] sm:w-[220px] h-auto -my-8 object-contain drop-shadow-md mb-2" />
             <p
               className="text-white/90 drop-shadow-sm"
               style={{
