@@ -31,7 +31,7 @@ export default function HomeScreen() {
         >
           {/* Logo */}
           <div className="flex justify-center relative z-10 pointer-events-none">
-            <img src={logoFullSrc} alt="Planify Logo" className="w-[200px] sm:w-[220px] h-auto -my-8 object-contain drop-shadow-md" />
+            <img src={logoFullSrc} alt="Planify Logo" className="w-[200px] sm:w-[220px] h-auto -mt-20 -mb-12 object-contain drop-shadow-md" />
           </div>
 
           {/* Badge — neu-pressed pill with icon */}
