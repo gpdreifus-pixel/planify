@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import { useAuthStore } from '../store/authStore'
 import { useUIStore } from '../store/uiStore'
-import logoFullSrc from '../assets/logo-full.png'
+import logoFullSrc from '../assets/logo-full.svg'
 
 type Tab = 'login' | 'register' | 'forgot-password'
 
@@ -115,7 +115,7 @@ export default function AuthScreen() {
         >
           {/* Brand header */}
           <div className="text-center relative z-10 flex flex-col items-center pointer-events-none">
-            <img src={logoFullSrc} alt="Planify Logo" className="w-[320px] h-auto -my-16 scale-125 drop-shadow-md" />
+            <img src={logoFullSrc} alt="Planify Logo" className="w-[320px] h-auto -my-10 object-contain drop-shadow-md mb-2" />
             <p
               className="text-white/90 drop-shadow-sm"
               style={{
