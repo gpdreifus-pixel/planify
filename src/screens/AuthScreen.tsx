@@ -21,11 +21,13 @@ export default function AuthScreen() {
   // Login form
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
+  const [showLoginPw, setShowLoginPw] = useState(false)
 
   // Register form
   const [regName, setRegName] = useState('')
   const [regEmail, setRegEmail] = useState('')
   const [regPassword, setRegPassword] = useState('')
+  const [showRegPw, setShowRegPw] = useState(false)
 
   // Forgot password form
   const [resetEmail, setResetEmail] = useState('')
