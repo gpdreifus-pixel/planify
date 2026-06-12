@@ -196,7 +196,7 @@ export default function AuthScreen() {
                   <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
                     <span className="material-symbols-outlined text-white/70 mr-3" style={{ fontSize: 20 }}>lock</span>
                     <input
-                      type="password"
+                      type={showLoginPw ? 'text' : 'password'}
                       placeholder="••••••••"
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
@@ -204,6 +204,15 @@ export default function AuthScreen() {
                       autoComplete="current-password"
                       className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowLoginPw((v) => !v)}
+                      aria-label={showLoginPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                      className="material-symbols-outlined text-white/55 hover:text-white/85 transition-colors flex-shrink-0 ml-2 p-1 -m-1"
+                      style={{ fontSize: 20 }}
+                    >
+                      {showLoginPw ? 'visibility_off' : 'visibility'}
+                    </button>
                   </div>
                 </div>
 
@@ -300,15 +309,41 @@ export default function AuthScreen() {
                   <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
                     <span className="material-symbols-outlined text-white/70 mr-3" style={{ fontSize: 20 }}>lock</span>
                     <input
-                      type="password"
-                      placeholder="Mínimo 8 caracteres"
+                      type={showRegPw ? 'text' : 'password'}
+                      placeholder="••••••••"
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       required
+                      minLength={8}
                       autoComplete="new-password"
+                      aria-describedby="reg-password-hint"
                       className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowRegPw((v) => !v)}
+                      aria-label={showRegPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                      className="material-symbols-outlined text-white/55 hover:text-white/85 transition-colors flex-shrink-0 ml-2 p-1 -m-1"
+                      style={{ fontSize: 20 }}
+                    >
+                      {showRegPw ? 'visibility_off' : 'visibility'}
+                    </button>
                   </div>
+                  {/* Hint visible ANTES del error — el requisito no debería descubrirse fallando */}
+                  <p
+                    id="reg-password-hint"
+                    className="t-caption px-3"
+                    style={{
+                      color: regPassword.length > 0 && regPassword.length < 8
+                        ? '#ffb4ab'
+                        : 'rgba(255,255,255,0.55)',
+                      transition: 'color 0.2s',
+                    }}
+                  >
+                    {regPassword.length > 0 && regPassword.length < 8
+                      ? `Mínimo 8 caracteres — te faltan ${8 - regPassword.length}`
+                      : 'Mínimo 8 caracteres'}
+                  </p>
                 </div>
 
                 {/* Submit */}
