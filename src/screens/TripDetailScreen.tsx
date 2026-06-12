@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
+import SmartImage from '../components/ui/SmartImage'
 import { useSearchStore } from '../store/searchStore'
 import { useTripsStore } from '../store/tripsStore'
 import { useChatStore } from '../store/chatStore'
@@ -85,11 +86,12 @@ export default function TripDetailScreen() {
       </div>
 
       <main className="flex-1 relative z-10 pb-44 max-w-md mx-auto w-full">
-        {/* Hero image */}
+        {/* Hero image — eager: está above-the-fold, lazy la demoraría */}
         <div className="relative h-[340px] overflow-hidden">
-          <img
+          <SmartImage
             src={property.images[0]}
             alt={property.name}
+            loading="eager"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />

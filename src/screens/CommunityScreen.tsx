@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
+import EmptyState from '../components/ui/EmptyState'
+import TabSwitcher from '../components/ui/TabSwitcher'
+import SmartImage from '../components/ui/SmartImage'
 import { useCommunityStore } from '../store/communityStore'
 import { useAuthStore } from '../store/authStore'
 import { useChatStore } from '../store/chatStore'
@@ -78,10 +81,10 @@ function PostCard({
 
       {/* Image */}
       <div className="relative h-52 overflow-hidden">
-        <img
+        <SmartImage
           src={post.images[0]}
           alt={post.destination}
-          className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-500"
+          className="w-full h-full object-cover opacity-85 group-hover:opacity-100"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="absolute bottom-3 left-4 right-4">
@@ -179,29 +182,15 @@ export default function CommunityScreen() {
 
       {/* Tab switcher */}
       <div className="px-6 max-w-md mx-auto w-full relative z-10 pb-3">
-        <div className="glass-pressed rounded-full p-1 flex">
-          {(['explore', 'mine'] as Tab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`flex-1 py-2.5 rounded-full text-sm font-semibold relative ${
-                tab === t ? 'text-white' : 'text-white/55 hover:text-white/75'
-              }`}
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              {tab === t && (
-                <motion.div
-                  layoutId="community-tab-pill"
-                  className="absolute inset-0 glass-raised rounded-full shadow-md"
-                  transition={{ type: 'spring', stiffness: 400, damping: 34 }}
-                />
-              )}
-              <span className="relative z-10">
-                {t === 'explore' ? 'Explorar' : 'Mis posts'}
-              </span>
-            </button>
-          ))}
-        </div>
+        <TabSwitcher<Tab>
+          layoutId="community-tab-pill"
+          active={tab}
+          onChange={setTab}
+          tabs={[
+            { value: 'explore', label: 'Explorar' },
+            { value: 'mine', label: 'Mis posts' },
+          ]}
+        />
       </div>
 
       {/* Search bar */}
@@ -238,54 +227,29 @@ export default function CommunityScreen() {
             className="flex flex-col gap-4"
           >
             {/* Empty states — only after loading finished with truly no posts */}
-            {!isLoading && displayPosts.length === 0 && tab === 'mine' && (
-              <motion.div variants={staggerItem} className="text-center py-16">
-                <span className="material-symbols-outlined text-white/25" style={{ fontSize: 60 }}>
-                  photo_camera
-                </span>
-                <p
-                  className="text-white/50 mt-3"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
-                >
-                  Todavía no publicaste nada.
-                </p>
-                {isAuthenticated && (
-                  <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => navigate('/community/new')}
-                    className="mt-5 px-6 py-2.5 rounded-full neu-btn-primary text-white font-semibold inline-flex items-center gap-2"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-                    Compartí tu viaje
-                  </motion.button>
-                )}
-              </motion.div>
-            )}
-
-            {!isLoading && displayPosts.length === 0 && tab === 'explore' && (
-              <motion.div variants={staggerItem} className="text-center py-16">
-                <span className="material-symbols-outlined text-white/25" style={{ fontSize: 60 }}>
-                  groups
-                </span>
-                <p
-                  className="text-white/50 mt-3"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
-                >
-                  Sé el primero en compartir un viaje.
-                </p>
-                {isAuthenticated && (
-                  <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => navigate('/community/new')}
-                    className="mt-5 px-6 py-2.5 rounded-full neu-btn-primary text-white font-semibold inline-flex items-center gap-2"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-                    Compartí tu viaje
-                  </motion.button>
-                )}
-              </motion.div>
+            {!isLoading && displayPosts.length === 0 && (
+              <EmptyState
+                icon={tab === 'mine' ? 'photo_camera' : searchQuery ? 'search_off' : 'groups'}
+                title={
+                  tab === 'mine'
+                    ? 'Todavía no publicaste nada'
+                    : searchQuery
+                    ? 'Sin resultados para tu búsqueda'
+                    : 'Sé el primero en compartir un viaje'
+                }
+                description={
+                  tab === 'mine'
+                    ? 'Compartí tu última aventura con la comunidad.'
+                    : searchQuery
+                    ? 'Probá con otro destino o autor.'
+                    : 'Inspirá a otros viajeros con tu experiencia.'
+                }
+                cta={
+                  isAuthenticated && !searchQuery
+                    ? { label: 'Compartí tu viaje', onPress: () => navigate('/community/new'), icon: 'add' }
+                    : undefined
+                }
+              />
             )}
 
             {displayPosts.map((post) => (
@@ -361,7 +325,7 @@ export default function CommunityScreen() {
               </div>
 
               <div className="px-6 pb-24 flex flex-col gap-5 mt-2">
-                <img src={selectedPost.images[0]} alt={selectedPost.destination} className="w-full h-48 object-cover rounded-2xl" />
+                <SmartImage src={selectedPost.images[0]} alt={selectedPost.destination} className="w-full h-48 object-cover rounded-2xl" />
                 
                 <p className="t-body-sm text-white/85" style={{ lineHeight: 1.6 }}>
                   {selectedPost.caption}

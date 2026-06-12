@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
+import EmptyState from '../components/ui/EmptyState'
 import { useChatStore } from '../store/chatStore'
 import { useSearchStore } from '../store/searchStore'
 import { staggerContainer, staggerItem } from '../animations/transitions'
@@ -38,9 +39,9 @@ export default function ChatSummaryScreen() {
     navigate('/results')
   }
 
-  const handleEditClick = (key: string, value: any) => {
+  const handleEditClick = (key: string, value: unknown) => {
     setEditingField(key as keyof TripSearchCriteria)
-    setEditValue(value)
+    setEditValue(Array.isArray(value) ? value : String(value ?? ''))
   }
 
   const handleSaveEdit = () => {
@@ -67,12 +68,12 @@ export default function ChatSummaryScreen() {
           className="flex flex-col gap-3 mb-8"
         >
           {entries.length === 0 ? (
-            <p
-              className="text-white/55 text-sm py-8 text-center"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              No ingresaste ningún criterio.
-            </p>
+            <EmptyState
+              icon="checklist"
+              title="No ingresaste ningún criterio"
+              description="Contestá las preguntas del chat para armar tu búsqueda ideal."
+              cta={{ label: 'Ir al chat', onPress: () => navigate('/chat/1') }}
+            />
           ) : (
             entries.map(([key, value]) => {
               const meta = FIELD_META[key] ?? { icon: 'info', label: key }

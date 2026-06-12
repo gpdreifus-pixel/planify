@@ -3,6 +3,8 @@ import { motion } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
+import EmptyState from '../components/ui/EmptyState'
+import SmartImage from '../components/ui/SmartImage'
 import { useSearchStore } from '../store/searchStore'
 import type { Property } from '../types'
 import { staggerContainer, staggerItem } from '../animations/transitions'
@@ -68,10 +70,10 @@ function PropertyCard({ property, onPress }: { property: Property; onPress: () =
     >
       {/* Image — mix-blend-luminosity */}
       <div className="relative h-48 overflow-hidden">
-        <img
+        <SmartImage
           src={property.images[0]}
           alt={property.name}
-          className="w-full h-full object-cover opacity-90 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500"
+          className="w-full h-full object-cover opacity-90 mix-blend-luminosity group-hover:mix-blend-normal"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         {/* Save button — top right */}
@@ -212,63 +214,22 @@ export default function ResultsScreen() {
 
             {/* Empty state — filtered */}
             {hasSearched && filteredResults.length === 0 && (
-              <div className="text-center py-16">
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 64, color: 'rgba(255,255,255,0.25)' }}
-                >
-                  search_off
-                </span>
-                <p
-                  className="mt-4"
-                  style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    color: 'rgba(255,255,255,0.50)',
-                  }}
-                >
-                  No encontramos resultados.
-                </p>
-                <button
-                  onClick={() => navigate('/chat/1')}
-                  className="mt-4 underline"
-                  style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: '0.875rem',
-                    color: 'rgba(255,255,255,0.65)',
-                  }}
-                >
-                  Editar búsqueda
-                </button>
-              </div>
+              <EmptyState
+                icon="search_off"
+                title="No encontramos resultados"
+                description="Probá ajustar los filtros o cambiar los criterios de búsqueda."
+                cta={{ label: 'Editar búsqueda', onPress: () => navigate('/chat/1'), icon: 'edit' }}
+              />
             )}
 
             {/* Not searched yet */}
             {!hasSearched && (
-              <div className="text-center py-16">
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 64, color: 'rgba(255,255,255,0.25)' }}
-                >
-                  travel_explore
-                </span>
-                <p
-                  className="mt-4"
-                  style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    color: 'rgba(255,255,255,0.50)',
-                  }}
-                >
-                  Comenzá buscando tu próximo destino.
-                </p>
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => navigate('/chat/1')}
-                  className="mt-6 neu-btn-primary px-8 py-3 rounded-full text-white"
-                  style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700 }}
-                >
-                  Empezar búsqueda
-                </motion.button>
-              </div>
+              <EmptyState
+                icon="travel_explore"
+                title="Tu próximo destino te espera"
+                description="Contestá 10 preguntas y armamos opciones a tu medida."
+                cta={{ label: 'Empezar búsqueda', onPress: () => navigate('/chat/1') }}
+              />
             )}
           </motion.div>
         )}

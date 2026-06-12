@@ -4,6 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
+import EmptyState from '../components/ui/EmptyState'
+import ConfirmSheet from '../components/ui/ConfirmSheet'
+import TabSwitcher from '../components/ui/TabSwitcher'
+import SmartImage from '../components/ui/SmartImage'
 import { useTripsStore } from '../store/tripsStore'
 import { useSearchStore } from '../store/searchStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
@@ -62,10 +66,10 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
     >
       {/* Image */}
       <div className="relative h-48 overflow-hidden rounded-t-3xl">
-        <img
+        <SmartImage
           src={trip.property.images[0]}
           alt={trip.property.name}
-          className="w-full h-full object-cover opacity-80 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-500"
+          className="w-full h-full object-cover opacity-80 mix-blend-luminosity group-hover:mix-blend-normal"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
         {/* Status badge */}
@@ -208,80 +212,28 @@ export default function MyTripsScreen() {
 
       {/* Tab switcher */}
       <div className="px-6 max-w-md mx-auto w-full relative z-10 pb-4">
-        <div className="glass-pressed rounded-full p-1 flex">
-          {(['active', 'past', 'saved'] as TripTab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => setActiveTab(t)}
-              className={`flex-1 py-2.5 rounded-full text-sm font-semibold relative ${
-                activeTab === t ? 'text-white' : 'text-white/55 hover:text-white/75'
-              }`}
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              {activeTab === t && (
-                <motion.div
-                  layoutId="trips-tab-pill"
-                  className="absolute inset-0 glass-raised rounded-full shadow-md"
-                  transition={{ type: 'spring', stiffness: 400, damping: 34 }}
-                />
-              )}
-              <span className="relative z-10 flex items-center justify-center gap-1">
-                {TAB_LABELS[t]}
-                {/* Badge for saved count */}
-                {t === 'saved' && savedProperties.length > 0 && (
-                  <span
-                    className="inline-flex items-center justify-center rounded-full"
-                    style={{
-                      minWidth: 16,
-                      height: 16,
-                      background: activeTab === 'saved' ? 'rgba(255,107,31,0.80)' : 'rgba(255,255,255,0.20)',
-                      fontSize: '0.6rem',
-                      fontWeight: 700,
-                      color: 'white',
-                      padding: '0 4px',
-                    }}
-                  >
-                    {savedProperties.length}
-                  </span>
-                )}
-              </span>
-            </button>
-          ))}
-        </div>
+        <TabSwitcher<TripTab>
+          layoutId="trips-tab-pill"
+          active={activeTab}
+          onChange={setActiveTab}
+          tabs={[
+            { value: 'active', label: TAB_LABELS.active },
+            { value: 'past', label: TAB_LABELS.past },
+            { value: 'saved', label: TAB_LABELS.saved, badge: savedProperties.length },
+          ]}
+        />
       </div>
 
       <main className="flex-1 relative z-10 px-6 pb-32 max-w-md mx-auto w-full">
         {/* ── Saved tab ── */}
         {activeTab === 'saved' && (
           savedProperties.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 72, color: 'rgba(255,255,255,0.20)' }}
-              >
-                favorite_border
-              </span>
-              <h3
-                className="text-white mt-4"
-                style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', fontWeight: 700 }}
-              >
-                Nada guardado aún
-              </h3>
-              <p
-                className="mt-2 max-w-xs text-white/50"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9rem', lineHeight: 1.55 }}
-              >
-                Tocá el corazón en cualquier propiedad para guardarla aquí.
-              </p>
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={() => navigate('/results')}
-                className="mt-6 neu-btn-primary px-8 py-3 rounded-full text-white"
-                style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700 }}
-              >
-                Explorar propiedades
-              </motion.button>
-            </div>
+            <EmptyState
+              icon="favorite_border"
+              title="Nada guardado aún"
+              description="Tocá el corazón en cualquier propiedad para guardarla aquí."
+              cta={{ label: 'Explorar propiedades', onPress: () => navigate('/results') }}
+            />
           ) : (
             <motion.div
               variants={staggerContainer}
@@ -299,7 +251,7 @@ export default function MyTripsScreen() {
                   onClick={() => navigate(`/results/${property.id}`)}
                   className="glass-molded rounded-2xl p-3 flex items-center gap-3 cursor-pointer"
                 >
-                  <img
+                  <SmartImage
                     src={property.images[0]}
                     alt={property.name}
                     className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
@@ -327,34 +279,14 @@ export default function MyTripsScreen() {
         {/* ── Active / Past tabs ── */}
         {activeTab !== 'saved' && (
           trips.length === 0 || displayTrips.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: 72, color: 'rgba(255,255,255,0.20)' }}
-              >
-                luggage
-              </span>
-              <h3
-                className="text-white mt-4"
-                style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', fontWeight: 700 }}
-              >
-                Todavía no tenés viajes
-              </h3>
-              <p
-                className="mt-2 max-w-xs text-white/50"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9rem', lineHeight: 1.55 }}
-              >
-                Empezá a planificar tu próxima aventura.
-              </p>
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={() => navigate('/chat/1')}
-                className="mt-6 neu-btn-primary px-8 py-3 rounded-full text-white"
-                style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700 }}
-              >
-                Planificar viaje
-              </motion.button>
-            </div>
+            <EmptyState
+              icon="luggage"
+              title="Todavía no tenés viajes"
+              description={activeTab === 'past'
+                ? 'Cuando completes un viaje va a aparecer acá.'
+                : 'Empezá a planificar tu próxima aventura.'}
+              cta={{ label: 'Planificar viaje', onPress: () => navigate('/chat/1') }}
+            />
           ) : (
             <motion.div
               variants={staggerContainer}
@@ -398,47 +330,15 @@ export default function MyTripsScreen() {
 
       <AnimatePresence>
         {tripToDelete && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-6 bg-black/60 backdrop-blur-sm"
-            onClick={() => setTripToDelete(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="glass-molded rounded-3xl p-6 max-w-sm w-full text-center"
-            >
-              <div className="w-16 h-16 rounded-full bg-[#ffb4ab]/20 text-[#ffb4ab] flex items-center justify-center mx-auto mb-4">
-                <span className="material-symbols-outlined" style={{ fontSize: 32 }}>delete_forever</span>
-              </div>
-              <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
-                ¿Eliminar este viaje?
-              </h3>
-              <p className="text-white/70 mb-6" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9rem' }}>
-                Esta acción no se puede deshacer y el viaje se borrará de tu historial.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setTripToDelete(null)}
-                  className="flex-1 py-3 rounded-full border border-white/20 text-white font-semibold hover:bg-white/10 transition-colors"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.95rem' }}
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="flex-1 py-3 rounded-full bg-[#ffb4ab] text-black font-bold hover:bg-[#ff8f82] transition-colors"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.95rem' }}
-                >
-                  Sí, eliminar
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
+          <ConfirmSheet
+            icon="delete_forever"
+            title="¿Eliminar este viaje?"
+            message="Esta acción no se puede deshacer y el viaje se borrará de tu historial."
+            confirmLabel="Sí, eliminar"
+            destructive
+            onConfirm={confirmDelete}
+            onCancel={() => setTripToDelete(null)}
+          />
         )}
       </AnimatePresence>
     </AppBackground>

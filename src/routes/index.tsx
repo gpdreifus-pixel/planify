@@ -1,4 +1,5 @@
-import { createBrowserRouter, Navigate, Outlet, ScrollRestoration } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
+import RootLayout from '../components/ui/RootLayout'
 import HomeScreen from '../screens/HomeScreen'
 import AuthScreen from '../screens/AuthScreen'
 import VerifyEmailScreen from '../screens/VerifyEmailScreen'
@@ -16,18 +17,6 @@ import CommunityScreen from '../screens/CommunityScreen'
 import CreatePostScreen from '../screens/CreatePostScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import ProtectedRoute from '../components/ui/ProtectedRoute'
-
-/** Layout raíz: resetea el scroll al navegar hacia adelante y lo restaura al
- *  volver atrás. Sin esto, abrir un detalle desde una lista scrolleada dejaba
- *  la nueva pantalla a mitad de página. */
-function RootLayout() {
-  return (
-    <>
-      <Outlet />
-      <ScrollRestoration />
-    </>
-  )
-}
 
 export const router = createBrowserRouter([
   {

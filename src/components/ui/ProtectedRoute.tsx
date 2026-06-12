@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
+import Spinner from './Spinner'
 
 /**
  * Wraps routes that require authentication.
@@ -11,21 +12,12 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const { isAuthenticated, isInitializing } = useAuthStore()
   const location = useLocation()
 
-  // Wait for the first onAuthStateChange callback (session restore)
+  // Wait for the first onAuthStateChange callback (session restore).
+  // El fondo lo aporta html (gradiente fijo en index.css) — sin duplicarlo acá.
   if (isInitializing) {
     return (
-      <div
-        className="min-h-dvh flex items-center justify-center"
-        style={{
-          background: 'linear-gradient(180deg, #8178a8 0%, #c49ba2 35%, #ff8c42 70%, #ff6b1f 100%)',
-        }}
-      >
-        <span
-          className="material-symbols-outlined animate-spin text-white/60"
-          style={{ fontSize: 32 }}
-        >
-          progress_activity
-        </span>
+      <div className="min-h-dvh flex items-center justify-center">
+        <Spinner size={32} />
       </div>
     )
   }

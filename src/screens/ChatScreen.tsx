@@ -25,9 +25,16 @@ export default function ChatScreen() {
   useEffect(() => {
     if (stepNum >= 1 && stepNum <= totalSteps) {
       setStep(stepNum)
-      setSelectedChips([])
     }
   }, [stepNum, setStep, totalSteps])
+
+  // Reset de chips al cambiar de paso — patrón "adjust state during render"
+  // (evita el setState dentro del effect, que dispara renders en cascada)
+  const [chipsStep, setChipsStep] = useState(stepNum)
+  if (chipsStep !== stepNum) {
+    setChipsStep(stepNum)
+    setSelectedChips([])
+  }
 
   const stepData = CHAT_STEPS[stepNum - 1]
   const progress = (stepNum / totalSteps) * 100
