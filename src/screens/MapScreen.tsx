@@ -154,41 +154,18 @@ export default function MapScreen() {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p
-                  className="text-white font-bold truncate"
-                  style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem' }}
-                >
-                  {selected.name}
-                </p>
-                <p
-                  className="text-white/55 truncate mt-0.5"
-                  style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: '0.8125rem',
-                  }}
-                >
+                <p className="t-cta truncate text-white">{selected.name}</p>
+                <p className="t-caption truncate text-white/65 mt-0.5" style={{ fontSize: '0.8125rem' }}>
                   {selected.location}
                 </p>
                 <div className="flex items-center gap-1.5 mt-1.5">
                   <span style={{ color: '#ffb597', fontSize: '0.8rem' }}>★</span>
-                  <span
-                    className="text-white font-semibold"
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.8125rem',
-                    }}
-                  >
+                  <span className="t-label text-white" style={{ fontSize: '0.8125rem' }}>
                     {selected.rating}
                   </span>
-                  <span
-                    className="ml-auto text-white font-bold"
-                    style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem' }}
-                  >
+                  <span className="t-cta ml-auto text-white">
                     ${selected.pricePerNight}
-                    <span
-                      className="text-white/50 font-normal"
-                      style={{ fontSize: '0.7rem' }}
-                    >
+                    <span className="text-white/55 font-normal" style={{ fontSize: '0.7rem' }}>
                       {' '}
                       /noche
                     </span>
@@ -200,6 +177,7 @@ export default function MapScreen() {
               <motion.button
                 whileTap={{ scale: 0.90 }}
                 onClick={() => navigate(`/results/${selected.id}`)}
+                aria-label={`Ver detalle de ${selected.name}`}
                 className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-white"
                 style={{
                   background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',

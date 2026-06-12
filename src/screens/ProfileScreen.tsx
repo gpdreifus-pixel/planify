@@ -5,11 +5,13 @@ import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
 import { useAuthStore } from '../store/authStore'
 import { useTripsStore } from '../store/tripsStore'
+import { useUIStore } from '../store/uiStore'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
 export default function ProfileScreen() {
   const { user, logout, userPreferences, setPreferences, updateProfile, isLoading } = useAuthStore()
   const { trips } = useTripsStore()
+  const showToast = useUIStore((s) => s.showToast)
   const [loggingOut, setLoggingOut] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   
@@ -53,7 +55,7 @@ export default function ProfileScreen() {
             whileTap={{ scale: 0.90 }}
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
             disabled={isLoading && isEditing}
-            className="px-4 h-9 rounded-full glass-raised flex items-center justify-center text-white font-semibold text-sm disabled:opacity-50"
+            className="t-label px-4 h-10 rounded-full glass-raised flex items-center justify-center text-white disabled:opacity-50"
           >
             {isEditing ? (isLoading ? 'Guardando...' : 'Guardar') : 'Editar'}
           </motion.button>
@@ -73,9 +75,10 @@ export default function ProfileScreen() {
             className="glass-surface rounded-3xl p-6 flex flex-col items-center text-center gap-3 relative"
           >
             {isEditing && (
-              <button 
+              <button
                 onClick={() => { setIsEditing(false); setEditName(user?.name ?? ''); setEditBio(user?.bio ?? '') }}
-                className="absolute top-4 left-4 text-white/50 hover:text-white"
+                aria-label="Cancelar edición"
+                className="absolute top-2 left-2 w-10 h-10 flex items-center justify-center text-white/50 hover:text-white"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
               </button>
@@ -100,49 +103,25 @@ export default function ProfileScreen() {
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     placeholder="Tu nombre"
-                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-center text-white font-bold"
-                    style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem' }}
+                    maxLength={50}
+                    aria-label="Nombre"
+                    className="t-headline-sm w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-center text-white"
                   />
                   <textarea
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
                     placeholder="Escribe algo sobre ti..."
-                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-center text-white/80 resize-none h-24"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
+                    maxLength={160}
+                    aria-label="Biografía"
+                    className="t-label font-normal w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-center text-white/80 resize-none h-24"
                   />
                 </div>
               ) : (
                 <>
-                  <h2
-                    style={{
-                      fontFamily: "'Syne', sans-serif",
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: 'white',
-                    }}
-                  >
-                    {user?.name ?? 'Viajero'}
-                  </h2>
-                  <p
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.875rem',
-                      color: 'rgba(255,255,255,0.60)',
-                    }}
-                  >
-                    {user?.email ?? ''}
-                  </p>
+                  <h2 className="t-headline text-white">{user?.name ?? 'Viajero'}</h2>
+                  <p className="t-label font-normal text-white/65">{user?.email ?? ''}</p>
                   {user?.bio && (
-                    <p
-                      className="mt-2"
-                      style={{
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        fontSize: '0.875rem',
-                        lineHeight: 1.6,
-                        color: 'rgba(255,255,255,0.75)',
-                        fontWeight: 300,
-                      }}
-                    >
+                    <p className="t-label font-normal text-white/80 mt-2" style={{ lineHeight: 1.6 }}>
                       {user.bio}
                     </p>
                   )}
@@ -162,25 +141,8 @@ export default function ProfileScreen() {
                 key={stat.label}
                 className="glass-surface rounded-2xl p-4 flex flex-col items-center gap-1"
               >
-                <span
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    fontSize: '1.625rem',
-                    fontWeight: 700,
-                    color: 'white',
-                  }}
-                >
-                  {stat.value}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: '0.75rem',
-                    color: 'rgba(255,255,255,0.55)',
-                  }}
-                >
-                  {stat.label}
-                </span>
+                <span className="t-headline text-white">{stat.value}</span>
+                <span className="t-caption text-white/65">{stat.label}</span>
               </div>
             ))}
           </motion.div>
@@ -188,28 +150,17 @@ export default function ProfileScreen() {
           {/* Badges */}
           {user?.badges && user.badges.length > 0 && (
             <motion.div variants={staggerItem} className="glass-surface rounded-3xl p-4">
-              <h3
-                className="mb-3"
-                style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  color: 'white',
-                }}
-              >
-                Logros
-              </h3>
+              <h3 className="t-cta text-white mb-3">Logros</h3>
               <div className="flex flex-wrap gap-2">
                 {user.badges.map((badge) => (
                   <span
                     key={badge}
-                    className="px-3 py-1.5 rounded-full font-semibold"
+                    className="t-label px-3 py-1.5 rounded-full"
                     style={{
+                      fontSize: '0.8125rem',
                       background: 'rgba(116,89,247,0.18)',
                       border: '1px solid rgba(116,89,247,0.30)',
                       color: '#c9bfff',
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.8125rem',
                     }}
                   >
                     🏆 {badge}
@@ -222,16 +173,7 @@ export default function ProfileScreen() {
           {/* Preferences */}
           <motion.div variants={staggerItem} className="glass-surface rounded-3xl overflow-hidden">
             <div className="px-5 pt-4 pb-2">
-              <h3
-                style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  color: 'white',
-                }}
-              >
-                Preferencias
-              </h3>
+              <h3 className="t-cta text-white">Preferencias</h3>
             </div>
 
             {/* Currency */}
@@ -242,13 +184,8 @@ export default function ProfileScreen() {
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.50)' }}>
                 payments
               </span>
-              <span
-                className="flex-1"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem', color: 'rgba(255,255,255,0.85)' }}
-              >
-                Moneda
-              </span>
-              <div className="flex gap-1.5">
+              <span className="t-body-sm flex-1 text-white/85">Moneda</span>
+              <div className="flex gap-1.5" role="radiogroup" aria-label="Moneda">
                 {(['USD', 'EUR', 'ARS'] as const).map((c) => {
                   const active = userPreferences.currency === c
                   return (
@@ -256,12 +193,13 @@ export default function ProfileScreen() {
                       key={c}
                       whileTap={{ scale: 0.91 }}
                       onClick={() => setPreferences({ currency: c })}
-                      className="px-2.5 py-1 rounded-full text-xs font-semibold transition-all"
+                      role="radio"
+                      aria-checked={active}
+                      className="t-caption font-semibold px-3 py-2 rounded-full transition-all"
                       style={{
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
                         background: active ? 'rgba(255,140,66,0.22)' : 'rgba(255,255,255,0.07)',
                         border: `1px solid ${active ? 'rgba(255,140,66,0.45)' : 'rgba(255,255,255,0.12)'}`,
-                        color: active ? '#ff8c42' : 'rgba(255,255,255,0.55)',
+                        color: active ? '#ff8c42' : 'rgba(255,255,255,0.65)',
                       }}
                     >
                       {c}
@@ -279,15 +217,13 @@ export default function ProfileScreen() {
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.50)' }}>
                 notifications
               </span>
-              <span
-                className="flex-1"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem', color: 'rgba(255,255,255,0.85)' }}
-              >
-                Notificaciones
-              </span>
+              <span className="t-body-sm flex-1 text-white/85">Notificaciones</span>
               <motion.button
                 whileTap={{ scale: 0.93 }}
                 onClick={() => setPreferences({ notifications: !userPreferences.notifications })}
+                role="switch"
+                aria-checked={userPreferences.notifications}
+                aria-label="Notificaciones"
                 style={{
                   width: 46,
                   height: 26,
@@ -328,6 +264,7 @@ export default function ProfileScreen() {
                 whileTap={{ scale: 0.98, x: 3 }}
                 whileHover={{ x: 2, backgroundColor: 'rgba(255,255,255,0.05)' }}
                 transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                onClick={() => showToast(`${item.label}: disponible próximamente`, 'info')}
                 className="flex items-center gap-4 px-4 py-4 w-full"
                 style={{
                   borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.10)' : 'none',
@@ -339,16 +276,7 @@ export default function ProfileScreen() {
                 >
                   {item.icon}
                 </span>
-                <span
-                  className="flex-1 text-left"
-                  style={{
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: '0.9375rem',
-                    color: 'rgba(255,255,255,0.88)',
-                  }}
-                >
-                  {item.label}
-                </span>
+                <span className="t-body-sm flex-1 text-left text-white/90">{item.label}</span>
                 <span
                   className="material-symbols-outlined"
                   style={{ fontSize: 18, color: 'rgba(255,255,255,0.30)' }}
@@ -364,10 +292,8 @@ export default function ProfileScreen() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => setShowLogoutConfirm(true)}
-              className="w-full py-4 rounded-2xl font-semibold glass-surface flex items-center justify-center gap-2"
+              className="t-body-sm font-semibold w-full py-4 rounded-2xl glass-surface flex items-center justify-center gap-2"
               style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.9375rem',
                 color: '#ffb4ab',
                 border: '1px solid rgba(255,180,171,0.22)',
                 cursor: 'pointer',

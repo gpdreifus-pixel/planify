@@ -28,15 +28,14 @@ export default function ChatInputBar({ value, onChange, onSend, placeholder }: C
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder ?? 'Escribí tu respuesta...'}
-            className="w-full bg-transparent border-none outline-none text-white placeholder-white/50 focus:ring-0 p-0"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem' }}
+            className="t-body w-full bg-transparent border-none outline-none text-white placeholder-white/50 focus:ring-0 p-0"
             type="text"
           />
         </div>
 
         {/* Send button — scales in when there's text to send */}
         <motion.button
-          aria-label="Send"
+          aria-label="Enviar respuesta"
           whileTap={{ scale: 0.88, opacity: 1 }}
           whileHover={{ scale: 1.08, opacity: 1 }}
           animate={{ scale: value.trim() ? 1 : 0.88, opacity: value.trim() ? 1 : 0.5 }}
@@ -47,7 +46,6 @@ export default function ChatInputBar({ value, onChange, onSend, placeholder }: C
             willChange: 'transform',
             backfaceVisibility: 'hidden',
             WebkitTapHighlightColor: 'transparent',
-            outline: 'none',
             userSelect: 'none',
           }}
         >

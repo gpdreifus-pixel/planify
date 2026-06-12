@@ -120,6 +120,7 @@ export default function BookingScreen() {
             onClick={handleSharePDF}
             className="w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white hover:bg-white/10"
             title="Compartir en PDF"
+            aria-label="Descargar resumen en PDF"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>share</span>
           </motion.button>
@@ -136,73 +137,30 @@ export default function BookingScreen() {
           {/* Info banner — glass-molded rounded-full */}
           <motion.div variants={staggerItem} className="glass-molded rounded-full px-6 py-4 flex items-start gap-4">
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#ffb68d' }}>info</span>
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.875rem',
-                color: 'rgba(255,181,141,0.90)',
-                lineHeight: 1.5,
-              }}
-            >
+            <p className="t-label font-normal" style={{ color: 'rgba(255,181,141,0.90)' }}>
               Planify no procesa pagos. Te llevamos a reservar en cada plataforma original.
             </p>
           </motion.div>
 
           {/* Total summary card */}
           <motion.div variants={staggerItem} className="glass-molded rounded-[2rem] p-8 flex flex-col items-center text-center">
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.75rem',
-                color: 'rgba(255,255,255,0.60)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.2em',
-                marginBottom: '0.75rem',
-                fontWeight: 600,
-              }}
-            >
+            <p className="t-caption font-semibold text-white/65 uppercase mb-3" style={{ letterSpacing: '0.2em' }}>
               Combo Total Estimado
             </p>
-            <h2
-              className="text-white font-bold mb-1"
-              style={{ fontFamily: "'Syne', sans-serif", fontSize: '3rem', fontWeight: 700 }}
-            >
+            <h2 className="t-display-xl text-white mb-1" style={{ fontSize: '3rem' }}>
               ${totalEstimate.toLocaleString()}
             </h2>
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '1rem',
-                color: '#ffb68d',
-              }}
-            >
+            <p className="t-body" style={{ color: '#ffb68d' }}>
               USD{travelers > 1 ? ' / por persona' : ''}
             </p>
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.75rem',
-                color: 'rgba(255,255,255,0.5)',
-                marginTop: '0.5rem',
-                lineHeight: 1.4,
-              }}
-            >
+            <p className="t-caption text-white/60 mt-2">
               * Precio estimado sujeto a cambios de disponibilidad y plataformas.
             </p>
           </motion.div>
 
           {/* Booking breakdown */}
           <motion.div variants={staggerItem} className="flex flex-col gap-4">
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: 'white',
-              }}
-            >
-              Desglose para Reservar
-            </h3>
+            <h3 className="t-headline-sm text-white">Desglose para Reservar</h3>
 
             {BOOKING_ITEMS.map((item) => {
               const price = item.priceKey === 'base'
@@ -222,25 +180,10 @@ export default function BookingScreen() {
                       </span>
                     </div>
                     <div>
-                      <p
-                        style={{
-                          fontFamily: "'Plus Jakarta Sans', sans-serif",
-                          fontSize: '0.6875rem',
-                          color: 'rgba(255,255,255,0.55)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.12em',
-                        }}
-                      >
+                      <p className="t-caption text-white/65 uppercase" style={{ fontSize: '0.6875rem', letterSpacing: '0.12em' }}>
                         {item.label}
                       </p>
-                      <p
-                        style={{
-                          fontFamily: "'Syne', sans-serif",
-                          fontSize: '1rem',
-                          color: 'white',
-                          fontWeight: 600,
-                        }}
-                      >
+                      <p className="t-cta text-white">
                         {item.label === 'Alojamiento' ? property.name : `${item.platform}`}
                       </p>
                     </div>
@@ -251,16 +194,10 @@ export default function BookingScreen() {
                     whileTap={{ scale: 0.92 }}
                     whileHover={{ scale: 1.06 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-                    className="raised-btn rounded-full px-4 py-2.5 flex items-center gap-2"
+                    aria-label={`Reservar ${item.label} en ${item.platform}`}
+                    className="raised-btn rounded-full px-4 py-3 flex items-center gap-2"
                   >
-                    <span
-                      style={{
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        fontSize: '0.8125rem',
-                        color: 'rgba(255,255,255,0.95)',
-                        fontWeight: 600,
-                      }}
-                    >
+                    <span className="t-label text-white/95" style={{ fontSize: '0.8125rem' }}>
                       {item.platform} ${price}
                     </span>
                     <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'rgba(255,255,255,0.65)' }}>
@@ -279,9 +216,7 @@ export default function BookingScreen() {
         {existingTrip ? (
           <div className="w-full rounded-[2rem] glass-molded p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between px-2">
-              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
-                Código de reserva
-              </span>
+              <span className="t-label font-normal text-white/75">Código de reserva</span>
               <span className="font-mono font-bold text-white tracking-widest bg-white/10 px-3 py-1 rounded-lg">
                 {existingTrip.confirmationCode}
               </span>
@@ -289,10 +224,8 @@ export default function BookingScreen() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/trips')}
-              className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-white font-bold border border-white/20"
+              className="t-cta w-full h-12 rounded-full flex items-center justify-center gap-2 text-white border border-white/20"
               style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1rem',
                 background: 'linear-gradient(to right, #22c55e, #16a34a)',
                 boxShadow: '0 8px 25px rgba(34,197,94,0.3)',
               }}
@@ -305,11 +238,8 @@ export default function BookingScreen() {
             whileTap={{ scale: 0.97 }}
             onClick={handleBook}
             disabled={isBooking}
-            className="w-full h-16 rounded-full flex items-center justify-center gap-3 text-white font-bold disabled:opacity-60 border border-white/20"
+            className="t-title w-full h-16 rounded-full flex items-center justify-center gap-3 text-white disabled:opacity-60 border border-white/20"
             style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.125rem',
-              fontWeight: 700,
               background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
               boxShadow: '0 12px 40px rgba(255,107,31,0.5)',
             }}

@@ -60,7 +60,7 @@ export default function FiltersScreen() {
 
       {/* Sheet — dark theme */}
       <motion.div
-        className="relative bg-[#2a2438] w-full max-w-md mx-auto rounded-t-[32px] overflow-hidden shadow-2xl"
+        className="relative bg-sheet-dark w-full max-w-md mx-auto rounded-t-[32px] overflow-hidden shadow-2xl"
         style={{ maxHeight: '90dvh', overflowY: 'auto', borderTop: '1px solid rgba(255,255,255,0.1)' }}
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
@@ -73,17 +73,7 @@ export default function FiltersScreen() {
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4">
-          <h2
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.375rem',
-              fontWeight: 700,
-              color: 'white',
-              lineHeight: 1.2,
-            }}
-          >
-            Filtros
-          </h2>
+          <h2 className="t-headline text-white">Filtros</h2>
           <button
             onClick={handleClose}
             className="neu-icon-btn w-9 h-9 flex items-center justify-center text-white"
@@ -98,17 +88,7 @@ export default function FiltersScreen() {
 
           {/* Sort */}
           <div>
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '0.9375rem',
-                fontWeight: 700,
-                color: 'white',
-                marginBottom: '0.75rem',
-              }}
-            >
-              Ordenar por
-            </h3>
+            <h3 className="t-section text-white mb-3">Ordenar por</h3>
             <div className="grid grid-cols-2 gap-2">
               {SORT_OPTIONS.map((opt) => {
                 const active = filters.sortBy === opt.value
@@ -116,10 +96,10 @@ export default function FiltersScreen() {
                   <button
                     key={opt.value}
                     onClick={() => setFilters({ sortBy: opt.value })}
-                    className="py-2.5 px-3 rounded-xl text-sm font-semibold transition-all"
+                    aria-pressed={active}
+                    className="t-label py-3 px-3 rounded-xl transition-all"
                     style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      color: active ? '#FF6B1F' : 'rgba(255,255,255,0.7)',
+                      color: active ? 'var(--color-primary-container)' : 'rgba(255,255,255,0.8)',
                       background: active
                         ? 'rgba(255,107,31,0.15)'
                         : 'rgba(255,255,255,0.05)',
@@ -135,17 +115,7 @@ export default function FiltersScreen() {
 
           {/* Accommodation type */}
           <div>
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '0.9375rem',
-                fontWeight: 700,
-                color: 'white',
-                marginBottom: '0.75rem',
-              }}
-            >
-              Tipo de alojamiento
-            </h3>
+            <h3 className="t-section text-white mb-3">Tipo de alojamiento</h3>
             <div className="flex flex-wrap gap-2">
               {TYPES.map((t) => {
                 const active = filters.types.includes(t.value)
@@ -153,10 +123,10 @@ export default function FiltersScreen() {
                   <button
                     key={t.value}
                     onClick={() => toggleType(t.value)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all"
+                    aria-pressed={active}
+                    className="t-label flex items-center gap-1.5 px-4 py-3 rounded-full transition-all"
                     style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      color: active ? '#FF6B1F' : 'rgba(255,255,255,0.7)',
+                      color: active ? 'var(--color-primary-container)' : 'rgba(255,255,255,0.8)',
                       background: active ? 'rgba(255,107,31,0.15)' : 'rgba(255,255,255,0.05)',
                       border: active ? '1px solid rgba(255,107,31,0.30)' : '1px solid rgba(255,255,255,0.1)',
                     }}
@@ -172,24 +142,8 @@ export default function FiltersScreen() {
           {/* Price range */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h3
-                style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: '0.9375rem',
-                  fontWeight: 700,
-                  color: 'white',
-                }}
-              >
-                Precio por noche
-              </h3>
-              <span
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.875rem',
-                  fontWeight: 700,
-                  color: '#FF6B1F',
-                }}
-              >
+              <h3 className="t-section text-white">Precio por noche</h3>
+              <span className="t-label font-bold" style={{ color: 'var(--color-primary-container)' }}>
                 hasta ${filters.priceMax}
               </span>
             </div>
@@ -201,27 +155,18 @@ export default function FiltersScreen() {
               value={filters.priceMax}
               onChange={(e) => setFilters({ priceMax: Number(e.target.value) })}
               className="w-full"
-              style={{ accentColor: '#FF6B1F' }}
+              aria-label="Precio máximo por noche"
+              style={{ accentColor: 'var(--color-primary-container)' }}
             />
             <div className="flex justify-between mt-1">
-              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>$0</span>
-              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>$1000</span>
+              <span className="t-caption text-white/65">$0</span>
+              <span className="t-caption text-white/65">$1000</span>
             </div>
           </div>
 
           {/* Rating */}
           <div>
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '0.9375rem',
-                fontWeight: 700,
-                color: 'white',
-                marginBottom: '0.75rem',
-              }}
-            >
-              Rating mínimo
-            </h3>
+            <h3 className="t-section text-white mb-3">Rating mínimo</h3>
             <div className="flex gap-2">
               {[0, 3, 3.5, 4, 4.5].map((r) => {
                 const active = filters.rating === r
@@ -229,11 +174,12 @@ export default function FiltersScreen() {
                   <button
                     key={r}
                     onClick={() => setFilters({ rating: r })}
-                    className="flex-1 py-2 rounded-xl text-sm font-semibold transition-all"
+                    aria-pressed={active}
+                    aria-label={r === 0 ? 'Cualquier rating' : `Rating mínimo ${r} estrellas`}
+                    className="t-label flex-1 py-3 rounded-xl transition-all"
                     style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
                       fontSize: '0.8125rem',
-                      color: active ? '#FF6B1F' : 'rgba(255,255,255,0.7)',
+                      color: active ? 'var(--color-primary-container)' : 'rgba(255,255,255,0.8)',
                       background: active ? 'rgba(255,107,31,0.15)' : 'rgba(255,255,255,0.05)',
                       border: active ? '1px solid rgba(255,107,31,0.30)' : '1px solid rgba(255,255,255,0.1)',
                     }}
@@ -250,11 +196,10 @@ export default function FiltersScreen() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={handleClear}
-              className="flex-1 py-3.5 rounded-full font-semibold"
+              className="t-label flex-1 py-3.5 rounded-full"
               style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: '0.9375rem',
-                color: 'rgba(255,255,255,0.8)',
+                color: 'rgba(255,255,255,0.85)',
                 background: 'rgba(255,255,255,0.08)',
                 border: '1px solid rgba(255,255,255,0.15)',
               }}
@@ -264,12 +209,9 @@ export default function FiltersScreen() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={handleApply}
-              className="flex-[2] py-3.5 rounded-full text-white font-bold"
+              className="t-cta flex-[2] py-3.5 rounded-full text-white"
               style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1rem',
-                fontWeight: 700,
-                background: '#FF6B1F',
+                background: 'var(--color-primary-container)',
                 boxShadow: '0 4px 16px rgba(255,107,31,0.4)',
               }}
             >

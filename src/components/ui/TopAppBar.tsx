@@ -41,8 +41,8 @@ export default function TopAppBar({
       {/* Back button */}
       {(backTo !== undefined || onBack) ? (
         <motion.button
-          aria-label="Back"
-          className="w-10 h-10 rounded-full flex items-center justify-center glass-raised hover:opacity-80 transition-opacity text-white"
+          aria-label="Volver"
+          className="w-10 h-10 rounded-full flex items-center justify-center glass-raised hover:opacity-80 transition-opacity text-white flex-shrink-0"
           whileTap={{ scale: 0.9 }}
           onClick={handleBack}
         >
@@ -51,15 +51,12 @@ export default function TopAppBar({
           </span>
         </motion.button>
       ) : (
-        <div className="w-10" />
+        <div className="w-10 flex-shrink-0" />
       )}
 
       {/* Title */}
-      <div className="flex-1 flex justify-center">
-        <h1
-          className="text-white tracking-tight drop-shadow-md"
-          style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.5rem', fontWeight: 700 }}
-        >
+      <div className="flex-1 flex justify-center min-w-0 px-2">
+        <h1 className="t-headline text-white tracking-tight drop-shadow-md truncate">
           {title}
         </h1>
       </div>

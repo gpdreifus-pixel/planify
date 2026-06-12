@@ -35,7 +35,7 @@ export default function BookingConfirmationScreen() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          style={{ fontFamily: "'Syne', sans-serif", fontSize: '2rem', fontWeight: 700, color: 'white', marginBottom: '0.5rem' }}
+          className="t-display text-white mb-2"
         >
           ¡Reserva Exitosa!
         </motion.h1>
@@ -44,7 +44,7 @@ export default function BookingConfirmationScreen() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem', color: 'rgba(255,255,255,0.7)', marginBottom: '2rem', lineHeight: 1.5 }}
+          className="t-body text-white/75 mb-8"
         >
           Tu aventura en <strong className="text-white font-semibold">{trip.property.name}</strong> está lista.
         </motion.p>
@@ -55,10 +55,10 @@ export default function BookingConfirmationScreen() {
           transition={{ delay: 0.4 }}
           className="glass-surface p-6 rounded-3xl w-full mb-8 flex flex-col gap-2"
         >
-          <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <span className="t-caption text-white/60 uppercase" style={{ fontSize: '0.8rem', letterSpacing: '0.1em' }}>
             Código de confirmación
           </span>
-          <span style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.5rem', fontWeight: 700, color: '#4ade80', letterSpacing: '0.05em' }}>
+          <span className="t-headline" style={{ color: '#4ade80', letterSpacing: '0.05em' }}>
             {trip.confirmationCode}
           </span>
         </motion.div>
@@ -69,8 +69,7 @@ export default function BookingConfirmationScreen() {
           transition={{ delay: 0.5 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/trips')}
-          className="neu-btn-primary w-full py-4 rounded-full text-white font-bold shadow-lg"
-          style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.125rem' }}
+          className="t-title neu-btn-primary w-full py-4 rounded-full text-white shadow-lg"
         >
           Ver Mis Viajes
         </motion.button>

@@ -27,10 +27,7 @@ export default function ChatBubble({ question, hint }: ChatBubbleProps) {
 
         {/* Bubble */}
         <div className="glass-molded px-6 py-5 rounded-2xl rounded-bl-sm">
-          <p
-            className="text-white leading-tight tracking-tight drop-shadow-sm"
-            style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.5rem', fontWeight: 600 }}
-          >
+          <p className="t-headline text-white leading-tight tracking-tight drop-shadow-sm">
             {question}
           </p>
         </div>
@@ -38,12 +35,7 @@ export default function ChatBubble({ question, hint }: ChatBubbleProps) {
 
       {/* Hint */}
       <div className="ml-[52px] mt-3">
-        <p
-          className="text-white/70"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 400 }}
-        >
-          {hint}
-        </p>
+        <p className="t-label font-normal text-white/75">{hint}</p>
       </div>
     </motion.div>
   )

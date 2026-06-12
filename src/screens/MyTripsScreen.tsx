@@ -84,7 +84,8 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
         {/* Share button */}
         <button
           onClick={handleShare}
-          className="absolute top-3 left-3 w-8 h-8 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-white"
+          aria-label="Descargar comprobante en PDF"
+          className="absolute top-3 left-3 w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-white"
         >
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>share</span>
         </button>
@@ -94,7 +95,8 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
             e.stopPropagation()
             onDelete()
           }}
-          className="absolute top-3 left-14 w-8 h-8 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-[#ffb4ab] transition-colors"
+          aria-label="Eliminar viaje"
+          className="absolute top-3 left-[3.75rem] w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-[#ffb4ab] transition-colors"
           title="Eliminar viaje"
         >
           <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
@@ -103,20 +105,8 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
 
       {/* Content */}
       <div className="p-4 flex flex-col gap-2">
-        <h2
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '1.0625rem',
-            fontWeight: 700,
-            color: 'white',
-          }}
-        >
-          {trip.property.name}
-        </h2>
-        <p
-          className="flex items-center gap-1 text-white/70 text-sm"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
+        <h2 className="t-title text-white">{trip.property.name}</h2>
+        <p className="t-label font-normal flex items-center gap-1 text-white/75">
           <span className="material-symbols-outlined text-white/50" style={{ fontSize: 16 }}>calendar_month</span>
           {formatDate(trip.checkIn)} — {formatDate(trip.checkOut)}
           <span className="ml-1">· {nights}n</span>
@@ -125,16 +115,10 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
         {/* Progress bar */}
         <div className="mt-1 flex flex-col gap-1">
           <div className="flex justify-between">
-            <span
-              className="text-white/50 uppercase tracking-widest"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.625rem' }}
-            >
+            <span className="t-caption text-white/60 uppercase tracking-widest" style={{ fontSize: '0.625rem' }}>
               Progreso del viaje
             </span>
-            <span
-              className="text-white/50"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.625rem' }}
-            >
+            <span className="t-caption text-white/60" style={{ fontSize: '0.625rem' }}>
               {progress}%
             </span>
           </div>
@@ -151,22 +135,8 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
         </div>
 
         <div className="flex items-center justify-between mt-1">
-          <span
-            className="text-white/55 text-sm"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
-            {trip.property.location}
-          </span>
-          <span
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1rem',
-              fontWeight: 700,
-              color: 'white',
-            }}
-          >
-            ${trip.totalPrice.toLocaleString()}
-          </span>
+          <span className="t-label font-normal text-white/65">{trip.property.location}</span>
+          <span className="t-cta text-white">${trip.totalPrice.toLocaleString()}</span>
         </div>
       </div>
 
@@ -232,17 +202,9 @@ export default function MyTripsScreen() {
 
   return (
     <AppBackground variant="chat">
-      <TopAppBar
-        title="Mis Viajes"
-        rightSlot={
-          <motion.button
-            whileTap={{ scale: 0.90 }}
-            className="w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white"
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>notifications</span>
-          </motion.button>
-        }
-      />
+      {/* Sin rightSlot: el ícono de notificaciones anterior no tenía acción
+          asociada — un control muerto comunica funcionalidad que no existe. */}
+      <TopAppBar title="Mis Viajes" />
 
       {/* Tab switcher */}
       <div className="px-6 max-w-md mx-auto w-full relative z-10 pb-4">
@@ -343,38 +305,18 @@ export default function MyTripsScreen() {
                     className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p
-                      className="text-white font-semibold truncate"
-                      style={{ fontFamily: "'Syne', sans-serif", fontSize: '0.9375rem' }}
-                    >
-                      {property.name}
-                    </p>
-                    <p
-                      className="text-white/55 truncate"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8rem' }}
-                    >
+                    <p className="t-section truncate text-white">{property.name}</p>
+                    <p className="t-caption truncate text-white/65" style={{ fontSize: '0.8rem' }}>
                       {property.location}
                     </p>
                     <div className="flex items-center gap-1 mt-0.5">
                       <span style={{ fontSize: 12, color: '#ffb597' }}>★</span>
-                      <span
-                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.70)', fontWeight: 600 }}
-                      >
-                        {property.rating}
-                      </span>
+                      <span className="t-caption font-semibold text-white/75">{property.rating}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span
-                      style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem', fontWeight: 700, color: 'white' }}
-                    >
-                      ${property.pricePerNight}
-                    </span>
-                    <span
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.7rem', color: 'rgba(255,255,255,0.45)' }}
-                    >
-                      /noche
-                    </span>
+                    <span className="t-cta text-white">${property.pricePerNight}</span>
+                    <span className="t-caption text-white/55" style={{ fontSize: '0.7rem' }}>/noche</span>
                   </div>
                 </motion.div>
               ))}
@@ -440,6 +382,7 @@ export default function MyTripsScreen() {
           whileHover={{ scale: 1.12, boxShadow: '0 12px 30px rgba(255,107,31,0.6)' }}
           transition={{ type: 'spring', stiffness: 380, damping: 20 }}
           onClick={() => navigate('/chat/1')}
+          aria-label="Planificar un nuevo viaje"
           className="w-14 h-14 rounded-full flex items-center justify-center"
           style={{
             background: 'linear-gradient(135deg, #ff8c42, #ff6b1f)',

@@ -65,15 +65,7 @@ export default function ToastContainer() {
               >
                 {ICON_MAP[toast.type] ?? 'info'}
               </span>
-              <p
-                className="flex-1 text-white"
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.875rem',
-                  lineHeight: 1.5,
-                  fontWeight: 500,
-                }}
-              >
+              <p className="t-label font-medium flex-1 text-white" role="status">
                 {toast.message}
               </p>
               <span

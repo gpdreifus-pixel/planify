@@ -99,6 +99,7 @@ export default function AuthScreen() {
         <div className="pt-12 pb-4">
           <motion.button
             onClick={() => navigate('/')}
+            aria-label="Volver al inicio"
             className="neu-icon-btn w-10 h-10 flex items-center justify-center text-white"
             whileTap={{ scale: 0.90 }}
           >
@@ -117,13 +118,7 @@ export default function AuthScreen() {
           <div className="text-center relative z-10 flex flex-col items-center pointer-events-none">
             <img src={logoFullSrc} alt="Planify Logo" className="w-[200px] sm:w-[220px] h-auto -my-20 object-contain drop-shadow-md mb-2" />
             <p
-              className="text-white/90 drop-shadow-sm"
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '1rem',
-                lineHeight: 1.55,
-                fontWeight: 300,
-              }}
+              className="t-body text-white/90 drop-shadow-sm"
             >
               Tu viaje comienza aquí.
             </p>
@@ -141,19 +136,19 @@ export default function AuthScreen() {
               />
               <button
                 onClick={() => handleTabChange('login')}
-                className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
+                aria-pressed={tab === 'login'}
+                className={`t-label flex-1 py-3 text-center relative z-10 transition-colors drop-shadow-sm ${
                   tab === 'login' ? 'text-white' : 'text-white/60'
                 }`}
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               >
                 Iniciar Sesión
               </button>
               <button
                 onClick={() => handleTabChange('register')}
-                className={`flex-1 py-3 text-center relative z-10 transition-colors text-sm font-semibold drop-shadow-sm ${
+                aria-pressed={tab === 'register'}
+                className={`t-label flex-1 py-3 text-center relative z-10 transition-colors drop-shadow-sm ${
                   tab === 'register' ? 'text-white' : 'text-white/60'
                 }`}
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               >
                 Registrarse
               </button>
@@ -174,10 +169,7 @@ export default function AuthScreen() {
               >
                 {/* Email */}
                 <div className="flex flex-col gap-1">
-                  <label
-                    className="text-white/90 px-3 drop-shadow-sm"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-                  >
+                  <label className="t-label text-white/90 px-3 drop-shadow-sm">
                     Correo Electrónico
                   </label>
                   <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
@@ -189,18 +181,14 @@ export default function AuthScreen() {
                       onChange={(e) => setLoginEmail(e.target.value)}
                       required
                       autoComplete="email"
-                      className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                      className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                     />
                   </div>
                 </div>
 
                 {/* Password */}
                 <div className="flex flex-col gap-1">
-                  <label
-                    className="text-white/90 px-3 drop-shadow-sm"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-                  >
+                  <label className="t-label text-white/90 px-3 drop-shadow-sm">
                     Contraseña
                   </label>
                   <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
@@ -212,8 +200,7 @@ export default function AuthScreen() {
                       onChange={(e) => setLoginPassword(e.target.value)}
                       required
                       autoComplete="current-password"
-                      className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                      className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                     />
                   </div>
                 </div>
@@ -223,8 +210,8 @@ export default function AuthScreen() {
                   <button
                     type="button"
                     onClick={() => handleTabChange('forgot-password')}
-                    className="text-white/90 hover:text-white transition-colors underline decoration-white/30 underline-offset-2"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8125rem', fontWeight: 600 }}
+                    className="t-label py-1 text-white/90 hover:text-white transition-colors underline decoration-white/30 underline-offset-2"
+                    style={{ fontSize: '0.8125rem' }}
                   >
                     ¿Olvidaste tu contraseña?
                   </button>
@@ -235,8 +222,7 @@ export default function AuthScreen() {
                   type="submit"
                   whileTap={{ scale: 0.97 }}
                   disabled={isLoading}
-                  className="w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
-                  style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', fontWeight: 700, letterSpacing: '0.02em' }}
+                  className="t-headline-sm w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
                 >
                   <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shimmer pointer-events-none" />
                   <span className="drop-shadow-sm">{isLoading ? 'Iniciando...' : 'Entrar'}</span>
@@ -248,13 +234,9 @@ export default function AuthScreen() {
                   <motion.p
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center"
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.8125rem',
-                      color: '#ffb4ab',
-                      lineHeight: 1.4,
-                    }}
+                    className="t-caption text-center"
+                    style={{ fontSize: '0.8125rem', color: '#ffb4ab' }}
+                    role="alert"
                   >
                     {error}
                   </motion.p>
@@ -272,10 +254,7 @@ export default function AuthScreen() {
               >
                 {/* Name */}
                 <div className="flex flex-col gap-1">
-                  <label
-                    className="text-white/90 px-3 drop-shadow-sm"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-                  >
+                  <label className="t-label text-white/90 px-3 drop-shadow-sm">
                     Nombre
                   </label>
                   <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
@@ -287,18 +266,14 @@ export default function AuthScreen() {
                       onChange={(e) => setRegName(e.target.value)}
                       required
                       autoComplete="name"
-                      className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                      className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                     />
                   </div>
                 </div>
 
                 {/* Email */}
                 <div className="flex flex-col gap-1">
-                  <label
-                    className="text-white/90 px-3 drop-shadow-sm"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-                  >
+                  <label className="t-label text-white/90 px-3 drop-shadow-sm">
                     Correo Electrónico
                   </label>
                   <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
@@ -310,18 +285,14 @@ export default function AuthScreen() {
                       onChange={(e) => setRegEmail(e.target.value)}
                       required
                       autoComplete="email"
-                      className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                      className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                     />
                   </div>
                 </div>
 
                 {/* Password */}
                 <div className="flex flex-col gap-1">
-                  <label
-                    className="text-white/90 px-3 drop-shadow-sm"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-                  >
+                  <label className="t-label text-white/90 px-3 drop-shadow-sm">
                     Contraseña
                   </label>
                   <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
@@ -333,8 +304,7 @@ export default function AuthScreen() {
                       onChange={(e) => setRegPassword(e.target.value)}
                       required
                       autoComplete="new-password"
-                      className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                      className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                     />
                   </div>
                 </div>
@@ -344,8 +314,7 @@ export default function AuthScreen() {
                   type="submit"
                   whileTap={{ scale: 0.97 }}
                   disabled={isLoading}
-                  className="w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
-                  style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', fontWeight: 700, letterSpacing: '0.02em' }}
+                  className="t-headline-sm w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
                 >
                   <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shimmer pointer-events-none" />
                   <span className="drop-shadow-sm">{isLoading ? 'Registrando...' : 'Crear Cuenta'}</span>
@@ -357,13 +326,9 @@ export default function AuthScreen() {
                   <motion.p
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center"
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.8125rem',
-                      color: '#ffb4ab',
-                      lineHeight: 1.4,
-                    }}
+                    className="t-caption text-center"
+                    style={{ fontSize: '0.8125rem', color: '#ffb4ab' }}
+                    role="alert"
                   >
                     {error}
                   </motion.p>
@@ -380,10 +345,8 @@ export default function AuthScreen() {
                 onSubmit={handleResetPassword}
               >
                 <div className="text-center mb-2">
-                  <h2 className="text-white font-bold" style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem' }}>
-                    Recuperar Contraseña
-                  </h2>
-                  <p className="text-white/70 text-sm mt-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  <h2 className="t-headline-sm text-white">Recuperar Contraseña</h2>
+                  <p className="t-label font-normal text-white/75 mt-1">
                     Te enviaremos un enlace para restablecer tu contraseña.
                   </p>
                 </div>
@@ -406,8 +369,9 @@ export default function AuthScreen() {
                           value={resetEmail}
                           onChange={(e) => setResetEmail(e.target.value)}
                           required
-                          className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
-                          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                          autoComplete="email"
+                          aria-label="Correo electrónico"
+                          className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/50 focus:ring-0 p-0"
                         />
                       </div>
                     </div>
@@ -416,8 +380,7 @@ export default function AuthScreen() {
                       type="submit"
                       whileTap={{ scale: 0.97 }}
                       disabled={isLoading}
-                      className="w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
-                      style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.125rem', fontWeight: 700 }}
+                      className="t-title w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
                     >
                       <span className="drop-shadow-sm">{isLoading ? 'Enviando...' : 'Enviar Enlace'}</span>
                     </motion.button>
@@ -427,8 +390,7 @@ export default function AuthScreen() {
                 <button
                   type="button"
                   onClick={() => handleTabChange('login')}
-                  className="mt-2 text-white/60 hover:text-white transition-colors text-sm font-semibold text-center"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  className="t-label mt-2 py-2 text-white/65 hover:text-white transition-colors text-center"
                 >
                   Volver a iniciar sesión
                 </button>
@@ -441,10 +403,7 @@ export default function AuthScreen() {
             <>
               <div className="flex items-center gap-4 relative z-10 mt-2">
                 <div className="flex-1 h-px bg-white/20" />
-                <span
-                  className="text-white/70 drop-shadow-sm"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8125rem' }}
-                >
+                <span className="t-caption text-white/75 drop-shadow-sm" style={{ fontSize: '0.8125rem' }}>
                   O continuar con
                 </span>
                 <div className="flex-1 h-px bg-white/20" />
@@ -455,6 +414,7 @@ export default function AuthScreen() {
             <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={() => handleSocial('google')}
+              aria-label="Continuar con Google"
               className="neu-icon-btn w-14 h-14 flex items-center justify-center"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
@@ -468,6 +428,7 @@ export default function AuthScreen() {
             <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={() => handleSocial('apple')}
+              aria-label="Continuar con Apple"
               className="neu-icon-btn w-14 h-14 flex items-center justify-center"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden>

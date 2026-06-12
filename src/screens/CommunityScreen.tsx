@@ -7,6 +7,7 @@ import BottomNav from '../components/ui/BottomNav'
 import { useCommunityStore } from '../store/communityStore'
 import { useAuthStore } from '../store/authStore'
 import { useChatStore } from '../store/chatStore'
+import { useUIStore } from '../store/uiStore'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 import type { CommunityPost } from '../types'
 
@@ -65,17 +66,9 @@ function PostCard({
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <p
-            className="font-semibold truncate text-white"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
-          >
-            {post.author.name}
-          </p>
+          <p className="t-label truncate text-white">{post.author.name}</p>
         </div>
-        <span
-          className="text-white/50 flex-shrink-0"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem' }}
-        >
+        <span className="t-caption text-white/65 flex-shrink-0">
           {new Date(post.createdAt).toLocaleDateString('es-AR', {
             day: 'numeric',
             month: 'short',
@@ -92,53 +85,41 @@ function PostCard({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="absolute bottom-3 left-4 right-4">
-          <h3
-            className="text-white drop-shadow"
-            style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', fontWeight: 700 }}
-          >
-            {post.destination}
-          </h3>
+          <h3 className="t-headline-sm text-white drop-shadow">{post.destination}</h3>
         </div>
       </div>
 
       {/* Caption */}
       <div className="px-4 pt-3 pb-2">
-        <p
-          className="text-white/85 line-clamp-2"
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '0.875rem',
-            lineHeight: 1.55,
-            fontWeight: 300,
-          }}
-        >
+        <p className="t-label font-normal text-white/85 line-clamp-2" style={{ lineHeight: 1.55 }}>
           {post.caption}
         </p>
       </div>
 
       {/* Actions row */}
-      <div className="flex items-center gap-4 px-4 pb-4 pt-2 border-t border-white/10" onClick={e => e.stopPropagation()}>
+      <div className="flex items-center gap-4 px-4 pb-2 pt-1 border-t border-white/10" onClick={e => e.stopPropagation()}>
         <motion.button
           whileTap={{ scale: 0.85 }}
           onClick={onLike}
-          className="flex items-center gap-1.5"
+          aria-label={post.likedByUser ? 'Quitar me gusta' : 'Me gusta'}
+          aria-pressed={post.likedByUser}
+          className="flex items-center gap-1.5 py-2 px-1"
         >
           <span
             className="material-symbols-outlined"
             style={{
               fontSize: 20,
-              color: post.likedByUser ? '#ffb597' : 'rgba(255,255,255,0.55)',
+              color: post.likedByUser ? '#ffb597' : 'rgba(255,255,255,0.65)',
               fontVariationSettings: post.likedByUser ? "'FILL' 1" : "'FILL' 0",
             }}
           >
             favorite
           </span>
           <span
+            className="t-label"
             style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: '0.8125rem',
-              color: post.likedByUser ? '#ffb597' : 'rgba(255,255,255,0.55)',
-              fontWeight: 600,
+              color: post.likedByUser ? '#ffb597' : 'rgba(255,255,255,0.65)',
             }}
           >
             {post.likes}
@@ -154,6 +135,7 @@ export default function CommunityScreen() {
   const navigate = useNavigate()
   const { posts, isLoading, fetchPosts, toggleLike } = useCommunityStore()
   const { isAuthenticated, user } = useAuthStore()
+  const showToast = useUIStore((s) => s.showToast)
 
   // Keep tab in URL search param so the back button restores the right tab
   const searchParams = new URLSearchParams(window.location.search)
@@ -231,8 +213,8 @@ export default function CommunityScreen() {
             placeholder="Buscar destino, autor..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+            aria-label="Buscar publicaciones"
+            className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0"
           />
         </div>
       </div>
@@ -312,7 +294,9 @@ export default function CommunityScreen() {
                 post={post}
                 onClick={() => setSelectedPost(post)}
                 onLike={() => {
+                  // El like de un invitado no debe fallar en silencio
                   if (isAuthenticated) toggleLike(post.id)
+                  else showToast('Iniciá sesión para dar me gusta', 'info')
                 }}
               />
             ))}
@@ -362,14 +346,16 @@ export default function CommunityScreen() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto bg-[#2a2438] rounded-t-[32px] flex flex-col pb-10 max-w-md mx-auto shadow-2xl"
+              className="fixed bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto bg-sheet-dark rounded-t-[32px] flex flex-col pb-10 max-w-md mx-auto shadow-2xl"
               style={{ borderTop: '1px solid rgba(255,255,255,0.1)', zIndex: 9999 }}
             >
-              <div className="sticky top-0 bg-gradient-to-b from-[#2a2438] to-transparent pt-4 pb-2 px-6 flex justify-between items-center z-10">
-                <h2 className="text-white font-bold" style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem' }}>
-                  {selectedPost.destination}
-                </h2>
-                <button onClick={() => setSelectedPost(null)} className="neu-icon-btn w-8 h-8 flex items-center justify-center text-white">
+              <div className="sticky top-0 bg-gradient-to-b from-sheet-dark to-transparent pt-4 pb-2 px-6 flex justify-between items-center z-10">
+                <h2 className="t-headline-sm text-white">{selectedPost.destination}</h2>
+                <button
+                  onClick={() => setSelectedPost(null)}
+                  aria-label="Cerrar publicación"
+                  className="neu-icon-btn w-10 h-10 flex items-center justify-center text-white"
+                >
                   <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
                 </button>
               </div>
@@ -377,21 +363,17 @@ export default function CommunityScreen() {
               <div className="px-6 pb-24 flex flex-col gap-5 mt-2">
                 <img src={selectedPost.images[0]} alt={selectedPost.destination} className="w-full h-48 object-cover rounded-2xl" />
                 
-                <p className="text-white/85" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem', lineHeight: 1.6 }}>
+                <p className="t-body-sm text-white/85" style={{ lineHeight: 1.6 }}>
                   {selectedPost.caption}
                 </p>
 
                 {selectedPost.experiences && selectedPost.experiences.length > 0 && (
                   <div className="flex flex-col gap-3">
-                    <h3 className="text-white font-bold" style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.125rem' }}>
-                      Experiencias
-                    </h3>
+                    <h3 className="t-title text-white">Experiencias</h3>
                     {selectedPost.experiences.map((exp, idx) => (
                       <div key={idx} className="glass-panel p-4 rounded-2xl flex flex-col gap-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-white font-semibold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                            {exp.type}
-                          </span>
+                          <span className="t-body font-semibold text-white">{exp.type}</span>
                           <div className="flex gap-1">
                             {[1, 2, 3, 4, 5].map(star => (
                               <span
@@ -409,9 +391,7 @@ export default function CommunityScreen() {
                           </div>
                         </div>
                         {exp.comment && (
-                          <p className="text-white/70 text-sm" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontStyle: 'italic' }}>
-                            "{exp.comment}"
-                          </p>
+                          <p className="t-label font-normal italic text-white/75">"{exp.comment}"</p>
                         )}
                       </div>
                     ))}
@@ -421,12 +401,10 @@ export default function CommunityScreen() {
                 <motion.button
                   whileTap={{ scale: 0.96 }}
                   onClick={() => handleCopyTrip(selectedPost)}
-                  className="w-full mt-2 py-3.5 rounded-full flex items-center justify-center gap-2 text-white font-bold"
+                  className="t-cta w-full mt-2 py-3.5 rounded-full flex items-center justify-center gap-2 text-white"
                   style={{
                     background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
                     boxShadow: '0 8px 25px rgba(255,107,31,0.4)',
-                    fontFamily: "'Syne', sans-serif",
-                    fontSize: '1rem'
                   }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 20 }}>content_copy</span>

@@ -98,10 +98,7 @@ export default function ChatScreen() {
         onBack={goBack}
         rightSlot={
           <div className="flex items-center gap-3">
-            <span
-              className="text-white/80"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
-            >
+            <span className="t-label font-normal text-white/80" aria-label={`Paso ${stepNum} de ${totalSteps}`}>
               {stepNum}/{totalSteps}
             </span>
             <button 
@@ -143,8 +140,7 @@ export default function ChatScreen() {
                   animate={{ opacity: 1, y: 0 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={advanceMulti}
-                  className="mt-6 ml-[52px] w-fit px-8 py-3 rounded-full neu-btn-primary text-white font-bold flex items-center gap-2"
-                  style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem' }}
+                  className="t-cta mt-6 ml-[52px] w-fit px-8 py-3 rounded-full neu-btn-primary text-white flex items-center gap-2"
                 >
                   Continuar
                   <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>

@@ -90,45 +90,12 @@ export default function VerifyEmailScreen() {
             transition={{ delay: 0.2, duration: 0.3 }}
             className="text-center"
           >
-            <h2
-              className="text-white mb-3"
-              style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.75rem', fontWeight: 700 }}
-            >
-              Revisá tu email
-            </h2>
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.9375rem',
-                lineHeight: 1.65,
-                fontWeight: 300,
-                color: 'rgba(255,255,255,0.70)',
-              }}
-            >
-              Te enviamos un enlace de verificación a
-            </p>
+            <h2 className="t-headline-lg text-white mb-3">Revisá tu email</h2>
+            <p className="t-body-sm text-white/75">Te enviamos un enlace de verificación a</p>
             {email && (
-              <p
-                className="mt-1"
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.9375rem',
-                  fontWeight: 600,
-                  color: 'white',
-                }}
-              >
-                {email}
-              </p>
+              <p className="t-body-sm font-semibold text-white mt-1">{email}</p>
             )}
-            <p
-              className="mt-3"
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.8125rem',
-                lineHeight: 1.65,
-                color: 'rgba(255,255,255,0.45)',
-              }}
-            >
+            <p className="t-caption text-white/60 mt-3" style={{ fontSize: '0.8125rem', lineHeight: 1.65 }}>
               Hacé clic en el enlace para activar tu cuenta.
               La app se abrirá automáticamente.
             </p>
@@ -145,11 +112,8 @@ export default function VerifyEmailScreen() {
               whileTap={{ scale: resendDisabled ? 1 : 0.96 }}
               onClick={handleResend}
               disabled={resendDisabled}
-              className="px-6 py-2.5 rounded-full transition-colors"
+              className="t-label px-6 py-3 rounded-full transition-colors"
               style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.875rem',
-                fontWeight: 600,
                 background: resendDisabled ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.10)',
                 border: '1px solid rgba(255,255,255,0.16)',
                 color: resendDisabled ? 'rgba(255,255,255,0.30)' : 'rgba(255,255,255,0.82)',
@@ -170,13 +134,7 @@ export default function VerifyEmailScreen() {
               </AnimatePresence>
             </motion.button>
 
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.75rem',
-                color: 'rgba(255,255,255,0.30)',
-              }}
-            >
+            <p className="t-caption text-white/45">
               ¿No lo recibiste? Revisá tu carpeta de spam.
             </p>
           </motion.div>
@@ -192,8 +150,7 @@ export default function VerifyEmailScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           whileTap={{ scale: 0.97 }}
-          className="w-full py-4 rounded-full btn-primary text-white font-bold flex items-center justify-center gap-2 no-underline"
-          style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem', fontWeight: 700 }}
+          className="t-cta w-full py-4 rounded-full btn-primary text-white flex items-center justify-center gap-2 no-underline"
         >
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>open_in_new</span>
           Abrir Gmail

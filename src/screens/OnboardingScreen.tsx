@@ -90,13 +90,7 @@ export default function OnboardingScreen() {
             whileTap={{ scale: 0.96 }}
             whileHover={{ scale: 1.02 }}
             onClick={advance}
-            className="w-full h-[72px] rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2"
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.125rem',
-              fontWeight: 700,
-              letterSpacing: '0.015em',
-            }}
+            className="t-title w-full h-[72px] rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2"
           >
             <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shimmer pointer-events-none" />
             <span>{step === 'ready' ? 'Planificá tu primer viaje' : 'Continuar'}</span>
@@ -130,29 +124,12 @@ function WelcomeStep({ name }: { name: string }) {
       </motion.div>
 
       <div className="text-center flex flex-col gap-3">
-        <h1
-          className="text-white"
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '2.25rem',
-            fontWeight: 500,
-            lineHeight: 1.1,
-            letterSpacing: '0.03em',
-          }}
-        >
+        <h1 className="t-display-xl text-white" style={{ fontSize: '2.25rem' }}>
           ¡Bienvenido/a,
           <br />
           {name}!
         </h1>
-        <p
-          className="text-white/65"
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '1rem',
-            lineHeight: 1.65,
-            fontWeight: 300,
-          }}
-        >
+        <p className="t-body text-white/70" style={{ lineHeight: 1.65 }}>
           Planify es tu asistente de viajes personal. En 10 preguntas armamos el itinerario ideal para vos.
         </p>
       </div>
@@ -174,48 +151,26 @@ function PrefsStep({
   return (
     <>
       <div className="text-center flex flex-col gap-2 w-full">
-        <h2
-          className="text-white"
-          style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.875rem', fontWeight: 500 }}
-        >
-          Personalizá tu experiencia
-        </h2>
-        <p
-          className="text-white/60"
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '0.9375rem',
-            fontWeight: 300,
-          }}
-        >
-          Podés cambiarlo cuando quieras desde tu perfil.
-        </p>
+        <h2 className="t-headline-lg text-white">Personalizá tu experiencia</h2>
+        <p className="t-body-sm text-white/70">Podés cambiarlo cuando quieras desde tu perfil.</p>
       </div>
 
       {/* Currency */}
       <div className="glass-surface rounded-2xl p-4 flex flex-col gap-3 w-full">
-        <p
-          className="text-white/90"
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '0.875rem',
-            fontWeight: 600,
-          }}
-        >
-          Moneda
-        </p>
-        <div className="flex gap-2">
+        <p className="t-label text-white/90">Moneda</p>
+        <div className="flex gap-2" role="radiogroup" aria-label="Moneda preferida">
           {currencies.map((c) => (
             <motion.button
               key={c}
               whileTap={{ scale: 0.94 }}
               onClick={() => setPrefs({ currency: c })}
-              className={`flex-1 py-2.5 rounded-full text-sm font-semibold transition-all ${
+              role="radio"
+              aria-checked={prefs.currency === c}
+              className={`t-label flex-1 py-3 rounded-full transition-all ${
                 prefs.currency === c
                   ? 'neu-btn-primary text-white'
-                  : 'neu-pressed text-white/55 hover:text-white/75'
+                  : 'neu-pressed text-white/65 hover:text-white/85'
               }`}
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               {c}
             </motion.button>
@@ -250,26 +205,8 @@ function ReadyStep() {
       </motion.div>
 
       <div className="text-center flex flex-col gap-3">
-        <h1
-          className="text-white"
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '2.5rem',
-            fontWeight: 500,
-            lineHeight: 1.05,
-          }}
-        >
-          ¡Todo listo!
-        </h1>
-        <p
-          className="text-white/65"
-          style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '1rem',
-            lineHeight: 1.65,
-            fontWeight: 300,
-          }}
-        >
+        <h1 className="t-display-xl text-white">¡Todo listo!</h1>
+        <p className="t-body text-white/70" style={{ lineHeight: 1.65 }}>
           Ya podés planificar tu primer viaje. Contestá 10 preguntas y encontramos el lugar perfecto para vos.
         </p>
       </div>

@@ -55,12 +55,7 @@ export default function ChatSummaryScreen() {
   return (
     <AppBackground variant="chat">
       <TopAppBar backTo="/chat/10" title="Tu búsqueda" rightSlot={
-        <span
-          className="text-white/70"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-        >
-          10/10
-        </span>
+        <span className="t-label text-white/75">10/10</span>
       } />
 
       <main className="flex-1 flex flex-col relative z-10 px-6 pb-32 max-w-md mx-auto w-full">
@@ -96,16 +91,10 @@ export default function ChatSummaryScreen() {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p
-                      className="text-white/65 uppercase tracking-wider"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.6875rem', fontWeight: 600 }}
-                    >
+                    <p className="t-caption font-semibold text-white/70 uppercase tracking-wider" style={{ fontSize: '0.6875rem' }}>
                       {meta.label}
                     </p>
-                    <p
-                      className="text-white font-bold truncate drop-shadow-sm"
-                      style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.0625rem' }}
-                    >
+                    <p className="t-title truncate text-white drop-shadow-sm">
                       {Array.isArray(value) ? value.join(', ') : String(value)}
                     </p>
                   </div>
@@ -122,8 +111,7 @@ export default function ChatSummaryScreen() {
             whileTap={{ scale: 0.97 }}
             onClick={handleSearch}
             disabled={isLoading}
-            className="w-full py-4 rounded-full neu-btn-primary text-white font-bold disabled:opacity-60 flex items-center justify-center gap-2"
-            style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem', fontWeight: 700 }}
+            className="t-cta w-full py-4 rounded-full neu-btn-primary text-white disabled:opacity-60 flex items-center justify-center gap-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
@@ -154,16 +142,18 @@ export default function ChatSummaryScreen() {
             >
               <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-2" />
               <div className="flex justify-between items-center mb-2">
-                <h3 className="text-white font-bold" style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem' }}>
+                <h3 className="t-headline-sm text-white">
                   Editar {FIELD_META[editingField as string]?.label}
                 </h3>
-                <button onClick={() => setEditingField(null)} className="text-white/60 hover:text-white">
+                <button
+                  onClick={() => setEditingField(null)}
+                  aria-label="Cerrar edición"
+                  className="w-10 h-10 -mr-2 flex items-center justify-center text-white/60 hover:text-white"
+                >
                   <span className="material-symbols-outlined">close</span>
                 </button>
               </div>
-              <p className="text-white/70" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9rem' }}>
-                {editingStepData.question}
-              </p>
+              <p className="t-body-sm text-white/75">{editingStepData.question}</p>
               
               <div className="max-h-[50vh] overflow-y-auto custom-scrollbar pb-4">
                 {editingStepData.chips && (
@@ -198,8 +188,7 @@ export default function ChatSummaryScreen() {
               <div className="mt-4 pb-6">
                 <button
                   onClick={handleSaveEdit}
-                  className="w-full py-3.5 rounded-full neu-btn-primary text-white font-bold flex items-center justify-center gap-2"
-                  style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem' }}
+                  className="t-cta w-full py-3.5 rounded-full neu-btn-primary text-white flex items-center justify-center gap-2"
                 >
                   Guardar cambios
                 </button>

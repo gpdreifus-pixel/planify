@@ -112,10 +112,7 @@ export default function CreatePostScreen() {
         >
           {/* Destination */}
           <div className="flex flex-col gap-1.5">
-            <label
-              className="text-white/90 px-1"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-            >
+            <label className="t-label text-white/90 px-1">
               ¿A dónde fuiste?
             </label>
             <div className="neu-pressed rounded-xl flex items-center px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
@@ -128,18 +125,14 @@ export default function CreatePostScreen() {
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
                 maxLength={80}
-                className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0"
               />
             </div>
           </div>
 
           {/* Image picker */}
           <div className="flex flex-col gap-2">
-            <label
-              className="text-white/90 px-1"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-            >
+            <label className="t-label text-white/90 px-1">
               Imagen
             </label>
 
@@ -163,10 +156,7 @@ export default function CreatePostScreen() {
                   >
                     <img src={p.thumb} alt={p.label} className="w-full h-full object-cover" />
                   </div>
-                  <span
-                    className="text-white/55"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.65rem' }}
-                  >
+                  <span className="t-caption text-white/65" style={{ fontSize: '0.65rem' }}>
                     {p.label}
                   </span>
                 </motion.button>
@@ -183,8 +173,8 @@ export default function CreatePostScreen() {
                 placeholder="O pegá una URL de imagen..."
                 value={imageUrl}
                 onChange={(e) => { setImageUrl(e.target.value); setSelectedPreset(null) }}
-                className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0 min-w-0"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
+                aria-label="URL de imagen personalizada"
+                className="t-label font-normal bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0 min-w-0"
               />
             </div>
 
@@ -212,10 +202,7 @@ export default function CreatePostScreen() {
 
           {/* Caption */}
           <div className="flex flex-col gap-1.5">
-            <label
-              className="text-white/90 px-1"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 600 }}
-            >
+            <label className="t-label text-white/90 px-1">
               Contanos tu experiencia
             </label>
             <div className="neu-pressed rounded-xl px-3 py-3 focus-within:ring-1 focus-within:ring-white/40 transition-all">
@@ -225,17 +212,10 @@ export default function CreatePostScreen() {
                 onChange={(e) => setCaption(e.target.value)}
                 maxLength={280}
                 rows={4}
-                className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0 resize-none"
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.9375rem',
-                  lineHeight: 1.6,
-                }}
+                className="t-body-sm bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 focus:ring-0 p-0 resize-none"
+                style={{ lineHeight: 1.6 }}
               />
-              <p
-                className="text-right text-white/30 mt-1"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem' }}
-              >
+              <p className="t-caption text-right text-white/40 mt-1" aria-live="polite">
                 {caption.length}/280
               </p>
             </div>
@@ -243,21 +223,22 @@ export default function CreatePostScreen() {
 
           {/* Experiences (Optional) */}
           <div className="flex flex-col gap-3 mt-2">
-            <h3 className="text-white font-bold" style={{ fontFamily: "'Syne', sans-serif" }}>Valora tu viaje (Opcional)</h3>
-            
+            <h3 className="t-title text-white">Valora tu viaje (Opcional)</h3>
+
             {experiences.map((exp, idx) => (
               <div key={exp.type} className="glass-molded rounded-2xl p-4 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-white/90 font-medium" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                    {exp.type}
-                  </span>
-                  <div className="flex gap-1">
+                  <span className="t-body font-medium text-white/90">{exp.type}</span>
+                  <div className="flex gap-1" role="radiogroup" aria-label={`Calificación de ${exp.type}`}>
                     {[1, 2, 3, 4, 5].map(star => (
                       <button
                         key={star}
                         type="button"
                         onClick={() => updateExperience(idx, 'rating', star)}
-                        className="material-symbols-outlined"
+                        role="radio"
+                        aria-checked={exp.rating === star}
+                        aria-label={`${star} ${star === 1 ? 'estrella' : 'estrellas'}`}
+                        className="material-symbols-outlined p-1 -m-0.5"
                         style={{
                           fontSize: 24,
                           color: star <= exp.rating ? '#ff8c42' : 'rgba(255,255,255,0.2)',
@@ -276,8 +257,7 @@ export default function CreatePostScreen() {
                   value={exp.comment}
                   onChange={e => updateExperience(idx, 'comment', e.target.value)}
                   maxLength={100}
-                  className="bg-transparent border-b border-white/20 outline-none text-white text-sm pb-1 placeholder:text-white/30 focus:border-white/60 transition-colors w-full"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  className="t-label font-normal bg-transparent border-b border-white/20 outline-none text-white pb-1 placeholder:text-white/30 focus:border-white/60 transition-colors w-full"
                 />
               </div>
             ))}
@@ -290,12 +270,9 @@ export default function CreatePostScreen() {
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="text-center"
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.8125rem',
-                  color: '#ffb4ab',
-                }}
+                role="alert"
+                className="t-caption text-center"
+                style={{ fontSize: '0.8125rem', color: '#ffb4ab' }}
               >
                 {error}
               </motion.p>
@@ -307,13 +284,7 @@ export default function CreatePostScreen() {
             type="submit"
             whileTap={{ scale: 0.97 }}
             disabled={isCreating}
-            className="w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.125rem',
-              fontWeight: 700,
-              letterSpacing: '0.015em',
-            }}
+            className="t-title w-full h-14 rounded-full neu-btn-primary relative overflow-hidden group flex items-center justify-center gap-2 disabled:opacity-60 mt-1"
           >
             <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shimmer pointer-events-none" />
             <span>{isCreating ? 'Publicando...' : 'Publicar'}</span>

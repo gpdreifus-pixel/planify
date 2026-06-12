@@ -81,12 +81,8 @@ function PropertyCard({ property, onPress }: { property: Property; onPress: () =
           {property.tags.slice(0, 2).map((tag) => (
             <span
               key={tag}
-              className="px-2.5 py-1 rounded-full text-white font-semibold"
-              style={{
-                background: 'rgba(255,107,31,0.88)',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.75rem',
-              }}
+              className="t-caption font-semibold px-2.5 py-1 rounded-full text-white"
+              style={{ background: 'rgba(255,107,31,0.88)' }}
             >
               {tag}
             </span>
@@ -94,17 +90,7 @@ function PropertyCard({ property, onPress }: { property: Property; onPress: () =
         </div>
         {/* Name overlay */}
         <div className="absolute bottom-3 left-4 right-4">
-          <h3
-            className="text-white drop-shadow-lg"
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.125rem',
-              fontWeight: 700,
-              lineHeight: 1.2,
-            }}
-          >
-            {property.name}
-          </h3>
+          <h3 className="t-title text-white drop-shadow-lg">{property.name}</h3>
         </div>
       </div>
 
@@ -112,68 +98,26 @@ function PropertyCard({ property, onPress }: { property: Property; onPress: () =
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <p
-              className="text-white/75"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem' }}
-            >
-              {property.location}
-            </p>
+            <p className="t-label font-normal text-white/75">{property.location}</p>
             <div className="flex items-center gap-1 mt-1">
               <span style={{ color: '#ffb597', fontSize: '0.875rem' }}>★</span>
-              <span
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  color: 'white',
-                }}
-              >
-                {property.rating}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.75rem',
-                  color: 'rgba(255,255,255,0.55)',
-                }}
-              >
-                ({property.reviewCount})
-              </span>
+              <span className="t-label text-white">{property.rating}</span>
+              <span className="t-caption text-white/65">({property.reviewCount})</span>
             </div>
           </div>
           <div className="text-right">
-            <span
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1.375rem',
-                fontWeight: 700,
-                color: 'white',
-              }}
-            >
-              ${property.pricePerNight}
-            </span>
-            <span
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.8rem',
-                color: 'rgba(255,255,255,0.60)',
-                marginLeft: '0.2rem',
-              }}
-            >
-              / noche
-            </span>
+            <span className="t-headline-sm text-white">${property.pricePerNight}</span>
+            <span className="t-caption text-white/70 ml-1">/ noche</span>
           </div>
         </div>
 
         {/* Ver detalle — orange gradient with arrow */}
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full border border-white/20 font-semibold text-white"
+          className="t-label w-full flex items-center justify-center gap-2 py-3 rounded-full border border-white/20 text-white"
           style={{
             background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
             boxShadow: '0 4px 12px rgba(255,140,66,0.4)',
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontSize: '0.9rem',
           }}
           onClick={(e) => { e.stopPropagation(); onPress() }}
         >
@@ -202,6 +146,7 @@ export default function ResultsScreen() {
           <motion.button
             whileTap={{ scale: 0.90 }}
             onClick={() => navigate('/results/filters')}
+            aria-label="Abrir filtros"
             className="w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>tune</span>
@@ -212,13 +157,7 @@ export default function ResultsScreen() {
       <main className="flex-1 relative z-10 px-6 pb-32 max-w-md mx-auto w-full">
         {/* Subtitle row */}
         <div className="flex items-center justify-between mb-5">
-          <p
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '0.875rem',
-              color: 'rgba(255,255,255,0.70)',
-            }}
-          >
+          <p className="t-label font-normal text-white/75" aria-live="polite">
             {isLoading
               ? 'Buscando...'
               : hasSearched
@@ -227,12 +166,8 @@ export default function ResultsScreen() {
           </p>
           <button
             onClick={() => navigate('/results/map')}
-            className="flex items-center gap-1 hover:opacity-80 transition-opacity"
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '0.875rem',
-              color: 'rgba(255,255,255,0.70)',
-            }}
+            aria-label="Ver resultados en el mapa"
+            className="t-label font-normal text-white/75 flex items-center gap-1 py-2 hover:opacity-80 transition-opacity"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>map</span>
             Mapa

@@ -43,45 +43,23 @@ export default function HomeScreen() {
               >
                 flight_takeoff
               </span>
-              <span
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.8125rem',
-                  color: 'rgba(255,255,255,0.80)',
-                  fontWeight: 500,
-                }}
-              >
+              <span className="t-label font-medium text-white/80" style={{ fontSize: '0.8125rem' }}>
                 Tu próximo destino
               </span>
             </div>
           </div>
 
-          {/* Heading — guest vs authenticated */}
-          <h1
-            className="text-white text-center"
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '2.625rem',
-              fontWeight: 500,
-              lineHeight: 1.1,
-              letterSpacing: '0.04em',
-            }}
-          >
+          {/* Heading — guest vs authenticated.
+              t-display-xl: Syne solo está cargada en 600/700 — el weight 500
+              anterior se renderizaba sintético (borroso e inconsistente). */}
+          <h1 className="t-display-xl text-white text-center">
             {isAuthenticated && user
               ? `Hola, ${user.name.split(' ')[0]}`
               : '¿A dónde te llevamos?'}
           </h1>
 
           {/* Subtitle — guest vs authenticated */}
-          <p
-            className="text-white/65 text-center"
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: '1rem',
-              lineHeight: 1.6,
-              fontWeight: 300,
-            }}
-          >
+          <p className="t-body text-white/70 text-center" style={{ lineHeight: 1.6 }}>
             {isAuthenticated ? '¿Qué estás planeando hoy?' : '10 preguntas. Tu viaje ideal.'}
           </p>
 
@@ -90,13 +68,7 @@ export default function HomeScreen() {
             whileTap={{ scale: 0.96 }}
             whileHover={{ scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 340, damping: 22 }}
-            className="w-full h-20 rounded-full neu-btn-primary relative overflow-hidden group mt-1 flex items-center justify-center gap-2"
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.125rem',
-              fontWeight: 700,
-              letterSpacing: '0.015em',
-            }}
+            className="t-title w-full h-20 rounded-full neu-btn-primary relative overflow-hidden group mt-1 flex items-center justify-center gap-2"
             onClick={() => navigate('/chat/1')}
           >
             {/* Shimmer overlay */}
@@ -111,29 +83,24 @@ export default function HomeScreen() {
           {isAuthenticated ? (
             <button
               onClick={() => navigate('/trips')}
-              className="text-center text-white/55 hover:text-white/75 transition-colors"
-              style={{ fontFamily: "'Syne', sans-serif", fontSize: '0.9375rem' }}
+              className="t-section text-center text-white/65 hover:text-white/85 transition-colors py-2"
             >
               Ver mis viajes{' '}
-              <span className="text-white/85 font-semibold underline underline-offset-2">
-                →
-              </span>
+              <span className="text-white/85 underline underline-offset-2">→</span>
             </button>
           ) : (
             <div className="flex gap-3">
               <motion.button
                 whileTap={{ scale: 0.96 }}
                 onClick={() => navigate('/auth', { state: { tab: 'login' } })}
-                className="flex-1 py-3.5 rounded-full neu-pressed text-white/80 hover:text-white font-semibold transition-colors"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                className="t-body-sm font-semibold flex-1 py-3.5 rounded-full neu-pressed text-white/80 hover:text-white transition-colors"
               >
                 Iniciar sesión
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.96 }}
                 onClick={() => navigate('/auth', { state: { tab: 'register' } })}
-                className="flex-1 py-3.5 rounded-full neu-flat text-white font-semibold"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9375rem' }}
+                className="t-body-sm font-semibold flex-1 py-3.5 rounded-full neu-flat text-white"
               >
                 Crear cuenta
               </motion.button>

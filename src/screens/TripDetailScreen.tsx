@@ -95,26 +95,13 @@ export default function TripDetailScreen() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
           {/* Name overlay */}
           <div className="absolute bottom-6 left-6 right-6">
-            <h2
-              className="text-white drop-shadow-lg"
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1.875rem',
-                fontWeight: 700,
-                lineHeight: 1.15,
-              }}
-            >
-              {property.name}
-            </h2>
-            <button 
+            <h2 className="t-headline-lg text-white drop-shadow-lg">{property.name}</h2>
+            <button
               onClick={() => navigate('/results/map')}
-              className="flex items-center gap-1.5 mt-2 hover:opacity-80 transition-opacity text-left"
+              className="flex items-center gap-1.5 mt-2 py-1 hover:opacity-80 transition-opacity text-left"
             >
               <span className="material-symbols-outlined text-white/90" style={{ fontSize: 16 }}>location_on</span>
-              <span
-                className="text-white/90 underline decoration-white/40 underline-offset-4"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', fontWeight: 500 }}
-              >
+              <span className="t-label font-medium text-white/90 underline decoration-white/40 underline-offset-4">
                 {property.location} (Ver en mapa)
               </span>
             </button>
@@ -141,47 +128,12 @@ export default function TripDetailScreen() {
                   >★</span>
                 ))}
               </div>
-              <span
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  color: 'white',
-                }}
-              >
-                {property.rating}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.8rem',
-                  color: 'rgba(255,255,255,0.55)',
-                }}
-              >
-                ({property.reviewCount})
-              </span>
+              <span className="t-label text-white">{property.rating}</span>
+              <span className="t-caption text-white/65">({property.reviewCount})</span>
             </div>
             <div>
-              <span
-                style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: '1.625rem',
-                  fontWeight: 700,
-                  color: 'white',
-                }}
-              >
-                ${property.pricePerNight}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.8rem',
-                  color: 'rgba(255,255,255,0.60)',
-                  marginLeft: '0.2rem',
-                }}
-              >
-                /noche
-              </span>
+              <span className="t-headline text-white">${property.pricePerNight}</span>
+              <span className="t-caption text-white/70 ml-1">/noche</span>
             </div>
           </motion.div>
 
@@ -195,10 +147,7 @@ export default function TripDetailScreen() {
               <span className="material-symbols-outlined text-white/80" style={{ fontSize: 18 }}>person</span>
             </div>
             <div className="flex-1">
-              <p
-                className="text-white font-semibold drop-shadow-sm"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.9rem' }}
-              >
+              <p className="t-label text-white drop-shadow-sm">
                 A Marte le encantó este lugar
               </p>
               <div className="flex items-center gap-0.5">
@@ -211,38 +160,23 @@ export default function TripDetailScreen() {
           </motion.div>
 
           {/* Match con tu búsqueda */}
-          <motion.div variants={staggerItem} className="glass-molded rounded-2xl p-4 border border-[#22c55e]/30">
+          <motion.div variants={staggerItem} className="glass-molded rounded-2xl p-4 border border-success/30">
             <div className="flex items-center gap-2 mb-2">
-              <span className="material-symbols-outlined text-[#22c55e]" style={{ fontSize: 20 }}>check_circle</span>
-              <h3
-                style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  color: 'white',
-                }}
-              >
-                Match con tu búsqueda
-              </h3>
+              <span className="material-symbols-outlined text-success" style={{ fontSize: 20 }}>check_circle</span>
+              <h3 className="t-cta text-white">Match con tu búsqueda</h3>
             </div>
-            <p className="text-white/70 mb-3" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.8rem' }}>
-              Este alojamiento tiene lo que buscas:
-            </p>
+            <p className="t-caption text-white/75 mb-3">Este alojamiento tiene lo que buscas:</p>
             <div className="flex flex-wrap gap-2">
               {displayAmenities.map((am) => (
-                <div key={am.label} className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-[#22c55e]/30">
+                <div key={am.label} className="bg-success/20 text-success px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-success/30">
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{am.icon}</span>
-                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', fontWeight: 600 }}>
-                    {am.label}
-                  </span>
+                  <span className="t-caption font-semibold">{am.label}</span>
                 </div>
               ))}
               {displayTags.map((t) => (
-                <div key={t} className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-[#22c55e]/30">
+                <div key={t} className="bg-success/20 text-success px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-success/30">
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>label</span>
-                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.75rem', fontWeight: 600 }}>
-                    {t}
-                  </span>
+                  <span className="t-caption font-semibold">{t}</span>
                 </div>
               ))}
             </div>
@@ -250,43 +184,15 @@ export default function TripDetailScreen() {
 
           {/* Description */}
           <motion.div variants={staggerItem}>
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1.0625rem',
-                fontWeight: 700,
-                color: 'white',
-                marginBottom: '0.5rem',
-              }}
-            >
-              Descripción
-            </h3>
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: '0.9rem',
-                lineHeight: 1.65,
-                color: 'rgba(255,255,255,0.80)',
-                fontWeight: 300,
-              }}
-            >
+            <h3 className="t-title text-white mb-2">Descripción</h3>
+            <p className="t-body-sm text-white/80" style={{ lineHeight: 1.65 }}>
               {property.description}
             </p>
           </motion.div>
 
           {/* Amenities */}
           <motion.div variants={staggerItem}>
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1.0625rem',
-                fontWeight: 700,
-                color: 'white',
-                marginBottom: '0.75rem',
-              }}
-            >
-              Lo que incluye
-            </h3>
+            <h3 className="t-title text-white mb-3">Lo que incluye</h3>
             <div className="grid grid-cols-2 gap-2.5">
               {property.amenities.map((amenity) => (
                 <div
@@ -299,13 +205,7 @@ export default function TripDetailScreen() {
                   >
                     {amenity.icon}
                   </span>
-                  <span
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.8rem',
-                      color: 'rgba(255,255,255,0.88)',
-                    }}
-                  >
+                  <span className="t-caption text-white/90" style={{ fontSize: '0.8rem' }}>
                     {amenity.label}
                   </span>
                 </div>
@@ -315,32 +215,14 @@ export default function TripDetailScreen() {
 
           {/* Activities */}
           <motion.div variants={staggerItem}>
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1.0625rem',
-                fontWeight: 700,
-                color: 'white',
-                marginBottom: '0.75rem',
-              }}
-            >
-              Actividades en la zona
-            </h3>
+            <h3 className="t-title text-white mb-3">Actividades en la zona</h3>
             <div className="flex flex-col gap-2">
               {['Playa y snorkel 🤿', 'Tour cultural histórico 🏛️', 'Gastronomía local 🍴', 'Senderismo 🥾'].map((act) => (
                 <div
                   key={act}
                   className="glass-surface flex items-center justify-between p-3.5 rounded-2xl cursor-pointer hover:bg-white/5 transition-colors"
                 >
-                  <span
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.875rem',
-                      color: 'rgba(255,255,255,0.88)',
-                    }}
-                  >
-                    {act}
-                  </span>
+                  <span className="t-label font-normal text-white/90">{act}</span>
                   <span className="material-symbols-outlined text-white/50" style={{ fontSize: 18 }}>
                     arrow_forward
                   </span>
@@ -351,17 +233,7 @@ export default function TripDetailScreen() {
 
           {/* Price breakdown — glass-surface */}
           <motion.div variants={staggerItem}>
-            <h3
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '1.0625rem',
-                fontWeight: 700,
-                color: 'white',
-                marginBottom: '0.75rem',
-              }}
-            >
-              Desglose de precio
-            </h3>
+            <h3 className="t-title text-white mb-3">Desglose de precio</h3>
             <div className="glass-surface rounded-2xl p-4 flex flex-col gap-3">
               {[
                 { label: '7 noches × $120', value: '$840' },
@@ -369,59 +241,15 @@ export default function TripDetailScreen() {
                 { label: 'Servicio Planify', value: '$0' },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between">
-                  <span
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.875rem',
-                      color: 'rgba(255,255,255,0.70)',
-                    }}
-                  >
-                    {row.label}
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      color: 'white',
-                    }}
-                  >
-                    {row.value}
-                  </span>
+                  <span className="t-label font-normal text-white/75">{row.label}</span>
+                  <span className="t-label text-white">{row.value}</span>
                 </div>
               ))}
               <div className="flex items-center justify-between pt-3 border-t border-white/15">
-                <span
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    color: 'white',
-                  }}
-                >
-                  Total Final
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    color: 'white',
-                  }}
-                >
-                  $907
-                </span>
+                <span className="t-cta text-white">Total Final</span>
+                <span className="t-headline text-white">$907</span>
               </div>
-              <p
-                className="text-center"
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.75rem',
-                  color: 'rgba(255,255,255,0.55)',
-                }}
-              >
-                Sin sorpresas — precio final
-              </p>
+              <p className="t-caption text-white/65 text-center">Sin sorpresas — precio final</p>
             </div>
           </motion.div>
 
@@ -434,13 +262,10 @@ export default function TripDetailScreen() {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate(`/booking/${property.id}`)}
-            className="w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white font-bold"
+            className="t-title w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white"
             style={{
               background: 'linear-gradient(to right, #22c55e, #16a34a)',
               boxShadow: '0 4px 20px rgba(34,197,94,0.4)',
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.0625rem',
-              fontWeight: 700,
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -453,13 +278,10 @@ export default function TripDetailScreen() {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate(`/booking/${property.id}`)}
-            className="w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white font-bold"
+            className="t-title w-full h-14 rounded-full flex items-center justify-center gap-2 border border-white/20 text-white"
             style={{
               background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
               boxShadow: '0 4px 20px rgba(255,107,31,0.5)',
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '1.0625rem',
-              fontWeight: 700,
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
