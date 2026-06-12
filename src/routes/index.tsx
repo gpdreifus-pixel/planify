@@ -1,22 +1,25 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import RootLayout from '../components/ui/RootLayout'
-import HomeScreen from '../screens/HomeScreen'
-import AuthScreen from '../screens/AuthScreen'
-import VerifyEmailScreen from '../screens/VerifyEmailScreen'
-import OnboardingScreen from '../screens/OnboardingScreen'
-import ChatScreen from '../screens/ChatScreen'
-import ChatSummaryScreen from '../screens/ChatSummaryScreen'
-import ResultsScreen from '../screens/ResultsScreen'
-import FiltersScreen from '../screens/FiltersScreen'
-import MapScreen from '../screens/MapScreen'
-import TripDetailScreen from '../screens/TripDetailScreen'
-import BookingScreen from '../screens/BookingScreen'
-import MyTripsScreen from '../screens/MyTripsScreen'
-import BookingConfirmationScreen from '../screens/BookingConfirmationScreen'
-import CommunityScreen from '../screens/CommunityScreen'
-import CreatePostScreen from '../screens/CreatePostScreen'
-import ProfileScreen from '../screens/ProfileScreen'
 import ProtectedRoute from '../components/ui/ProtectedRoute'
+// HomeScreen queda eager: es el entry point y debe pintar al instante.
+import HomeScreen from '../screens/HomeScreen'
+import {
+  AuthScreen,
+  VerifyEmailScreen,
+  OnboardingScreen,
+  ChatScreen,
+  ChatSummaryScreen,
+  ResultsScreen,
+  FiltersScreen,
+  MapScreen,
+  TripDetailScreen,
+  BookingScreen,
+  MyTripsScreen,
+  BookingConfirmationScreen,
+  CommunityScreen,
+  CreatePostScreen,
+  ProfileScreen,
+} from './screens'
 
 export const router = createBrowserRouter([
   {
@@ -43,4 +46,3 @@ export const router = createBrowserRouter([
     ],
   },
 ])
-

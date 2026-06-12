@@ -9,7 +9,6 @@ import { useTripsStore } from '../store/tripsStore'
 import { useChatStore } from '../store/chatStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
-import html2pdf from 'html2pdf.js'
 
 const BOOKING_ITEMS = [
   { icon: 'bed',            label: 'Alojamiento', platform: 'Airbnb',    priceKey: 'base' as const },
@@ -94,7 +93,7 @@ export default function BookingScreen() {
 
   const totalEstimate = property.pricePerNight * nights + 850 + 220 + 45
 
-  const handleSharePDF = () => {
+  const handleSharePDF = async () => {
     const element = document.getElementById('booking-pdf-template')
     if (!element) return
 
@@ -106,6 +105,8 @@ export default function BookingScreen() {
       jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
     }
 
+    // html2pdf pesa ~100KB: se carga recién cuando el usuario pide el PDF
+    const html2pdf = (await import('html2pdf.js')).default
     html2pdf().set(opt).from(element).save()
   }
 

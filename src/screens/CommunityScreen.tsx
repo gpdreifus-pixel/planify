@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
@@ -40,19 +40,20 @@ function SkeletonPost() {
 }
 
 // ── Post card ──────────────────────────────────────────────────────────────────
-function PostCard({
+// Callbacks reciben el post (estables en el padre) para que memo sea efectivo
+const PostCard = memo(function PostCard({
   post,
   onLike,
   onClick,
 }: {
   post: CommunityPost
-  onLike: () => void
-  onClick: () => void
+  onLike: (post: CommunityPost) => void
+  onClick: (post: CommunityPost) => void
 }) {
   return (
     <motion.article
       variants={staggerItem}
-      onClick={onClick}
+      onClick={() => onClick(post)}
       className="glass-surface rounded-[24px] overflow-hidden group cursor-pointer"
     >
       {/* Author row */}
@@ -103,7 +104,7 @@ function PostCard({
       <div className="flex items-center gap-4 px-4 pb-2 pt-1 border-t border-white/10" onClick={e => e.stopPropagation()}>
         <motion.button
           whileTap={{ scale: 0.85 }}
-          onClick={onLike}
+          onClick={() => onLike(post)}
           aria-label={post.likedByUser ? 'Quitar me gusta' : 'Me gusta'}
           aria-pressed={post.likedByUser}
           className="flex items-center gap-1.5 py-2 px-1"
@@ -131,7 +132,7 @@ function PostCard({
       </div>
     </motion.article>
   )
-}
+})
 
 // ── Main screen ────────────────────────────────────────────────────────────────
 export default function CommunityScreen() {
@@ -158,6 +159,17 @@ export default function CommunityScreen() {
 
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedPost, setSelectedPost] = useState<CommunityPost | null>(null)
+
+  // Handlers estables para que React.memo de PostCard evite re-renders
+  const handlePostClick = useCallback((post: CommunityPost) => {
+    setSelectedPost(post)
+  }, [])
+
+  const handlePostLike = useCallback((post: CommunityPost) => {
+    // El like de un invitado no debe fallar en silencio
+    if (useAuthStore.getState().isAuthenticated) toggleLike(post.id)
+    else showToast('Iniciá sesión para dar me gusta', 'info')
+  }, [toggleLike, showToast])
 
   const handleCopyTrip = (post: CommunityPost) => {
     const { reset, setCriteria } = useChatStore.getState()
@@ -256,12 +268,8 @@ export default function CommunityScreen() {
               <PostCard
                 key={post.id}
                 post={post}
-                onClick={() => setSelectedPost(post)}
-                onLike={() => {
-                  // El like de un invitado no debe fallar en silencio
-                  if (isAuthenticated) toggleLike(post.id)
-                  else showToast('Iniciá sesión para dar me gusta', 'info')
-                }}
+                onClick={handlePostClick}
+                onLike={handlePostLike}
               />
             ))}
           </motion.div>

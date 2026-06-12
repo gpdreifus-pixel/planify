@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
@@ -13,7 +13,6 @@ import { useSearchStore } from '../store/searchStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 import type { Trip } from '../types'
-import html2pdf from 'html2pdf.js'
 
 type TripTab = 'active' | 'past' | 'saved'
 
@@ -26,7 +25,8 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
   planning:  { label: 'Planificando', color: '#ffb597', bg: 'rgba(255,181,151,0.20)' },
 }
 
-function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void; onDelete: () => void }) {
+// Callbacks reciben el trip/id (estables en el padre) para que memo sea efectivo
+const TripCard = memo(function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: (trip: Trip) => void; onDelete: (id: string) => void }) {
   const status = STATUS_LABELS[trip.status] ?? STATUS_LABELS.planning
   const nights =
     (new Date(trip.checkOut).getTime() - new Date(trip.checkIn).getTime()) /
@@ -38,7 +38,7 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
   const progress = trip.status === 'confirmed' || trip.status === 'completed' ? 100 :
                    trip.status === 'active' ? 65 : 35
 
-  const handleShare = (e: React.MouseEvent) => {
+  const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation()
     const element = document.getElementById(`trip-pdf-template-${trip.id}`)
     if (!element) return
@@ -51,6 +51,8 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
       jsPDF:        { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
     }
 
+    // html2pdf pesa ~100KB: se carga recién cuando el usuario pide el PDF
+    const html2pdf = (await import('html2pdf.js')).default
     html2pdf().set(opt).from(element).save()
   }
 
@@ -61,7 +63,7 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
       whileTap={{ scale: 0.97 }}
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-      onClick={onPress}
+      onClick={() => onPress(trip)}
       className="glass-molded rounded-3xl overflow-hidden cursor-pointer group"
     >
       {/* Image */}
@@ -97,7 +99,7 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
         <button
           onClick={(e) => {
             e.stopPropagation()
-            onDelete()
+            onDelete(trip.id)
           }}
           aria-label="Eliminar viaje"
           className="absolute top-3 left-[3.75rem] w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-[#ffb4ab] transition-colors"
@@ -173,7 +175,7 @@ function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: () => void
       </div>
     </motion.div>
   )
-}
+})
 
 export default function MyTripsScreen() {
   const navigate = useNavigate()
@@ -188,6 +190,10 @@ export default function MyTripsScreen() {
       setTripToDelete(null)
     }
   }
+
+  const handleTripPress = useCallback((trip: Trip) => {
+    navigate(`/results/${trip.property.id}`)
+  }, [navigate])
 
   const upcoming = trips.filter((t) => ['upcoming', 'confirmed', 'active', 'planning'].includes(t.status))
   const past = trips.filter((t) => ['completed', 'cancelled'].includes(t.status))
@@ -298,8 +304,8 @@ export default function MyTripsScreen() {
                 <TripCard
                   key={trip.id}
                   trip={trip}
-                  onPress={() => navigate(`/results/${trip.property.id}`)}
-                  onDelete={() => setTripToDelete(trip.id)}
+                  onPress={handleTripPress}
+                  onDelete={setTripToDelete}
                 />
               ))}
             </motion.div>

@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
@@ -58,14 +59,16 @@ function SkeletonCard() {
   )
 }
 
-function PropertyCard({ property, onPress }: { property: Property; onPress: () => void }) {
+// onPress recibe la property (callback estable del padre) para que memo
+// realmente evite re-renders: una arrow inline lo invalidaría
+const PropertyCard = memo(function PropertyCard({ property, onPress }: { property: Property; onPress: (p: Property) => void }) {
   return (
     <motion.div
       variants={staggerItem}
       whileTap={{ scale: 0.975 }}
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-      onClick={onPress}
+      onClick={() => onPress(property)}
       className="glass-surface rounded-3xl overflow-hidden cursor-pointer group"
     >
       {/* Image — mix-blend-luminosity */}
@@ -121,7 +124,7 @@ function PropertyCard({ property, onPress }: { property: Property; onPress: () =
             background: 'linear-gradient(to right, #ff8c42, #ff6b1f)',
             boxShadow: '0 4px 12px rgba(255,140,66,0.4)',
           }}
-          onClick={(e) => { e.stopPropagation(); onPress() }}
+          onClick={(e) => { e.stopPropagation(); onPress(property) }}
         >
           Ver detalle
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
@@ -129,15 +132,15 @@ function PropertyCard({ property, onPress }: { property: Property; onPress: () =
       </div>
     </motion.div>
   )
-}
+})
 
 export default function ResultsScreen() {
   const navigate = useNavigate()
   const { filteredResults, isLoading, hasSearched } = useSearchStore()
 
-  const handlePropertyPress = (property: Property) => {
+  const handlePropertyPress = useCallback((property: Property) => {
     navigate(`/results/${property.id}`)
-  }
+  }, [navigate])
 
   return (
     <AppBackground variant="chat">
@@ -208,7 +211,7 @@ export default function ResultsScreen() {
               <PropertyCard
                 key={property.id}
                 property={property}
-                onPress={() => handlePropertyPress(property)}
+                onPress={handlePropertyPress}
               />
             ))}
 
