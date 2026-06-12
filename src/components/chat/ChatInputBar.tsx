@@ -16,7 +16,10 @@ export default function ChatInputBar({ value, onChange, onSend, placeholder }: C
   }
 
   return (
-    <div className="fixed bottom-0 left-0 w-full px-6 pb-8 pt-10 bg-gradient-to-t from-[#ff6b1f] via-[#ff6b1f]/40 to-transparent z-40 flex justify-center">
+    <div
+      className="fixed bottom-0 left-0 w-full px-6 pt-10 bg-gradient-to-t from-[#ff6b1f] via-[#ff6b1f]/40 to-transparent z-40 flex justify-center"
+      style={{ paddingBottom: 'max(2rem, calc(env(safe-area-inset-bottom) + 1rem))' }}
+    >
       <div className="max-w-md w-full flex items-center gap-3">
         {/* Input */}
         <div className="flex-1 glass-pressed rounded-full flex items-center px-5 py-3 border border-white/10 focus-within:border-white/30 transition-colors">

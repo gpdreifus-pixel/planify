@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet, ScrollRestoration } from 'react-router-dom'
 import HomeScreen from '../screens/HomeScreen'
 import AuthScreen from '../screens/AuthScreen'
 import VerifyEmailScreen from '../screens/VerifyEmailScreen'
@@ -17,24 +17,41 @@ import CreatePostScreen from '../screens/CreatePostScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import ProtectedRoute from '../components/ui/ProtectedRoute'
 
+/** Layout raíz: resetea el scroll al navegar hacia adelante y lo restaura al
+ *  volver atrás. Sin esto, abrir un detalle desde una lista scrolleada dejaba
+ *  la nueva pantalla a mitad de página. */
+function RootLayout() {
+  return (
+    <>
+      <Outlet />
+      <ScrollRestoration />
+    </>
+  )
+}
+
 export const router = createBrowserRouter([
-  { path: '/', element: <HomeScreen /> },
-  { path: '/onboarding', element: <OnboardingScreen /> },
-  { path: '/auth', element: <AuthScreen /> },
-  { path: '/auth/verify', element: <VerifyEmailScreen /> },
-  { path: '/chat/summary', element: <ChatSummaryScreen /> },
-  { path: '/chat/:step', element: <ChatScreen /> },
-  { path: '/results', element: <ResultsScreen /> },
-  { path: '/results/filters', element: <FiltersScreen /> },
-  { path: '/results/map', element: <MapScreen /> },
-  { path: '/results/:id', element: <TripDetailScreen /> },
-  { path: '/booking/:id', element: <BookingScreen /> },
-  { path: '/booking-confirmation', element: <ProtectedRoute><BookingConfirmationScreen /></ProtectedRoute> },
-  { path: '/trips', element: <ProtectedRoute><MyTripsScreen /></ProtectedRoute> },
-  { path: '/community', element: <CommunityScreen /> },
-  { path: '/community/new', element: <ProtectedRoute><CreatePostScreen /></ProtectedRoute> },
-  { path: '/profile', element: <ProtectedRoute><ProfileScreen /></ProtectedRoute> },
-  // Catch-all
-  { path: '*', element: <Navigate to="/" replace /> },
+  {
+    element: <RootLayout />,
+    children: [
+      { path: '/', element: <HomeScreen /> },
+      { path: '/onboarding', element: <OnboardingScreen /> },
+      { path: '/auth', element: <AuthScreen /> },
+      { path: '/auth/verify', element: <VerifyEmailScreen /> },
+      { path: '/chat/summary', element: <ChatSummaryScreen /> },
+      { path: '/chat/:step', element: <ChatScreen /> },
+      { path: '/results', element: <ResultsScreen /> },
+      { path: '/results/filters', element: <FiltersScreen /> },
+      { path: '/results/map', element: <MapScreen /> },
+      { path: '/results/:id', element: <TripDetailScreen /> },
+      { path: '/booking/:id', element: <BookingScreen /> },
+      { path: '/booking-confirmation', element: <ProtectedRoute><BookingConfirmationScreen /></ProtectedRoute> },
+      { path: '/trips', element: <ProtectedRoute><MyTripsScreen /></ProtectedRoute> },
+      { path: '/community', element: <CommunityScreen /> },
+      { path: '/community/new', element: <ProtectedRoute><CreatePostScreen /></ProtectedRoute> },
+      { path: '/profile', element: <ProtectedRoute><ProfileScreen /></ProtectedRoute> },
+      // Catch-all
+      { path: '*', element: <Navigate to="/" replace /> },
+    ],
+  },
 ])
 

@@ -182,9 +182,12 @@ export default function VerifyEmailScreen() {
           </motion.div>
         </div>
 
-        {/* Open email app CTA */}
+        {/* Open email CTA — Gmail web/app; `mailto:` sin destinatario abría un
+            compose vacío (o nada) en lugar de la bandeja de entrada */}
         <motion.a
-          href="mailto:"
+          href="https://mail.google.com"
+          target="_blank"
+          rel="noopener noreferrer"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -193,7 +196,7 @@ export default function VerifyEmailScreen() {
           style={{ fontFamily: "'Syne', sans-serif", fontSize: '1rem', fontWeight: 700 }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>open_in_new</span>
-          Abrir app de email
+          Abrir Gmail
         </motion.a>
       </main>
     </AppBackground>

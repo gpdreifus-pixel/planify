@@ -19,6 +19,7 @@ interface SearchState {
   search: (criteria?: TripSearchCriteria) => Promise<void>
   setFilters: (filters: Partial<FilterState>) => void
   applyFilters: () => void
+  resetFilters: () => void
   selectProperty: (id: string) => void
   clearSelection: () => void
   reset: () => void
@@ -195,6 +196,11 @@ export const useSearchStore = create<SearchState>()(
 
       setFilters: (partial) =>
         set((state) => ({ filters: { ...state.filters, ...partial } })),
+
+      resetFilters: () => {
+        set({ filters: DEFAULT_FILTERS })
+        get().applyFilters()
+      },
 
       applyFilters: () => {
         const { results, filters } = get()

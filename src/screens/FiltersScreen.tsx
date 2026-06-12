@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useSearchStore } from '../store/searchStore'
+import { useUIStore } from '../store/uiStore'
 import type { AccommodationType } from '../types'
 
 const TYPES: { value: AccommodationType; label: string; icon: string }[] = [
@@ -20,7 +21,8 @@ const SORT_OPTIONS = [
 
 export default function FiltersScreen() {
   const navigate = useNavigate()
-  const { filters, setFilters, applyFilters } = useSearchStore()
+  const { filters, setFilters, applyFilters, resetFilters } = useSearchStore()
+  const showToast = useUIStore((s) => s.showToast)
 
   const toggleType = (type: AccommodationType) => {
     const current = filters.types
@@ -35,6 +37,13 @@ export default function FiltersScreen() {
   const handleApply = () => {
     applyFilters()
     navigate('/results')
+  }
+
+  // Resetea valores con el sheet abierto: el usuario ve los controles volver
+  // a su estado inicial en lugar de que el panel se cierre sin explicación.
+  const handleClear = () => {
+    resetFilters()
+    showToast('Filtros restablecidos', 'info')
   }
 
   return (
@@ -240,7 +249,7 @@ export default function FiltersScreen() {
           <div className="flex gap-3 pt-1">
             <motion.button
               whileTap={{ scale: 0.97 }}
-              onClick={handleClose}
+              onClick={handleClear}
               className="flex-1 py-3.5 rounded-full font-semibold"
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",

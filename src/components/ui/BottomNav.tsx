@@ -2,10 +2,10 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 const NAV_ITEMS = [
-  { path: '/results', icon: 'search' },
-  { path: '/trips',   icon: 'luggage' },
-  { path: '/community', icon: 'groups' },
-  { path: '/profile', icon: 'person' },
+  { path: '/results', icon: 'search', label: 'Buscar' },
+  { path: '/trips',   icon: 'luggage', label: 'Viajes' },
+  { path: '/community', icon: 'groups', label: 'Comunidad' },
+  { path: '/profile', icon: 'person', label: 'Perfil' },
 ]
 
 export default function BottomNav() {
@@ -21,20 +21,22 @@ export default function BottomNav() {
           return (
             <button
               key={item.path}
-              aria-label={item.icon}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
               onClick={() => navigate(item.path)}
+              className="flex flex-col items-center justify-center gap-1 min-w-16 py-1"
             >
               <motion.div
                 whileTap={{ scale: 0.84 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 18 }}
-                className={`w-14 h-14 flex items-center justify-center ${
+                className={`w-12 h-12 flex items-center justify-center ${
                   isActive ? 'neu-nav-item-active' : 'text-white/70 hover:text-white/90'
                 }`}
               >
                 <span
                   className="material-symbols-outlined"
                   style={{
-                    fontSize: isActive ? 28 : 24,
+                    fontSize: isActive ? 26 : 23,
                     fontVariationSettings: isActive
                       ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
                       : "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24",
@@ -43,6 +45,14 @@ export default function BottomNav() {
                   {item.icon}
                 </span>
               </motion.div>
+              <span
+                className={`text-[10px] leading-none font-semibold ${
+                  isActive ? 'text-white' : 'text-white/60'
+                }`}
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                {item.label}
+              </span>
             </button>
           )
         })}
