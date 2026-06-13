@@ -116,15 +116,16 @@ export default function AuthScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
         >
-          {/* Brand header */}
-          <div className="text-center relative z-10 flex flex-col items-center pointer-events-none">
-            <img src={logoFullSrc} alt="Planify Logo" className="w-[200px] sm:w-[220px] h-auto -my-20 object-contain drop-shadow-md mb-2" />
-            <p
-              className="t-body text-white/90 drop-shadow-sm"
-            >
-              Tu viaje comienza aquí.
-            </p>
+          {/* Brand header — misma estructura que HomeScreen: el logo va solo en
+              su contenedor para que -my-20 absorba el aire interno del SVG en
+              ambos lados (un mb-* en el mismo elemento pisa el margen negativo
+              inferior y deja ~80px de espacio vacío). */}
+          <div className="flex justify-center relative z-10 pointer-events-none">
+            <img src={logoFullSrc} alt="Planify Logo" className="w-[200px] sm:w-[220px] h-auto -my-20 object-contain drop-shadow-md" />
           </div>
+          <p className="t-body text-white/90 drop-shadow-sm text-center relative z-10 mt-2 pointer-events-none">
+            Tu viaje comienza aquí.
+          </p>
 
           {/* Tab switcher — neu-pressed container + neu-flat spring indicator */}
           {tab !== 'forgot-password' && (
