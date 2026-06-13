@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
 import TopAppBar from '../components/ui/TopAppBar'
@@ -42,9 +42,13 @@ const PRESETS = [
 
 export default function CreatePostScreen() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { createPost, isCreating } = useCommunityStore()
 
-  const [destination, setDestination] = useState('')
+  // El CTA "¿Cómo te fue?" de Mis Viajes llega con el destino pre-cargado
+  const prefillDestination =
+    (location.state as { destination?: string } | null)?.destination ?? ''
+  const [destination, setDestination] = useState(prefillDestination)
   const [caption, setCaption] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null)

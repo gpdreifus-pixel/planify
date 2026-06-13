@@ -27,8 +27,16 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
 }
 
 // Callbacks reciben el trip/id (estables en el padre) para que memo sea efectivo
-const TripCard = memo(function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: (trip: Trip) => void; onDelete: (id: string) => void }) {
+const TripCard = memo(function TripCard({ trip, onPress, onDelete, onShareExperience }: { trip: Trip; onPress: (trip: Trip) => void; onDelete: (id: string) => void; onShareExperience: (trip: Trip) => void }) {
   const status = STATUS_LABELS[trip.status] ?? STATUS_LABELS.planning
+  // Un viaje "vivido" (completado o con check-out pasado) es el momento justo
+  // para invitar a compartirlo en la comunidad — cierra el loop inspiración →
+  // viaje → post → inspiración. El "ahora" se fija al montar la card: la regla
+  // de pureza de React no permite Date.now() suelto en el render.
+  const [now] = useState(() => Date.now())
+  const tripEnded =
+    trip.status === 'completed' ||
+    (trip.status !== 'cancelled' && new Date(trip.checkOut).getTime() < now)
   const { currency, fmt } = usePriceFormatter()
   const nights =
     (new Date(trip.checkOut).getTime() - new Date(trip.checkIn).getTime()) /
@@ -147,6 +155,23 @@ const TripCard = memo(function TripCard({ trip, onPress, onDelete }: { trip: Tri
           <span className="t-label font-normal text-white/65">{trip.property.location}</span>
           <span className="t-cta text-white">{fmt(trip.totalPrice)}</span>
         </div>
+
+        {/* Viaje terminado → invitar a compartirlo en Comunidad */}
+        {tripEnded && (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={(e) => {
+              e.stopPropagation()
+              onShareExperience(trip)
+            }}
+            className="mt-2 w-full py-3 rounded-full glass-raised flex items-center justify-center gap-2"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#ffb597' }}>
+              rate_review
+            </span>
+            <span className="t-label text-white/90">¿Cómo te fue? Contale a la comunidad</span>
+          </motion.button>
+        )}
       </div>
 
       {/* Hidden PDF Template for MyTrips */}
@@ -197,6 +222,13 @@ export default function MyTripsScreen() {
 
   const handleTripPress = useCallback((trip: Trip) => {
     navigate(`/results/${trip.property.id}`)
+  }, [navigate])
+
+  // Pre-carga el destino en Crear Post. Si el usuario no está logueado,
+  // ProtectedRoute lo manda a /auth y AuthScreen lo trae de vuelta con el
+  // state intacto (from.state), así que el prefill sobrevive el login.
+  const handleShareExperience = useCallback((trip: Trip) => {
+    navigate('/community/new', { state: { destination: trip.property.location } })
   }, [navigate])
 
   const upcoming = trips.filter((t) => ['upcoming', 'confirmed', 'active', 'planning'].includes(t.status))
@@ -310,6 +342,7 @@ export default function MyTripsScreen() {
                   trip={trip}
                   onPress={handleTripPress}
                   onDelete={setTripToDelete}
+                  onShareExperience={handleShareExperience}
                 />
               ))}
             </motion.div>

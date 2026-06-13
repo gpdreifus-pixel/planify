@@ -10,6 +10,7 @@ import SmartImage from '../components/ui/SmartImage'
 import { useCommunityStore } from '../store/communityStore'
 import { useAuthStore } from '../store/authStore'
 import { useChatStore } from '../store/chatStore'
+import { useSearchStore } from '../store/searchStore'
 import { useUIStore } from '../store/uiStore'
 import { haptic } from '../utils/haptics'
 import { staggerContainer, staggerItem } from '../animations/transitions'
@@ -177,9 +178,16 @@ export default function CommunityScreen() {
   }, [toggleLike, showToast])
 
   const handleCopyTrip = (post: CommunityPost) => {
+    haptic()
+    const criteria = post.tripCriteria ?? { destination: post.destination }
+    // Los criterios van al chat (para que "Editar búsqueda" sea coherente)...
     const { reset, setCriteria } = useChatStore.getState()
     reset()
-    setCriteria(post.tripCriteria || { destination: post.destination })
+    setCriteria(criteria)
+    // ...pero navegar solo no busca nada: sin disparar la búsqueda se veían
+    // los resultados de la búsqueda anterior o el empty state.
+    void useSearchStore.getState().search(criteria)
+    setSelectedPost(null)
     navigate('/results')
   }
 
