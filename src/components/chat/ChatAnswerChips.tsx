@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { staggerContainer, staggerItem } from '../../animations/transitions'
+import { haptic } from '../../utils/haptics'
 
 interface ChatAnswerChipsProps {
   chips: string[]
@@ -36,7 +37,8 @@ export default function ChatAnswerChips({ chips, onSelect, selectedValues = [] }
               WebkitTapHighlightColor: 'transparent',
               userSelect: 'none',
             }}
-            onClick={() => onSelect(chip)}
+            onClick={() => { haptic(8); onSelect(chip) }}
+            aria-pressed={isSelected}
           >
             <span className="t-label text-white">{chip}</span>
           </motion.button>

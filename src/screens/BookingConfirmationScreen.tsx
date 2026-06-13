@@ -2,11 +2,14 @@ import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import AppBackground from '../components/ui/AppBackground'
+import { useUIStore } from '../store/uiStore'
+import { haptic } from '../utils/haptics'
 import type { Trip } from '../types'
 
 export default function BookingConfirmationScreen() {
   const navigate = useNavigate()
   const location = useLocation()
+  const showToast = useUIStore((s) => s.showToast)
   const trip = (location.state as { trip?: Trip })?.trip
 
   useEffect(() => {
@@ -14,6 +17,17 @@ export default function BookingConfirmationScreen() {
       navigate('/trips', { replace: true })
     }
   }, [trip, navigate])
+
+  const handleCopyCode = async () => {
+    if (!trip?.confirmationCode) return
+    try {
+      await navigator.clipboard.writeText(trip.confirmationCode)
+      haptic()
+      showToast('Código copiado', 'success')
+    } catch {
+      showToast('No se pudo copiar el código', 'error')
+    }
+  }
 
   if (!trip) return null
 
@@ -58,9 +72,19 @@ export default function BookingConfirmationScreen() {
           <span className="t-caption text-white/60 uppercase" style={{ fontSize: '0.8rem', letterSpacing: '0.1em' }}>
             Código de confirmación
           </span>
-          <span className="t-headline" style={{ color: '#4ade80', letterSpacing: '0.05em' }}>
-            {trip.confirmationCode}
-          </span>
+          <div className="flex items-center justify-center gap-3">
+            <span className="t-headline" style={{ color: '#4ade80', letterSpacing: '0.05em' }}>
+              {trip.confirmationCode}
+            </span>
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={handleCopyCode}
+              aria-label="Copiar código de confirmación"
+              className="w-10 h-10 rounded-full glass-raised flex items-center justify-center text-white/80 hover:text-white"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>content_copy</span>
+            </motion.button>
+          </div>
         </motion.div>
 
         <motion.button

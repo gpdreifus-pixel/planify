@@ -11,6 +11,7 @@ import { useCommunityStore } from '../store/communityStore'
 import { useAuthStore } from '../store/authStore'
 import { useChatStore } from '../store/chatStore'
 import { useUIStore } from '../store/uiStore'
+import { haptic } from '../utils/haptics'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 import type { CommunityPost } from '../types'
 
@@ -167,8 +168,12 @@ export default function CommunityScreen() {
 
   const handlePostLike = useCallback((post: CommunityPost) => {
     // El like de un invitado no debe fallar en silencio
-    if (useAuthStore.getState().isAuthenticated) toggleLike(post.id)
-    else showToast('Iniciá sesión para dar me gusta', 'info')
+    if (useAuthStore.getState().isAuthenticated) {
+      toggleLike(post.id)
+      haptic()
+    } else {
+      showToast('Iniciá sesión para dar me gusta', 'info')
+    }
   }, [toggleLike, showToast])
 
   const handleCopyTrip = (post: CommunityPost) => {

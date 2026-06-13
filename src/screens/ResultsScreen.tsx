@@ -7,18 +7,30 @@ import BottomNav from '../components/ui/BottomNav'
 import EmptyState from '../components/ui/EmptyState'
 import SmartImage from '../components/ui/SmartImage'
 import { useSearchStore } from '../store/searchStore'
+import { useUIStore } from '../store/uiStore'
+import { haptic } from '../utils/haptics'
 import type { Property } from '../types'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
 // Reads store directly to avoid prop-drilling saved state into every card
 function SaveButton({ propertyId }: { propertyId: string }) {
   const { toggleSavedProperty, isPropertySaved } = useSearchStore()
+  const showToast = useUIStore((s) => s.showToast)
   const saved = isPropertySaved(propertyId)
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    toggleSavedProperty(propertyId)
+    haptic()
+    // El corazón cambia, pero el toast enseña DÓNDE quedó guardado
+    if (!saved) showToast('Guardado en Mis viajes', 'success')
+  }
+
   return (
     <motion.button
       whileTap={{ scale: 0.80, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 420, damping: 18 }}
-      onClick={(e) => { e.stopPropagation(); toggleSavedProperty(propertyId) }}
+      onClick={handleToggle}
       className="absolute top-3 right-3 w-9 h-9 rounded-full glass-raised flex items-center justify-center z-10"
       aria-label={saved ? 'Quitar de guardados' : 'Guardar propiedad'}
       style={{ WebkitTapHighlightColor: 'transparent', willChange: 'transform' }}

@@ -7,8 +7,10 @@ import BottomNav from '../components/ui/BottomNav'
 import { useSearchStore } from '../store/searchStore'
 import { useTripsStore } from '../store/tripsStore'
 import { useChatStore } from '../store/chatStore'
+import Spinner from '../components/ui/Spinner'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
+import { haptic } from '../utils/haptics'
 
 const BOOKING_ITEMS = [
   { icon: 'bed',            label: 'Alojamiento', platform: 'Airbnb',    priceKey: 'base' as const },
@@ -88,6 +90,7 @@ export default function BookingScreen() {
     setIsBooking(true)
     await new Promise((r) => setTimeout(r, 1200))
     const newTrip = bookTrip(property, criteria, checkIn, checkOut, travelers)
+    haptic(20)
     navigate('/booking-confirmation', { state: { trip: newTrip } })
   }
 
@@ -245,6 +248,7 @@ export default function BookingScreen() {
               boxShadow: '0 12px 40px rgba(255,107,31,0.5)',
             }}
           >
+            {isBooking && <Spinner size={20} />}
             <span>{isBooking ? 'Procesando...' : 'Ya reservé todo'}</span>
             {!isBooking && (
               <span className="material-symbols-outlined" style={{ fontSize: 22, fontVariationSettings: "'FILL' 1" }}>

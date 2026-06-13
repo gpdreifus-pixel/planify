@@ -8,6 +8,8 @@ import SmartImage from '../components/ui/SmartImage'
 import { useSearchStore } from '../store/searchStore'
 import { useTripsStore } from '../store/tripsStore'
 import { useChatStore } from '../store/chatStore'
+import { useUIStore } from '../store/uiStore'
+import { haptic } from '../utils/haptics'
 import ReviewsModal from '../components/ui/ReviewsModal'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
@@ -18,6 +20,7 @@ export default function TripDetailScreen() {
   const { selectedProperty, selectProperty, toggleSavedProperty, isPropertySaved } = useSearchStore()
   const { trips } = useTripsStore()
   const { criteria } = useChatStore()
+  const showToast = useUIStore((s) => s.showToast)
   const [showReviews, setShowReviews] = useState(false)
 
   useEffect(() => {
@@ -61,7 +64,11 @@ export default function TripDetailScreen() {
             <motion.button
               whileTap={{ scale: 0.88, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 420, damping: 18 }}
-              onClick={() => toggleSavedProperty(property.id)}
+              onClick={() => {
+                toggleSavedProperty(property.id)
+                haptic()
+                if (!isSaved) showToast('Guardado en Mis viajes', 'success')
+              }}
               className="w-10 h-10 rounded-full glass-raised flex items-center justify-center"
               aria-label={isSaved ? 'Quitar de guardados' : 'Guardar propiedad'}
               style={{ WebkitTapHighlightColor: 'transparent', willChange: 'transform' }}
