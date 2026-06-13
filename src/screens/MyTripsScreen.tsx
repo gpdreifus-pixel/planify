@@ -12,6 +12,7 @@ import { useTripsStore } from '../store/tripsStore'
 import { useSearchStore } from '../store/searchStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
+import { usePriceFormatter } from '../utils/currency'
 import type { Trip } from '../types'
 
 type TripTab = 'active' | 'past' | 'saved'
@@ -28,6 +29,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
 // Callbacks reciben el trip/id (estables en el padre) para que memo sea efectivo
 const TripCard = memo(function TripCard({ trip, onPress, onDelete }: { trip: Trip; onPress: (trip: Trip) => void; onDelete: (id: string) => void }) {
   const status = STATUS_LABELS[trip.status] ?? STATUS_LABELS.planning
+  const { currency, fmt } = usePriceFormatter()
   const nights =
     (new Date(trip.checkOut).getTime() - new Date(trip.checkIn).getTime()) /
     (1000 * 60 * 60 * 24)
@@ -142,7 +144,7 @@ const TripCard = memo(function TripCard({ trip, onPress, onDelete }: { trip: Tri
 
         <div className="flex items-center justify-between mt-1">
           <span className="t-label font-normal text-white/65">{trip.property.location}</span>
-          <span className="t-cta text-white">${trip.totalPrice.toLocaleString()}</span>
+          <span className="t-cta text-white">{fmt(trip.totalPrice)}</span>
         </div>
       </div>
 
@@ -156,7 +158,7 @@ const TripCard = memo(function TripCard({ trip, onPress, onDelete }: { trip: Tri
           </p>
 
           <div style={{ marginBottom: '40px', fontSize: '24px', fontWeight: 'bold', color: '#111', borderBottom: '2px solid #eee', paddingBottom: '20px' }}>
-            Total Pagado: ${trip.totalPrice.toLocaleString()} USD
+            Total Pagado: {fmt(trip.totalPrice)} {currency}
           </div>
 
           <div style={{ fontSize: '16px', marginBottom: '12px', color: '#333' }}>
@@ -181,6 +183,7 @@ export default function MyTripsScreen() {
   const navigate = useNavigate()
   const { trips, deleteTrip } = useTripsStore()
   const { savedPropertyIds, results } = useSearchStore()
+  const { fmt } = usePriceFormatter()
   const [activeTab, setActiveTab] = useState<TripTab>('active')
   const [tripToDelete, setTripToDelete] = useState<string | null>(null)
 
@@ -273,7 +276,7 @@ export default function MyTripsScreen() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span className="t-cta text-white">${property.pricePerNight}</span>
+                    <span className="t-cta text-white">{fmt(property.pricePerNight)}</span>
                     <span className="t-caption text-white/55" style={{ fontSize: '0.7rem' }}>/noche</span>
                   </div>
                 </motion.div>

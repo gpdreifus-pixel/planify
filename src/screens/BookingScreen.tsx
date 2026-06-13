@@ -11,6 +11,8 @@ import Spinner from '../components/ui/Spinner'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 import { haptic } from '../utils/haptics'
+import { getCheckInDate, getNights, getTravelers } from '../utils/booking'
+import { usePriceFormatter } from '../utils/currency'
 
 const BOOKING_ITEMS = [
   { icon: 'bed',            label: 'Alojamiento', platform: 'Airbnb',    priceKey: 'base' as const },
@@ -18,6 +20,14 @@ const BOOKING_ITEMS = [
   { icon: 'train',          label: 'Transporte',  platform: 'Uber',      extra: 220 },
   { icon: 'local_activity', label: 'Actividades', platform: 'Civitatis', extra: 45  },
 ]
+
+// Destinos reales de cada plataforma — Airbnb con búsqueda por ubicación
+const PLATFORM_URLS: Record<string, (location: string) => string> = {
+  Airbnb:    (location) => `https://www.airbnb.com/s/${encodeURIComponent(location)}/homes`,
+  Despegar:  () => 'https://www.despegar.com.ar',
+  Uber:      () => 'https://m.uber.com',
+  Civitatis: () => 'https://www.civitatis.com/es/',
+}
 
 export default function BookingScreen() {
   const { id } = useParams<{ id: string }>()
@@ -34,49 +44,11 @@ export default function BookingScreen() {
     (t) => t.property.id === property.id && ['confirmed', 'upcoming', 'active'].includes(t.status)
   )
 
-  // ── Derive dates from criteria ────────────────────────────────────────
-  const getCheckInDate = (): string => {
-    const raw = criteria.departureDate ?? ''
-    // Try to parse an ISO date first
-    const parsed = new Date(raw)
-    if (!isNaN(parsed.getTime()) && raw.match(/\d{4}-\d{2}-\d{2}/)) {
-      return raw
-    }
-    // Default: next Saturday from today
-    const today = new Date()
-    const daysUntilSat = (6 - today.getDay() + 7) % 7 || 7
-    const nextSat = new Date(today)
-    nextSat.setDate(today.getDate() + daysUntilSat)
-    return nextSat.toISOString().split('T')[0]
-  }
-
-  const getNights = (): number => {
-    const raw = (criteria.returnDate ?? '').toLowerCase()
-    // Parse chip responses like "Un finde 2d", "Una semana 7d", "Dos semanas 14d"
-    const match = raw.match(/(\d+)\s*d/)
-    if (match) return parseInt(match[1], 10)
-    if (raw.includes('finde') || raw.includes('weekend')) return 2
-    if (raw.includes('semana') && raw.includes('dos')) return 14
-    if (raw.includes('semana')) return 7
-    return 7 // default
-  }
-
-  const getTravelers = (): number => {
-    if (typeof criteria.travelers === 'number') return criteria.travelers
-    const raw = String(criteria.travelers ?? '').toLowerCase()
-    if (raw.includes('solo') || raw.includes('🧳')) return 1
-    if (raw.includes('pareja') || raw.includes('💑')) return 2
-    if (raw.includes('amigos') || raw.includes('👯')) return 4
-    if (raw.includes('familia') || raw.includes('👨')) return 4
-    // Try to parse a number
-    const num = parseInt(raw, 10)
-    if (!isNaN(num) && num > 0) return num
-    return 1
-  }
-
-  const checkIn = getCheckInDate()
-  const nights = getNights()
-  const travelers = getTravelers()
+  // ── Derive dates from criteria (lógica compartida con TripDetail) ──────
+  const { currency, fmt } = usePriceFormatter()
+  const checkIn = getCheckInDate(criteria)
+  const nights = getNights(criteria)
+  const travelers = getTravelers(criteria)
   const checkOutDate = new Date(checkIn)
   checkOutDate.setDate(checkOutDate.getDate() + nights)
   const checkOut = checkOutDate.toISOString().split('T')[0]
@@ -152,10 +124,10 @@ export default function BookingScreen() {
               Combo Total Estimado
             </p>
             <h2 className="t-display-xl text-white mb-1" style={{ fontSize: '3rem' }}>
-              ${totalEstimate.toLocaleString()}
+              {fmt(totalEstimate)}
             </h2>
             <p className="t-body" style={{ color: '#ffb68d' }}>
-              USD{travelers > 1 ? ' / por persona' : ''}
+              {currency}{travelers > 1 ? ' / por persona' : ''}
             </p>
             <p className="t-caption text-white/60 mt-2">
               * Precio estimado sujeto a cambios de disponibilidad y plataformas.
@@ -193,16 +165,21 @@ export default function BookingScreen() {
                     </div>
                   </div>
 
-                  {/* Right: action button */}
+                  {/* Right: action button — abre la plataforma real en otra pestaña */}
                   <motion.button
                     whileTap={{ scale: 0.92 }}
                     whileHover={{ scale: 1.06 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+                    onClick={() => {
+                      haptic()
+                      const buildUrl = PLATFORM_URLS[item.platform]
+                      if (buildUrl) window.open(buildUrl(property.location), '_blank', 'noopener')
+                    }}
                     aria-label={`Reservar ${item.label} en ${item.platform}`}
                     className="raised-btn rounded-full px-4 py-3 flex items-center gap-2"
                   >
                     <span className="t-label text-white/95" style={{ fontSize: '0.8125rem' }}>
-                      {item.platform} ${price}
+                      {item.platform} {fmt(price)}
                     </span>
                     <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'rgba(255,255,255,0.65)' }}>
                       open_in_new
@@ -273,7 +250,7 @@ export default function BookingScreen() {
             Resumen Estimado
           </h2>
           <div style={{ marginBottom: '40px', fontSize: '28px', fontWeight: 'bold', color: '#111' }}>
-            Total: ${totalEstimate.toLocaleString()} USD
+            Total: {fmt(totalEstimate)} {currency}
             <span style={{ fontSize: '16px', color: '#777', fontWeight: 'normal', marginLeft: '10px' }}>
               {travelers > 1 ? '/ por persona' : ''}
             </span>
@@ -285,18 +262,18 @@ export default function BookingScreen() {
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {BOOKING_ITEMS.map((item) => {
               const price = item.priceKey === 'base' ? property.pricePerNight * nights : item.extra ?? 0
-              const fakeUrl = `https://www.${item.platform.toLowerCase()}.com/planify-booking`
+              const url = PLATFORM_URLS[item.platform]?.(property.location) ?? ''
               return (
                 <li key={item.label} style={{ marginBottom: '20px', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '12px', border: '1px solid #eaeaea' }}>
                   <div style={{ fontWeight: 'bold', fontSize: '18px', marginBottom: '8px', color: '#111' }}>
                     {item.label} — {item.label === 'Alojamiento' ? property.name : item.platform}
                   </div>
                   <div style={{ fontSize: '16px', marginBottom: '12px', color: '#444' }}>
-                    Costo estimado: <strong style={{ color: '#22c55e' }}>${price}</strong>
+                    Costo estimado: <strong style={{ color: '#22c55e' }}>{fmt(price)}</strong>
                   </div>
                   <div style={{ fontSize: '14px', color: '#666', backgroundColor: '#fff', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}>
                     Link de reserva:{' '}
-                    <a href={fakeUrl} style={{ color: '#0066cc', textDecoration: 'none', wordBreak: 'break-all' }}>{fakeUrl}</a>
+                    <a href={url} style={{ color: '#0066cc', textDecoration: 'none', wordBreak: 'break-all' }}>{url}</a>
                   </div>
                 </li>
               )

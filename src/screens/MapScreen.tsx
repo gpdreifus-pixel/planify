@@ -8,10 +8,11 @@ import TopAppBar from '../components/ui/TopAppBar'
 import BottomNav from '../components/ui/BottomNav'
 import { useSearchStore } from '../store/searchStore'
 import { MOCK_PROPERTIES } from '../data/mockData'
+import { usePriceFormatter } from '../utils/currency'
 import type { Property } from '../types'
 
 // ── Custom price-label marker icon ────────────────────────────────────────────
-function makePriceIcon(price: number, selected: boolean): L.DivIcon {
+function makePriceIcon(priceLabel: string, selected: boolean): L.DivIcon {
   return L.divIcon({
     className: '',
     html: `<div style="
@@ -28,7 +29,7 @@ function makePriceIcon(price: number, selected: boolean): L.DivIcon {
       cursor: pointer;
       transform: ${selected ? 'scale(1.12)' : 'scale(1)'};
       transition: transform 0.15s ease;
-    ">$${price}</div>`,
+    ">${priceLabel}</div>`,
     iconSize: [72, 32],
     iconAnchor: [36, 16],
   })
@@ -37,6 +38,7 @@ function makePriceIcon(price: number, selected: boolean): L.DivIcon {
 export default function MapScreen() {
   const navigate = useNavigate()
   const { filteredResults } = useSearchStore()
+  const { fmt } = usePriceFormatter()
   const properties = filteredResults.length > 0 ? filteredResults : MOCK_PROPERTIES
 
   const [selected, setSelected] = useState<Property | null>(null)
@@ -82,7 +84,7 @@ export default function MapScreen() {
     properties.forEach((property) => {
       const marker = L.marker(
         [property.coordinates.lat, property.coordinates.lng],
-        { icon: makePriceIcon(property.pricePerNight, false) }
+        { icon: makePriceIcon(fmt(property.pricePerNight), false) }
       ).addTo(map)
 
       marker.on('click', () => {
@@ -103,14 +105,14 @@ export default function MapScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // ── Update marker icons when selection changes ────────────────────────────
+  // ── Update marker icons when selection or currency changes ────────────────
   useEffect(() => {
     markersRef.current.forEach((marker, id) => {
       const prop = properties.find((p) => p.id === id)
       if (!prop) return
-      marker.setIcon(makePriceIcon(prop.pricePerNight, selected?.id === id))
+      marker.setIcon(makePriceIcon(fmt(prop.pricePerNight), selected?.id === id))
     })
-  }, [selected, properties])
+  }, [selected, properties, fmt])
 
   return (
     <AppBackground variant="chat">
@@ -164,7 +166,7 @@ export default function MapScreen() {
                     {selected.rating}
                   </span>
                   <span className="t-cta ml-auto text-white">
-                    ${selected.pricePerNight}
+                    {fmt(selected.pricePerNight)}
                     <span className="text-white/55 font-normal" style={{ fontSize: '0.7rem' }}>
                       {' '}
                       /noche

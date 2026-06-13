@@ -9,6 +9,7 @@ import SmartImage from '../components/ui/SmartImage'
 import { useSearchStore } from '../store/searchStore'
 import { useUIStore } from '../store/uiStore'
 import { haptic } from '../utils/haptics'
+import { usePriceFormatter } from '../utils/currency'
 import type { Property } from '../types'
 import { staggerContainer, staggerItem } from '../animations/transitions'
 
@@ -74,6 +75,8 @@ function SkeletonCard() {
 // onPress recibe la property (callback estable del padre) para que memo
 // realmente evite re-renders: una arrow inline lo invalidaría
 const PropertyCard = memo(function PropertyCard({ property, onPress }: { property: Property; onPress: (p: Property) => void }) {
+  // Suscripción propia a la moneda: el memo no bloquea re-renders por store
+  const { fmt } = usePriceFormatter()
   return (
     <motion.div
       variants={staggerItem}
@@ -123,7 +126,7 @@ const PropertyCard = memo(function PropertyCard({ property, onPress }: { propert
             </div>
           </div>
           <div className="text-right">
-            <span className="t-headline-sm text-white">${property.pricePerNight}</span>
+            <span className="t-headline-sm text-white">{fmt(property.pricePerNight)}</span>
             <span className="t-caption text-white/70 ml-1">/ noche</span>
           </div>
         </div>

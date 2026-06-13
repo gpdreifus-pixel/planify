@@ -10,6 +10,8 @@ import { useTripsStore } from '../store/tripsStore'
 import { useChatStore } from '../store/chatStore'
 import { useUIStore } from '../store/uiStore'
 import { haptic } from '../utils/haptics'
+import { getNights, getPriceBreakdown } from '../utils/booking'
+import { usePriceFormatter } from '../utils/currency'
 import ReviewsModal from '../components/ui/ReviewsModal'
 import { MOCK_PROPERTIES } from '../data/mockData'
 import { staggerContainer, staggerItem } from '../animations/transitions'
@@ -29,6 +31,12 @@ export default function TripDetailScreen() {
 
   const property = selectedProperty ?? MOCK_PROPERTIES[0]
   const isSaved = isPropertySaved(property.id)
+  const { fmt } = usePriceFormatter()
+
+  // Desglose real: noches según lo que respondió el usuario en el chat y
+  // precio de ESTA propiedad (antes era un bloque estático "7 × $120 = $907")
+  const nights = getNights(criteria)
+  const breakdown = getPriceBreakdown(property.pricePerNight, nights)
   // Check if user already has a live booking for this property
   const existingTrip = trips.find(
     (t) => t.property.id === property.id && ['confirmed', 'upcoming', 'active'].includes(t.status)
@@ -141,7 +149,7 @@ export default function TripDetailScreen() {
               <span className="t-caption text-white/65">({property.reviewCount})</span>
             </div>
             <div>
-              <span className="t-headline text-white">${property.pricePerNight}</span>
+              <span className="t-headline text-white">{fmt(property.pricePerNight)}</span>
               <span className="t-caption text-white/70 ml-1">/noche</span>
             </div>
           </motion.div>
@@ -245,9 +253,9 @@ export default function TripDetailScreen() {
             <h3 className="t-title text-white mb-3">Desglose de precio</h3>
             <div className="glass-surface rounded-2xl p-4 flex flex-col gap-3">
               {[
-                { label: '7 noches × $120', value: '$840' },
-                { label: 'Impuestos y tasas', value: '$67' },
-                { label: 'Servicio Planify', value: '$0' },
+                { label: `${nights} noches × ${fmt(property.pricePerNight)}`, value: fmt(breakdown.base) },
+                { label: 'Impuestos y tasas', value: fmt(breakdown.taxes) },
+                { label: 'Servicio Planify', value: fmt(breakdown.service) },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between">
                   <span className="t-label font-normal text-white/75">{row.label}</span>
@@ -256,7 +264,7 @@ export default function TripDetailScreen() {
               ))}
               <div className="flex items-center justify-between pt-3 border-t border-white/15">
                 <span className="t-cta text-white">Total Final</span>
-                <span className="t-headline text-white">$907</span>
+                <span className="t-headline text-white">{fmt(breakdown.total)}</span>
               </div>
               <p className="t-caption text-white/65 text-center">Sin sorpresas — precio final</p>
             </div>

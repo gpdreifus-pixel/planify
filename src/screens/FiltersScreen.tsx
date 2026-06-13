@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useSearchStore } from '../store/searchStore'
 import { useUIStore } from '../store/uiStore'
+import { usePriceFormatter } from '../utils/currency'
 import type { AccommodationType } from '../types'
 
 const TYPES: { value: AccommodationType; label: string; icon: string }[] = [
@@ -23,6 +24,7 @@ export default function FiltersScreen() {
   const navigate = useNavigate()
   const { filters, setFilters, applyFilters, resetFilters } = useSearchStore()
   const showToast = useUIStore((s) => s.showToast)
+  const { fmt } = usePriceFormatter()
 
   const toggleType = (type: AccommodationType) => {
     const current = filters.types
@@ -144,7 +146,7 @@ export default function FiltersScreen() {
             <div className="flex items-center justify-between mb-2">
               <h3 className="t-section text-white">Precio por noche</h3>
               <span className="t-label font-bold" style={{ color: 'var(--color-primary-container)' }}>
-                hasta ${filters.priceMax}
+                hasta {fmt(filters.priceMax)}
               </span>
             </div>
             <input
@@ -159,8 +161,8 @@ export default function FiltersScreen() {
               style={{ accentColor: 'var(--color-primary-container)' }}
             />
             <div className="flex justify-between mt-1">
-              <span className="t-caption text-white/65">$0</span>
-              <span className="t-caption text-white/65">$1000</span>
+              <span className="t-caption text-white/65">{fmt(0)}</span>
+              <span className="t-caption text-white/65">{fmt(1000)}</span>
             </div>
           </div>
 
