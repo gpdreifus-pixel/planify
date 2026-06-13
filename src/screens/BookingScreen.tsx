@@ -146,26 +146,28 @@ export default function BookingScreen() {
               return (
                 <div
                   key={item.label}
-                  className="glass-molded rounded-full p-3 pr-5 flex items-center justify-between"
+                  className="glass-molded rounded-full p-3 pr-4 flex items-center justify-between gap-3"
                 >
-                  {/* Left: icon + info */}
-                  <div className="flex items-center gap-4">
-                    <div className="icon-well-round w-14 h-14 flex items-center justify-center">
+                  {/* Left: icon + info. La plataforma vive acá (no en el botón):
+                      con ARS los montos son largos y duplicar el nombre rompía
+                      el layout. min-w-0 + truncate evitan el wrap a dos líneas. */}
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="icon-well-round w-14 h-14 flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#ffb68d' }}>
                         {item.icon}
                       </span>
                     </div>
-                    <div>
-                      <p className="t-caption text-white/65 uppercase" style={{ fontSize: '0.6875rem', letterSpacing: '0.12em' }}>
-                        {item.label}
+                    <div className="min-w-0">
+                      <p className="t-caption text-white/65 uppercase truncate" style={{ fontSize: '0.6875rem', letterSpacing: '0.12em' }}>
+                        {item.label === 'Alojamiento' ? `${item.label} · ${item.platform}` : item.label}
                       </p>
-                      <p className="t-cta text-white">
+                      <p className="t-cta text-white truncate">
                         {item.label === 'Alojamiento' ? property.name : `${item.platform}`}
                       </p>
                     </div>
                   </div>
 
-                  {/* Right: action button — abre la plataforma real en otra pestaña */}
+                  {/* Right: action button — solo el precio, nunca se parte en dos líneas */}
                   <motion.button
                     whileTap={{ scale: 0.92 }}
                     whileHover={{ scale: 1.06 }}
@@ -176,10 +178,10 @@ export default function BookingScreen() {
                       if (buildUrl) window.open(buildUrl(property.location), '_blank', 'noopener')
                     }}
                     aria-label={`Reservar ${item.label} en ${item.platform}`}
-                    className="raised-btn rounded-full px-4 py-3 flex items-center gap-2"
+                    className="raised-btn rounded-full px-4 py-3 flex items-center gap-2 flex-shrink-0"
                   >
-                    <span className="t-label text-white/95" style={{ fontSize: '0.8125rem' }}>
-                      {item.platform} {fmt(price)}
+                    <span className="t-label text-white/95 whitespace-nowrap" style={{ fontSize: '0.8125rem' }}>
+                      {fmt(price)}
                     </span>
                     <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'rgba(255,255,255,0.65)' }}>
                       open_in_new
