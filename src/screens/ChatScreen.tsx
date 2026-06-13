@@ -28,6 +28,19 @@ export default function ChatScreen() {
     }
   }, [stepNum, setStep, totalSteps])
 
+  // Guard: entrar por URL directa a /chat/7 sin haber respondido nada deja
+  // al usuario a mitad de un flujo sin contexto — lo mandamos al paso 1.
+  // (criteria persiste en localStorage, así que recargar mitad de flujo es válido)
+  useEffect(() => {
+    const criteria = useChatStore.getState().criteria
+    const hasAnswers = Object.values(criteria).some((v) => v !== undefined && v !== '')
+    if (stepNum > 1 && !hasAnswers) {
+      navigate('/chat/1', { replace: true })
+    }
+    // Solo al montar — durante el flujo normal siempre hay respuestas previas
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Reset de chips al cambiar de paso — patrón "adjust state during render"
   // (evita el setState dentro del effect, que dispara renders en cascada)
   const [chipsStep, setChipsStep] = useState(stepNum)
@@ -84,6 +97,19 @@ export default function ChatScreen() {
   const advanceMulti = () => {
     if (selectedChips.length > 0) {
       advance(selectedChips)
+    }
+  }
+
+  // Reduce la fricción del flujo de 10 pasos: toda pregunta posterior al
+  // destino se puede saltear sin registrar respuesta.
+  const skipStep = async () => {
+    setUserInput('')
+    if (stepNum < totalSteps) {
+      navigate(`/chat/${stepNum + 1}`)
+    } else {
+      const currentCriteria = useChatStore.getState().criteria
+      await search(currentCriteria)
+      navigate('/chat/summary')
     }
   }
 
@@ -154,6 +180,19 @@ export default function ChatScreen() {
                 </motion.button>
               )}
             </div>
+          )}
+
+          {/* Omitir — el destino (paso 1) es la única pregunta esencial */}
+          {stepNum > 1 && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.45 }}
+              onClick={skipStep}
+              className="t-label font-normal mt-5 ml-[52px] w-fit py-2 text-white/60 hover:text-white/85 transition-colors underline decoration-white/25 underline-offset-4"
+            >
+              Omitir esta pregunta
+            </motion.button>
           )}
         </motion.main>
       </AnimatePresence>

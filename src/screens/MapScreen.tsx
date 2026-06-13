@@ -94,6 +94,15 @@ export default function MapScreen() {
       markersRef.current.set(property.id, marker)
     })
 
+    // Encuadrar TODOS los markers — los resultados pueden ser de ciudades
+    // distintas y con zoom fijo quedaban fuera de pantalla sin aviso
+    if (properties.length > 1) {
+      const bounds = L.latLngBounds(
+        properties.map((p) => [p.coordinates.lat, p.coordinates.lng] as [number, number])
+      )
+      map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 })
+    }
+
     mapRef.current = map
     const currentMarkers = markersRef.current
 

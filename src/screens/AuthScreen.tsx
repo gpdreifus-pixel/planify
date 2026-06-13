@@ -390,7 +390,7 @@ export default function AuthScreen() {
 
                 {resetSent ? (
                   <div className="glass-pressed rounded-2xl p-4 text-center mt-2">
-                    <span className="material-symbols-outlined text-[#4ade80] mb-2" style={{ fontSize: 32 }}>check_circle</span>
+                    <span className="material-symbols-outlined text-success-light mb-2" style={{ fontSize: 32 }}>check_circle</span>
                     <p className="text-white/90 text-sm" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       Revisa tu correo electrónico (incluyendo la carpeta de spam) para encontrar el enlace de recuperación.
                     </p>

@@ -230,19 +230,17 @@ export default function TripDetailScreen() {
             </div>
           </motion.div>
 
-          {/* Activities */}
+          {/* Activities — lista informativa: sin cursor ni flecha que prometan
+              una navegación que no existe */}
           <motion.div variants={staggerItem}>
             <h3 className="t-title text-white mb-3">Actividades en la zona</h3>
             <div className="flex flex-col gap-2">
               {['Playa y snorkel 🤿', 'Tour cultural histórico 🏛️', 'Gastronomía local 🍴', 'Senderismo 🥾'].map((act) => (
                 <div
                   key={act}
-                  className="glass-surface flex items-center justify-between p-3.5 rounded-2xl cursor-pointer hover:bg-white/5 transition-colors"
+                  className="glass-surface flex items-center p-3.5 rounded-2xl"
                 >
                   <span className="t-label font-normal text-white/90">{act}</span>
-                  <span className="material-symbols-outlined text-white/50" style={{ fontSize: 18 }}>
-                    arrow_forward
-                  </span>
                 </div>
               ))}
             </div>

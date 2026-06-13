@@ -183,6 +183,10 @@ export default function CommunityScreen() {
     navigate('/results')
   }
 
+  // El store cae a posts de demostración cuando la tabla está vacía o falla
+  // la conexión — el usuario debe saber que no es contenido real.
+  const isDemoContent = posts.length > 0 && posts.every((p) => p.id.startsWith('demo-'))
+
   const displayPosts = (tab === 'mine' ? posts.filter((p) => p.author.id === user?.id) : posts).filter((p) => {
     if (!searchQuery.trim()) return true
     const q = searchQuery.toLowerCase()
@@ -226,6 +230,20 @@ export default function CommunityScreen() {
       </div>
 
       <main className="flex-1 relative z-10 px-6 pb-32 max-w-md mx-auto w-full overflow-y-auto">
+        {/* Aviso de contenido demo — honestidad sobre el estado del sistema */}
+        {isDemoContent && tab === 'explore' && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 mb-3 px-4 py-2.5 rounded-full glass-pressed border border-white/10"
+          >
+            <span className="material-symbols-outlined text-white/55" style={{ fontSize: 16 }}>info</span>
+            <p className="t-caption text-white/70">
+              Estás viendo publicaciones de ejemplo. ¡Sé el primero en compartir!
+            </p>
+          </motion.div>
+        )}
+
         {/* Skeletons only on first load (no posts yet).
             On revisits the cached posts stay visible while the refresh runs in the background. */}
         {isLoading && posts.length === 0 && (

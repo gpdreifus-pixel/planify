@@ -30,6 +30,9 @@
   --color-error: #ba1a1a;
   --color-error-container: #ffdad6;
   --color-success: #22c55e;
+  /* Variante clara: texto/íconos de éxito sobre fondos oscuros o glass,
+     donde el success base no alcanza el contraste AA */
+  --color-success-light: #4ade80;
   --color-sheet-dark: #2a2438;
 
   /* Font families */

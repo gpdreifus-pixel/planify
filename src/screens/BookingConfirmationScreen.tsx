@@ -38,9 +38,9 @@ export default function BookingConfirmationScreen() {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.1 }}
-          className="w-24 h-24 rounded-full bg-[#4ade80]/20 flex items-center justify-center mb-6"
+          className="w-24 h-24 rounded-full bg-success-light/20 flex items-center justify-center mb-6"
         >
-          <span className="material-symbols-outlined text-[#4ade80]" style={{ fontSize: 48, fontVariationSettings: "'FILL' 1" }}>
+          <span className="material-symbols-outlined text-success-light" style={{ fontSize: 48, fontVariationSettings: "'FILL' 1" }}>
             check_circle
           </span>
         </motion.div>
@@ -73,7 +73,7 @@ export default function BookingConfirmationScreen() {
             Código de confirmación
           </span>
           <div className="flex items-center justify-center gap-3">
-            <span className="t-headline" style={{ color: '#4ade80', letterSpacing: '0.05em' }}>
+            <span className="t-headline text-success-light" style={{ letterSpacing: '0.05em' }}>
               {trip.confirmationCode}
             </span>
             <motion.button

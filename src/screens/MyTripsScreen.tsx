@@ -19,7 +19,7 @@ type TripTab = 'active' | 'past' | 'saved'
 
 const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }> = {
   upcoming:  { label: 'Próximo',      color: '#ff6b1f', bg: 'rgba(255,107,31,0.20)' },
-  confirmed: { label: 'Confirmado',   color: '#4ade80', bg: 'rgba(74,222,128,0.18)' },
+  confirmed: { label: 'Confirmado',   color: 'var(--color-success-light)', bg: 'rgba(74,222,128,0.18)' },
   active:    { label: 'En curso',     color: '#c9bfff', bg: 'rgba(201,191,255,0.18)' },
   completed: { label: 'Completado',   color: 'rgba(255,255,255,0.55)', bg: 'rgba(255,255,255,0.10)' },
   cancelled: { label: 'Cancelado',    color: '#ffb4ab', bg: 'rgba(255,180,171,0.15)' },
@@ -82,7 +82,8 @@ const TripCard = memo(function TripCard({ trip, onPress, onDelete }: { trip: Tri
           style={{
             background: status.bg,
             color: status.color,
-            border: `1px solid ${status.color}40`,
+            // color-mix acepta tanto hex como var() — `${color}40` no
+            border: `1px solid color-mix(in srgb, ${status.color} 25%, transparent)`,
             fontFamily: "'Plus Jakarta Sans', sans-serif",
             backdropFilter: 'blur(8px)',
           }}

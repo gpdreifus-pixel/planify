@@ -99,6 +99,18 @@ familia/tamaño/peso — el color se aplica aparte según contexto.
 
 ## 4. Surface System
 
+### Regla de uso: glass vs neu
+
+Conviven dos familias con roles **excluyentes**:
+
+| Familia | Rol | Cuándo |
+|---|---|---|
+| `glass-*` | **Contenido** | Cards, paneles, burbujas, superficies que contienen información (glass-surface para listas, glass-molded para contenedores destacados, glass-panel para héroes, glass-raised para botones de ícono flotantes, glass-pressed para tracks/inputs) |
+| `neu-*` | **Controles** | Elementos que se presionan: botones primarios (neu-btn-primary), icon buttons (neu-icon-btn), contenedores de tabs e inputs de formulario (neu-pressed), bottom bar (neu-bottombar) |
+
+> Nunca usar `neu-card`/`neu-flat` para contenido nuevo ni `glass-raised` para
+> CTAs primarios. Si dudás: contenido → glass, control → neu.
+
 ### Glass Surfaces (used on gradient background)
 
 ```css
@@ -122,17 +134,12 @@ familia/tamaño/peso — el color se aplica aparte según contexto.
   border: 1px solid rgba(255,255,255,0.10)
 ```
 
-### White Cards (content listings on gradient background)
+### Content cards
 
-```css
-.surface-card
-  background: rgba(255,255,255,0.92)
-  border: 1px solid rgba(255,255,255,0.60)
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08)
-  border-radius: 1.5rem
-```
-
-Use `surface-card` for: property cards, trip cards, community cards, profile sections.
+Las cards de contenido (propiedades, viajes, posts, secciones de perfil) usan
+**`glass-surface`** (translúcido + blur) con texto blanco — NO cards blancas.
+La clase `.surface-card` de index.css es un alias legacy con los mismos valores
+glass; preferir `glass-surface` directamente.
 
 ### Glass Input Field
 
@@ -380,14 +387,14 @@ Used for: Filters overlay
 
 | Screen | Background | Cards | Primary Text |
 |---|---|---|---|
-| HomeScreen | warm gradient | `glass-molded` main card | white |
-| AuthScreen | warm gradient | `glass-molded` main card | white |
-| ChatScreen | warm gradient | `glass-raised` bubbles | white |
-| ChatSummaryScreen | warm gradient | `glass-molded` | white |
-| ResultsScreen | warm gradient | `surface-card` (white) | dark |
-| TripDetailScreen | warm gradient | white content panel | dark |
-| BookingScreen | warm gradient | `surface-card` (white) | dark |
-| MyTripsScreen | warm gradient | `surface-card` (white) | dark |
-| CommunityScreen | warm gradient | `surface-card` (white) | dark |
-| FiltersScreen | overlay sheet | white sheet | dark |
-| ProfileScreen | warm gradient | `surface-card` (white) | dark |
+| HomeScreen | warm gradient | `glass-panel` main card | white |
+| AuthScreen | warm gradient | `glass-panel` main card | white |
+| ChatScreen | warm gradient | `glass-molded` bubbles | white |
+| ChatSummaryScreen | warm gradient | `glass-molded` pills | white |
+| ResultsScreen | warm gradient | `glass-surface` | white |
+| TripDetailScreen | warm gradient | `glass-surface` / `glass-molded` | white |
+| BookingScreen | warm gradient | `glass-molded` | white |
+| MyTripsScreen | warm gradient | `glass-molded` | white |
+| CommunityScreen | warm gradient | `glass-surface` | white |
+| FiltersScreen | overlay sheet | `bg-sheet-dark` sheet | white |
+| ProfileScreen | warm gradient | `glass-surface` | white |
