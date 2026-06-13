@@ -50,6 +50,8 @@ Ambient decorative circles (`bg-circle-1/2/3`) are fixed behind all content:
 |---|---|---|
 | `--color-error` | `#ba1a1a` | Destructive actions |
 | `--color-error-container` | `#ffdad6` | Error surface |
+| `--color-success` | `#22c55e` | Match/confirmación (text-success, bg-success/20) |
+| `--color-sheet-dark` | `#2a2438` | Bottom sheets oscuros (bg-sheet-dark) |
 
 ---
 
@@ -59,17 +61,28 @@ Ambient decorative circles (`bg-circle-1/2/3`) are fixed behind all content:
 - **Syne 700** — Display headings, brand wordmark, section titles, CTA button text
 - **Plus Jakarta Sans 400/600** — Body text, labels, chip text, meta info
 
-### Scale
-| Role | Size | Weight | Font |
-|---|---|---|---|
-| Display | `2rem` | 700 | Syne |
-| Headline LG | `1.75rem` | 700 | Syne |
-| Headline MD | `1.5rem` | 700 | Syne |
-| Headline SM | `1.25rem` | 700 | Syne |
-| Body LG | `1.125rem` | 400 | Jakarta |
-| Body MD | `1rem` | 400/600 | Jakarta |
-| Label MD | `0.875rem` | 600 | Jakarta |
-| Label SM | `0.75rem` | 600 | Jakarta |
+### Scale — utility classes (`@layer components` en index.css)
+
+**Usar SIEMPRE estas clases en lugar de estilos inline.** Solo definen
+familia/tamaño/peso — el color se aplica aparte según contexto.
+
+| Clase | Size | Weight | Font | Uso |
+|---|---|---|---|---|
+| `.t-display-xl` | `2.5rem` | 700 | Syne | Solo héroes (Home, Onboarding) |
+| `.t-display` | `2rem` | 700 | Syne | Títulos de momento (¡Reserva exitosa!) |
+| `.t-headline-lg` | `1.75rem` | 700 | Syne | Títulos sobre hero images |
+| `.t-headline` | `1.5rem` | 700 | Syne | Títulos de pantalla / sheets |
+| `.t-headline-sm` | `1.25rem` | 700 | Syne | Subtítulos, precios destacados |
+| `.t-title` | `1.125rem` | 700 | Syne | Nombres de card, secciones |
+| `.t-section` | `0.9375rem` | 700 | Syne | Headings de grupo en sheets |
+| `.t-cta` | `1rem` | 700 | Syne | Texto de botones primarios |
+| `.t-body` | `1rem` | 400 | Jakarta | Cuerpo |
+| `.t-body-sm` | `0.9375rem` | 400 | Jakarta | Cuerpo secundario, inputs |
+| `.t-label` | `0.875rem` | 600 | Jakarta | Labels, chips, meta (usar `font-normal` para variante 400) |
+| `.t-caption` | `0.75rem` | 400 | Jakarta | Captions, contadores |
+
+> Syne está cargada solo en 600/700 y Jakarta en 400/600 — **nunca** usar
+> weights 300/500: el navegador los sintetiza y se ven borrosos.
 
 ### Text Colors
 **On gradient background (glass surfaces):**
