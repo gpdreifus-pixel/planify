@@ -57,6 +57,21 @@
 
     <title>Planify</title>
 
+    <!-- ── Fonts ───────────────────────────────────────────────────────── -->
+    <!-- Cargadas desde el HTML (no @import en CSS) para que el navegador las
+         descubra de inmediato y las baje en paralelo con el bundle JS — el
+         @import encadenaba CSS bundle → CSS de Google → fuentes en serie. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=Syne:wght@600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+    />
+
     <!-- ── Startup background ──────────────────────────────────────────── -->
     <!-- Prevent white flash before React mounts by matching the app's
          atmospheric gradient exactly on the document body. -->
@@ -74,7 +89,23 @@
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Splash estático: pinta contenido real apenas llega el HTML (FCP
+           inmediato) en lugar de esperar a que el bundle JS monte React.
+           createRoot().render() lo reemplaza por la app. -->
+      <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center">
+        <span
+          style="
+            font-family: 'Syne', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #fff;
+            letter-spacing: -0.02em;
+          "
+          >Planify</span
+        >
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
