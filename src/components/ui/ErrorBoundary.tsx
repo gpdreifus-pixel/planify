@@ -90,7 +90,9 @@ export default class ErrorBoundary extends Component<Props, State> {
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: '0.9375rem',
                 lineHeight: 1.6,
-                fontWeight: 300,
+                // 400: la fuente solo carga los pesos 400/600 — un 300
+                // forzaría renderizado sintético
+                fontWeight: 400,
               }}
             >
               Ocurrió un error inesperado. Por favor, intentá recargar la página.

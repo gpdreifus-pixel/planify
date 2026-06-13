@@ -73,6 +73,11 @@ export default defineConfig({
         // Aggressive cache for all build artifacts
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,webp}'],
 
+        // html2pdf pesa ~936KB y solo se usa al exportar un PDF — no tiene
+        // sentido bajarlo en la instalación. Se cachea en runtime (abajo)
+        // la primera vez que alguien exporta.
+        globIgnores: ['**/html2pdf-*.js'],
+
         // Take control of all clients immediately on activation —
         // no need to close and reopen tabs after an update installs.
         skipWaiting: true,
@@ -83,6 +88,16 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
 
         runtimeCaching: [
+          // Chunk de html2pdf — URL hasheada (inmutable), excluida del
+          // precache. CacheFirst: se descarga una vez y queda para siempre.
+          {
+            urlPattern: /\/assets\/html2pdf-.*\.js$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pdf-lib',
+              expiration: { maxEntries: 4, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
           // Google Fonts stylesheet — long-lived, regenerated only on font changes
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

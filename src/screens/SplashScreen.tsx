@@ -8,16 +8,19 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
   useEffect(() => {
-    // La animación dura aproximadamente 2.8s antes de avisarle a la app que terminó
+    // 1.8s de animación + 0.6s de fade de salida. Se muestra una vez por
+    // sesión (ver App.tsx) — refreshes y deep links van directo al contenido.
     const timer = setTimeout(() => {
       onComplete()
-    }, 2800)
+    }, 1800)
     return () => clearTimeout(timer)
   }, [onComplete])
 
   return (
+    // Fondo transparente: deja ver el gradiente de marca que vive en <html>,
+    // así el splash estático del index.html transiciona acá sin pantallazo negro.
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#0A0A0A]"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.6, ease: 'easeInOut' } }}
     >
