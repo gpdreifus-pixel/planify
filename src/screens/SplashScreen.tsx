@@ -35,8 +35,11 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           src={logoSrc}
           alt="Planify Logo"
           className="w-32 h-32 object-contain"
-          initial={{ filter: 'drop-shadow(0 0 0px rgba(255,107,31,0))' }}
-          animate={{ filter: 'drop-shadow(0 0 20px rgba(255,107,31,0.4))' }}
+          // brightness(0) invert(1) pinta el isotipo de blanco puro: el naranja
+          // se mezclaba con el gradiente al sacar el fondo negro. El glow también
+          // pasa a blanco — uno naranja sobre fondo naranja era invisible.
+          initial={{ filter: 'brightness(0) invert(1) drop-shadow(0 0 0px rgba(255,255,255,0))' }}
+          animate={{ filter: 'brightness(0) invert(1) drop-shadow(0 0 22px rgba(255,255,255,0.55))' }}
           transition={{ duration: 1.5, delay: 1, repeat: Infinity, repeatType: 'reverse' }}
         />
         
